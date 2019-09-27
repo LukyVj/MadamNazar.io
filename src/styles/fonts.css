@@ -1,0 +1,23 @@
+@font-face {
+  font-family: "RDRLino-Regular";
+  font-style: normal;
+  font-weight: 400;
+  src: local("RDRLino-Regular"),
+    url("../fonts/RDRLino-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "RDRHapna-Regular";
+  font-style: normal;
+  font-weight: 400;
+  src: local("RDRHapna-Regular"),
+    url("../fonts/RDRHapna-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "RDRCatalogueBold-Bold";
+  font-style: normal;
+  font-weight: 400;
+  src: local("RDRCatalogueBold-Bold"),
+    url("../fonts/RDRCatalogueBold-Bold.woff2") format("woff2");
+}

@@ -1,0 +1,11 @@
+@import url(https://fonts.googleapis.com/css?family=Ewert);
+@import url(https://fonts.googleapis.com/css?family=Ultra);
+
+html,
+body,
+#root {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
