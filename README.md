@@ -1,3 +1,5 @@
+<img src="https://puu.sh/ElY0b/cccc9578bb.png"/>
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Definition
@@ -289,8 +291,8 @@ If I'll have at some point enough cointributors to let the project live by itsel
 
 ## Next steps ( implementation ) 
 - [ ] Being able to add a time constrain. Meaning that I'd like to check per day if the location was found. And display a message if it's not the case like: "Madam Nazar wasn't found yet, search more!" 
-- [ ] Being able to record her moves to try to find a rotation pattern 
-- [ ] From the point defined right before. I'd like to display a calendar to explore her locations per day
+- [ ] Being able to record her moves to try to find a rotation pattern
+- [ ] From the point defined right before. I'd like to display a calendar to explore her locations per day
 - [ ] Drastically improve the mobile version 
 
 
