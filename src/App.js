@@ -137,18 +137,31 @@ class App extends Component {
             <small
               css={css`
                 letter-spacing: 2px;
+                font-size: 16px;
+                font-family: "RDRLino-Regular";
+                line-height: 3;
               `}
             >
               Made by <a href="https://twitter.com/lukyvj">@LukyVj</a> 🤠 - For
-              the ❤️ of the RDO community - Show some support 🐦
-              <a href="https://twitter.com/intent/tweet?text=%F0%9F%A7%BF%20NazarFinder%20-%20Get%20the%20updated%20location%20of%20Madam%20Nazar%20in%20Red%20Dead%20Redemption%202%20Online%20https%3A%2F%2Fnazarfinder.surge.sh%20from%20%40lukyvj">
-                Tweet about it!
+              the ❤️ of the RDO community
+            </small>
+            <br />
+            <small
+              css={css`
+                font-size: 16px;
+                margin-top: 16px;
+                display: inline-block;
+              `}
+            >
+              Made using the unofficial{" "}
+              <a href="https://documenter.getpostman.com/view/6602370/SVtN3rnY">
+                Madam Nazar Location Api
               </a>
             </small>
             <br />
             <small
               css={css`
-                font-size: 12px;
+                font-size: 14px;
                 margin-top: 16px;
                 display: inline-block;
                 opacity: 0.75;

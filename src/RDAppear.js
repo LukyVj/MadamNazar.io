@@ -3,22 +3,37 @@ import React, { Component } from "react";
 import { css, jsx } from "@emotion/core";
 
 class RDAppear extends Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
     const styles = {
       root: css`
         animation: blur 5s forwards;
         position: relative;
         overflow: hidden;
-        height: ${this.props.height}px;
-        width: ${this.props.width}px;
+        height: ${this.props.height - 8}px;
+        width: ${this.props.width - 8}px;
+        display: flex;
+        align-items: center;
+        border: 2px solid var(--Armadillo);
+        position: relative;
+
+        &:before {
+          content: "Click to expand";
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          margin: 1em;
+          z-index: 10;
+          background: rgba(0, 0, 0, 0.78);
+          color: var(--EcruWhite);
+          font-size: 16px;
+          padding: 6px 10px;
+          border-radius: 100px;
+        }
 
         & > div {
-          height: ${this.props.height}px;
+          height: ${this.props.height - 8}px;
           position: absolute;
-          width: ${this.props.width}px;
+          width: ${this.props.width - 8}px;
         }
 
         .normal,
@@ -28,11 +43,13 @@ class RDAppear extends Component {
 
         .normal {
           background-size: cover;
+          background-position: center;
         }
 
         .invert {
           animation: mask 5s steps(69) forwards;
           background-size: cover;
+          background-position: center;
           filter: invert(1) grayscale(1);
           -webkit-mask: url(${require("./images/sheet.png")});
           -webkit-mask-size: 7000% 100%;

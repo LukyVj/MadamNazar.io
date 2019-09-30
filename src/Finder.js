@@ -5,6 +5,10 @@ import RDAppear from "./RDAppear";
 import Map from "./Map";
 import { isConditional } from "@babel/types";
 
+const capitalize = string => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+
 const styles = {
   posterGrid: css``,
   posterWrapper: css`
@@ -110,13 +114,6 @@ const styles = {
 };
 
 const InfoBox = props => {
-  const avatarCSS = css`
-    #normal,
-    #invert {
-      background-image: url(${props.author_avatar});
-    }
-  `;
-  const text = props.text.split("https://")[0];
   return (
     <>
       <div
@@ -162,49 +159,15 @@ const InfoBox = props => {
       </div>
 
       <div css={styles.posterWrapper}>
-        <div css={[avatarCSS, styles.posterGrid, styles.posterLayout]}>
-          <div
-            className="header"
+        <div css={[styles.posterGrid, styles.posterLayout]}>
+          <section
+            className="pv-48"
             css={css`
-              margin-bottom: 2em;
+              text-align: center;
             `}
           >
-            <h3 className="news-title">Mme Nazar was found!</h3>
-            <div class="subhead">
-              <time
-                css={css`
-                  letter-spacing: 2px;
-                `}
-              >
-                {props.found_on.split(" ")[0]} {props.found_on.split(" ")[1]} 
-                {props.found_on.split(" ")[2]} {props.found_on.split(" ")[5]}
-              </time>
-            </div>
-          </div>
-
-          <section className="d-grid lg:g-2 pv-32 pos-relative">
-            <div className="pos-relative">
-              <span>Found by: </span> <br />
-              <div
-                className="h-100"
-                css={css`
-                  line-height: 100px;
-                `}
-              >
-                <span className="pos-relative d-inline-block va-middle">
-                  <RDAppear
-                    width={58}
-                    height={58}
-                    image={props.author_avatar}
-                    childrenStyle={css`
-                      height: calc(58px - 8px) !important;
-                      width: calc(58px - 8px) !important;
-                      border-radius: 100px;
-                      border: 4px solid var(--Armadillo);
-                      overflow: hidden;
-                    `}
-                  />
-                </span>
+            <div>
+              <div>
                 <h2
                   className="m-0 p-0 pl-24"
                   css={css`
@@ -215,64 +178,95 @@ const InfoBox = props => {
                     text-shadow: -1px 1px 0 black;
                   `}
                 >
-                  <a href={`https://twitter.com/${props.author}`}>
-                    @{props.author}
-                  </a>
+                  In {capitalize(props.region_precise)}  in the region of{" "}
+                  {capitalize(props.region)}
                 </h2>
               </div>
               <div>
-                <p>{text}</p>
+                <p>
+                  In the {capitalize(props.cardinals.split(" ")[0])} 
+                  {capitalize(props.cardinals.split(" ")[1])} side of the map.
+                  nearby{" "}
+                  {props.nearby.map(
+                    (poi, id) =>
+                      console.log(id, props.nearby.length - 1) || (
+                        <b key={id}>
+                          {id === props.nearby.length - 1 && " & "}
+                          {capitalize(poi)}
+                          {id !== props.nearby.length - 1 &&
+                            (id !== props.nearby.length - 2 && ", ")}
+                        </b>
+                      )
+                  )}
+                  .
+                </p>
                 <a href={props.link}>{props.link}</a>
               </div>
             </div>
 
-            <div className={props.media.length !== 1 && "d-grid lg:g-2"}>
-              {props.media.map(media => (
-                <div
-                  className="cursor-pointer"
-                  css={css`
-                    padding: 8px;
-                  `}
-                >
-                  <RDAppear
-                    image={media.media_url_https}
-                    width={props.media.length === 1 ? 400 : 300}
-                    height={props.media.length === 1 ? 400 : 300}
-                    onClick={() => {
-                      props.parent.setState({
-                        modal: true,
-                        modalImage: media.media_url_https
-                      });
-                    }}
-                    childrenStyle={css`
-                      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
-                      transform: rotate(-0.3deg);
-                      filter: sepia(1) saturate(0.65);
+            <div>
+              <div
+                className="cursor-pointer d-grid g-2"
+                css={css`
+                  padding: 8px;
+                `}
+              >
+                <RDAppear
+                  image={props.media.full}
+                  width={props.parent.state.frameWidth / 2}
+                  height={480}
+                  onClick={() => {
+                    props.parent.setState({
+                      modal: true,
+                      modalImage: props.media.full
+                    });
+                  }}
+                  childrenStyle={css`
+                    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
+                    transform: rotate(-0.3deg);
+                    filter: sepia(1) saturate(0.65);
 
-                      @media (max-width: 960px) {
-                        width: 100% !important;
-                      }
-                    `}
-                    css={css`
-                      @media (max-width: 960px) {
-                        width: 100% !important;
-                      }
-                    `}
-                  />
-                </div>
-              ))}
+                    @media (max-width: 960px) {
+                      width: 100% !important;
+                    }
+                  `}
+                  css={css`
+                    @media (max-width: 960px) {
+                      width: 100% !important;
+                    }
+                  `}
+                />
+
+                <RDAppear
+                  image={props.media.zoom}
+                  width={props.parent.state.frameWidth / 2}
+                  height={480}
+                  onClick={() => {
+                    props.parent.setState({
+                      modal: true,
+                      modalImage: props.media.zoom
+                    });
+                  }}
+                  childrenStyle={css`
+                    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
+                    transform: rotate(-0.3deg);
+                    filter: sepia(1) saturate(0.65);
+
+                    @media (max-width: 960px) {
+                      width: 100% !important;
+                    }
+                  `}
+                  css={css`
+                    @media (max-width: 960px) {
+                      width: 100% !important;
+                    }
+                  `}
+                />
+              </div>
             </div>
           </section>
           <section>
-            {props.hashtags.map(ht => {
-              if (ht.text.startsWith("p")) {
-                let loc = ht.text.substring(
-                  ht.text.lastIndexOf("p") + 1,
-                  ht.text.lastIndexOf("x")
-                );
-                return <Map localisation={loc} />;
-              }
-            })}
+            <Map localisation={props.id} />;
           </section>
         </div>
       </div>
@@ -292,34 +286,28 @@ class Finder extends Component {
   }
 
   fetchData = () => {
-    fetch(
-      "https://cors-anywhere.herokuapp.com/https://api.twitter.com/1.1/search/tweets.json?q=%23NazarFinder&tweet_mode=extended",
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "*/*",
-          "Access-Control-Allow-Origin": "*",
-          "Accept-Encoding": "gzip, deflate",
-          Authorization:
-            "Bearer AAAAAAAAAAAAAAAAAAAAABrO0AAAAAAA8qTMsAShpS43PMvZweECxqTZ728%3DFF6BCPcE2CBuqYeTo00Z88tQxNIPWerPb7fEzmpaUE75nzF8LO",
-          "Cache-Control": "no-cache",
-          Connection: "keep-alive",
-          Cookie:
-            "personalization_id='v1_OHHCF5O+kmx2t+clOEL/6Q=='; guest_id=v1%3A156699205346221382",
-          Host: "api.twitter.com'",
-          "cache-control": "no-cache"
-        }
+    fetch("https://madam-nazar-location-api.herokuapp.com/current", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "*/*",
+        "Access-Control-Allow-Origin": "*",
+        "Accept-Encoding": "gzip, deflate",
+        Authorization:
+          "Bearer AAAAAAAAAAAAAAAAAAAAABrO0AAAAAAA8qTMsAShpS43PMvZweECxqTZ728%3DFF6BCPcE2CBuqYeTo00Z88tQxNIPWerPb7fEzmpaUE75nzF8LO",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+        Cookie:
+          "personalization_id='v1_OHHCF5O+kmx2t+clOEL/6Q=='; guest_id=v1%3A156699205346221382",
+        Host: "api.twitter.com'",
+        "cache-control": "no-cache"
       }
-    )
+    })
       .then(response => response.json())
       .then(data => {
-        if (
-          data.statuses[0].user.screen_name === "iamfabriceg" ||
-          data.statuses[0].user.screen_name === "LukyVJ"
-        ) {
-          this.setState({ data });
-        }
+        console.log(data);
+
+        this.setState({ data });
       })
       .catch(function(err) {
         console.log("error", err);
@@ -328,26 +316,42 @@ class Finder extends Component {
 
   componentDidMount() {
     this.fetchData();
+
+    this.setState({
+      frameWidth:
+        document.getElementById("frame").getBoundingClientRect().width - 100
+    });
+
+    window.addEventListener("resize", () => {
+      this.setState({
+        frameWidth:
+          document.getElementById("frame").getBoundingClientRect().width - 100
+      });
+    });
+
+    setTimeout(() => {
+      this.setState({ loadMore: true });
+    }, 5000);
+
+    setTimeout(() => {
+      this.setState({ loadEvenMore: true });
+    }, 10000);
   }
 
   render() {
-    const dataExists = this.state.data !== null && this.state.data.statuses[0];
-
+    const dataExists = this.state.data !== null && this.state.data.data;
+    console.log(this.state);
     return (
       <>
-        <div>
+        <div id="frame">
           {dataExists ? (
             <InfoBox
-              found_on={this.state.data.statuses[0]["created_at"]}
-              author={this.state.data.statuses[0].user.screen_name}
-              id={this.state.data.statuses[0].id_str}
-              media={this.state.data.statuses[0]["extended_entities"].media}
-              author_avatar={this.state.data.statuses[0].user.profile_image_url}
-              text={this.state.data.statuses[0].full_text}
-              link={`https://${
-                this.state.data.statuses[0].full_text.split("https://")[1]
-              }`}
-              hashtags={this.state.data.statuses[0].entities.hashtags}
+              id={this.state.data.data._id}
+              media={this.state.data.data.location.image}
+              region={this.state.data.data.location.region.name}
+              region_precise={this.state.data.data.location.region.precise}
+              nearby={this.state.data.data.location["near_by"]}
+              cardinals={this.state.data.data.location.cardinals.full}
               parent={this}
             />
           ) : (
@@ -362,6 +366,23 @@ class Finder extends Component {
                 `}
               >
                 Loading... Fetching some data
+                {this.state.loadMore === true && (
+                  <p>It can take a few seconds, hang tight</p>
+                )}
+                {this.state.loadEvenMore === true && (
+                  <>
+                    {" "}
+                    <p>
+                      I know pal, it's long, but you know, technology works in
+                      mysterious ways
+                    </p>
+                    <p>
+                      The cause of this time to load can be a lot of things..
+                      From the Twitter API to a bunch of mices eating your
+                      internet cable, but stay here
+                    </p>
+                  </>
+                )}
               </figcaption>
               <span css={styles.badge}>
                 <img src={require("./images/hat.png")} alt="loading" />
