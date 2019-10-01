@@ -4,7 +4,6 @@ import React, { Component } from "react";
 import Finder from "./Finder";
 import ReactGA from "react-ga";
 import { hotjar } from "react-hotjar";
-
 import { css, jsx } from "@emotion/core";
 
 import { isBrowser, rudr_favorite } from "./scripts/helpers";
