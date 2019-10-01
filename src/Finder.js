@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import React, { Component } from "react";
 import { css, jsx } from "@emotion/core";
+import ReactGA from "react-ga";
 import RDAppear from "./RDAppear";
 import Map from "./Map";
 import { isConditional } from "@babel/types";
@@ -220,6 +221,10 @@ const InfoBox = props => {
                       modal: true,
                       modalImage: props.media.full
                     });
+                    ReactGA.event({
+                      category: "click.modal",
+                      action: "Open first image"
+                    });
                   }}
                   childrenStyle={css`
                     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
@@ -245,6 +250,10 @@ const InfoBox = props => {
                     props.parent.setState({
                       modal: true,
                       modalImage: props.media.zoom
+                    });
+                    ReactGA.event({
+                      category: "click.modal",
+                      action: "Open second image"
                     });
                   }}
                   childrenStyle={css`

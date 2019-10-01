@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 /** @jsx jsx */
 import React, { Component } from "react";
 import Finder from "./Finder";
@@ -78,19 +79,34 @@ class App extends Component {
               <li>
                 <a
                   href="javascript:void(0)"
-                  onClick={() => rudr_favorite(this)}
+                  onClick={() => {
+                    rudr_favorite(this);
+                    ReactGA.event({
+                      category: "click.link",
+                      action: "Add to Favorite"
+                    });
+                  }}
                 >
                   <img
                     src={require("./images/star.svg")}
                     width={18}
                     className="va-middle"
+                    alt="star icon"
                   />{" "}
                   Add to favorites
                 </a>{" "}
               </li>
               <li>
                 🐦
-                <a href="https://twitter.com/intent/tweet?text=%F0%9F%A7%BF%20NazarFinder%20-%20Get%20the%20updated%20location%20of%20Madam%20Nazar%20in%20Red%20Dead%20Redemption%202%20Online%20https%3A%2F%2Fnazarfinder.surge.sh%20from%20%40lukyvj">
+                <a
+                  href="https://twitter.com/intent/tweet?text=%F0%9F%A7%BF%20NazarFinder%20-%20Get%20the%20updated%20location%20of%20Madam%20Nazar%20in%20Red%20Dead%20Redemption%202%20Online%20https%3A%2F%2Fnazarfinder.surge.sh%20from%20%40lukyvj"
+                  onClick={() => {
+                    ReactGA.event({
+                      category: "click.link",
+                      action: "Tweet link"
+                    });
+                  }}
+                >
                   Tweet about it!
                 </a>
               </li>
@@ -142,8 +158,19 @@ class App extends Component {
                 line-height: 3;
               `}
             >
-              Made by <a href="https://twitter.com/lukyvj">@LukyVj</a> 🤠 - For
-              the ❤️ of the RDO community
+              Made by{" "}
+              <a
+                href="https://twitter.com/lukyvj"
+                onClick={() => {
+                  ReactGA.event({
+                    category: "click.link",
+                    action: "Click on LukyVj Twitter profile"
+                  });
+                }}
+              >
+                @LukyVj
+              </a>{" "}
+              🤠 - For the ❤️ of the RDO community
             </small>
             <br />
             <small
@@ -154,7 +181,15 @@ class App extends Component {
               `}
             >
               Made using the unofficial{" "}
-              <a href="https://documenter.getpostman.com/view/6602370/SVtN3rnY">
+              <a
+                href="https://documenter.getpostman.com/view/6602370/SVtN3rnY"
+                onClick={() => {
+                  ReactGA.event({
+                    category: "click.link",
+                    action: "Click on API link"
+                  });
+                }}
+              >
                 Madam Nazar Location Api
               </a>
             </small>
