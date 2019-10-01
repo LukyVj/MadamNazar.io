@@ -1,1 +1,1 @@
-rm -rf build && yarn build && rm build/static/js/*.map && git add build && git commit -m"Update gh pages" && git subtree push --prefix build origin gh-pages
+yarn build && rm build/static/js/*.map && mv build docs && git add . && git commit -m"Updae" && git push origin master && surge ./build --domain https://backup-nazarfinder.surge.sh
