@@ -178,7 +178,7 @@ const InfoBox = props => {
                     text-shadow: -1px 1px 0 black;
                   `}
                 >
-                  In {capitalize(props.region_precise)}  in the region of{" "}
+                  In {capitalize(props.region_precise)} in the region of{" "}
                   {capitalize(props.region)}
                 </h2>
               </div>

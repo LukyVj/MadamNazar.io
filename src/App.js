@@ -4,7 +4,7 @@ import Finder from "./Finder";
 import ReactGA from "react-ga";
 
 import { css, jsx } from "@emotion/core";
-import * as Icon from "react-feather";
+
 import { isBrowser, rudr_favorite } from "./scripts/helpers";
 
 class App extends Component {
