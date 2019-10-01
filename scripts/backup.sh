@@ -1,0 +1,1 @@
+echo "Build backup" && yarn build && rm build/static/js/*.map && surge ./build --domain https://backup-nazarfinder.surge.sh
