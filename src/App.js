@@ -3,6 +3,7 @@
 import React, { Component } from "react";
 import Finder from "./Finder";
 import ReactGA from "react-ga";
+import hotjar from "react-hotjar";
 import { css, jsx } from "@emotion/core";
 
 import { isBrowser, rudr_favorite } from "./scripts/helpers";
@@ -22,6 +23,7 @@ class App extends Component {
   componentDidMount() {
     ReactGA.initialize("UA-148400737-1");
     ReactGA.pageview(window.location.pathname);
+    hotjar.initialize(1508869, 6);
   }
 
   componentDidUpdate() {}

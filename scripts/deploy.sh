@@ -1,1 +1,1 @@
-yarn build && rm build/static/js/*.map && rm -rd ./docs/ && mv ./build/ ./docs/ && git add . && git commit -m"Update `date +"%T"`" && git push origin master && surge ./docs --domain https://backup-nazarfinder.surge.sh
+yarn build && rm build/static/js/*.map && rm -rd ./docs/ && mv ./build/ ./docs/ && git add . && git commit -m"Update `date`" && git push origin master && surge ./docs --domain https://backup-nazarfinder.surge.sh
