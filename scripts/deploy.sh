@@ -1,2 +1,2 @@
 #yarn build && rm build/static/js/*.map && surge ./build --domain https://nazarfinder.surge.sh && echo "Build backup" && yarn build && rm build/static/js/*.map && surge ./build --domain https://backup-nazarfinder.surge.sh
-yarn build && rm build/static/js/*.map && git add build && git commit -m"Update gh pages" && git subtree push --prefix build origin gh-pages && echo "Build backup" && yarn build && rm build/static/js/*.map && surge ./build --domain https://backup-nazarfinder.surge.sh
+yarn build && rm build/static/js/*.map && git add build && git commit -m"Update gh pages" && git subtree push --prefix build origin gh-pages && echo "Build backup" && yarn build && rm build/static/js/*.map 
