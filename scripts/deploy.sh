@@ -1,1 +1,1 @@
-yarn build && rm build/static/js/*.map && surge ./build --domain https://nazarfinder.surge.sh && echo "Build backup" && yarn build && rm build/static/js/*.map && surge ./build --domain https://backup-nazarfinder.surge.sh
+yarn build && rm build/static/js/*.map && surge ./build --domain https://madamnazar.io && echo "Build backup" && yarn build && rm build/static/js/*.map && surge ./build --domain https://backup-nazarfinder.surge.sh
