@@ -76,7 +76,7 @@ export const navigation = [
     target: "_blank",
     rel: "noreferrer noopener",
     url:
-      "https://twitter.com/intent/tweet?text=%F0%9F%A7%BF%20NazarFinder%20-%20Get%20the%20updated%20location%20of%20Madam%20Nazar%20in%20Red%20Dead%20Redemption%202%20Online%20https%3A%2F%2Fnazarfinder.surge.sh%20from%20%40lukyvj",
+      "https://twitter.com/intent/tweet?text=%F0%9F%A7%BF%20NazarFinder%20-%20Get%20the%20updated%20location%20of%20Madam%20Nazar%20in%20Red%20Dead%20Redemption%202%20Online%20https%3A%2F%2Fmadamnazar.io%20from%20%40lukyvj",
     onclick: () => {
       ReactGA.event({
         category: "click.link",

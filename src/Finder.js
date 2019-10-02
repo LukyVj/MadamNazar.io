@@ -10,6 +10,26 @@ const capitalize = string => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
+const weekDay = new Date().getUTCDay();
+let dayCycle;
+switch (weekDay) {
+  case 2: //tuesday
+  case 4: //thursday
+  case 6: //saturday
+    dayCycle = 1;
+    break;
+
+  case 0: //sunday
+  case 3: //wednesday
+    dayCycle = 2;
+    break;
+
+  case 1: //monday
+  case 5: //friday
+    dayCycle = 3;
+    break;
+}
+
 const styles = {
   posterGrid: css``,
   posterWrapper: css`
@@ -114,6 +134,12 @@ const styles = {
   `
 };
 
+const dateObj = new Date();
+const month = dateObj.getUTCMonth() + 1; //months from 1-12
+const day = dateObj.getUTCDate();
+const year = dateObj.getUTCFullYear();
+
+const today = year + "/" + month + "/" + day;
 const InfoBox = props => {
   return (
     <>
@@ -158,6 +184,29 @@ const InfoBox = props => {
           }}
         />
       </div>
+
+      {props.isNewLocation === today ? (
+        <div
+          css={css`
+            border-color: #2e2e2e;
+            border-image-repeat: all;
+            border-image-slice: 14;
+            border-image-source: url(${require("./images/frame.png")});
+            border-style: solid;
+            border-width: 6px;
+            margin: 16px auto;
+            text-align: center;
+          `}
+        >
+          <p>
+            She was found today {props.parent.state.dataFor} cycle {dayCycle}
+          </p>
+        </div>
+      ) : (
+        <div>
+          <p>Oops, we haven't found her yer</p>
+        </div>
+      )}
 
       <div css={styles.posterWrapper}>
         <div css={[styles.posterGrid, styles.posterLayout]}>
@@ -327,7 +376,8 @@ class Finder extends Component {
     })
       .then(response => response.json())
       .then(data => {
-        this.setState({ data });
+        this.setState({ data: data, dataFor: data.dataFor });
+        console.log(this.state);
       })
       .catch(function(err) {
         console.log("error", err);
@@ -371,6 +421,7 @@ class Finder extends Component {
               region_precise={this.state.data.data.location.region.precise}
               nearby={this.state.data.data.location["near_by"]}
               cardinals={this.state.data.data.location.cardinals.full}
+              isNewLocation={this.state.data.dataFor}
               parent={this}
             />
           ) : (
