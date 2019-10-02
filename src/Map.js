@@ -13,7 +13,7 @@ class Map extends Component {
 
   componentDidMount() {
     document.querySelector(`svg circle[id^="${this.state.loc}_"]`).style.fill =
-      "red";
+      "var(--Tabasco)";
   }
   render() {
     console.log(this.state.loc);

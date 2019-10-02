@@ -14,15 +14,9 @@ class CollectorMap extends Component {
   render() {
     return (
       <>
-        <h2>Read dead redemption collectors map</h2>
-        <h4>
-          Credit:{" "}
-          <a href="https://github.com/jeanropke/RDR2CollectorsMap">
-            @JeanRopke
-          </a>
-        </h4>
+        <h2>Read dead redemption collectors map :</h2>
         <Iframe
-          url="https://jeanropke.github.io/RDR2CollectorsMap/"
+          url="https://jeanropke.github.io/RDR2CollectorsMap/?utm_source=madamnazar.io"
           title="Jean Ropke RDR2 Collector Map"
           width="100%"
           height="640px"
@@ -32,9 +26,16 @@ class CollectorMap extends Component {
           display="initial"
           position="relative"
           css={css`
-            border: 2px solid var(--Armadillo);
+            border: 4px solid var(--Armadillo);
+            background: #d2b790;
           `}
         />
+        <h4>
+          Credit:{" "}
+          <a href="https://github.com/jeanropke/RDR2CollectorsMap">
+            @JeanRopke
+          </a>
+        </h4>
       </>
     );
   }

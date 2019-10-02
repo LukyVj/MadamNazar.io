@@ -176,7 +176,6 @@ const InfoBox = props => {
                     font-size: 38px;
                     letter-spacing: 2px;
                     vertical-align: middle;
-                    text-shadow: -1px 1px 0 black;
                   `}
                 >
                   In {capitalize(props.region_precise)} in the region of{" "}
@@ -191,12 +190,22 @@ const InfoBox = props => {
                   {props.nearby.map(
                     (poi, id) =>
                       console.log(id, props.nearby.length - 1) || (
-                        <b key={id}>
+                        <>
                           {id === props.nearby.length - 1 && " & "}
-                          {capitalize(poi)}
+
+                          <b
+                            key={id}
+                            css={css`
+                              border-bottom: 2px solid var(--Tabasco);
+                              display: inline-block;
+                              margin: 0 2px;
+                            `}
+                          >
+                            {capitalize(poi)}
+                          </b>
                           {id !== props.nearby.length - 1 &&
                             (id !== props.nearby.length - 2 && ", ")}
-                        </b>
+                        </>
                       )
                   )}
                   .
@@ -223,7 +232,7 @@ const InfoBox = props => {
                     });
                     ReactGA.event({
                       category: "click.modal",
-                      action: "Open first image"
+                      action: "Open First image"
                     });
                   }}
                   childrenStyle={css`
@@ -253,7 +262,7 @@ const InfoBox = props => {
                     });
                     ReactGA.event({
                       category: "click.modal",
-                      action: "Open second image"
+                      action: "Open Second image"
                     });
                   }}
                   childrenStyle={css`
@@ -274,7 +283,14 @@ const InfoBox = props => {
               </div>
             </div>
           </section>
-          <section>
+          <section
+            onClick={() => {
+              ReactGA.event({
+                category: "click.map",
+                action: "Clicked the map"
+              });
+            }}
+          >
             <Map localisation={props.id} />;
           </section>
         </div>

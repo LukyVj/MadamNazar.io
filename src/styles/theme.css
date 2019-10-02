@@ -50,6 +50,7 @@ body:before {
   background-blend-mode: multiply;
   background-position: bottom -150px right -150px, bottom right;
   background-repeat: no-repeat, repeat;
+  background-size: 540px, auto;
   z-index: 1;
   opacity: 0.75;
 }
