@@ -13,18 +13,18 @@ export const navigation = [
     }
   },
 
-  //   {
-  //     title: "Collectors Map",
-  //     target: "_blank",
-  //     appLink: true,
-  //     url: "/map",
-  //     onclick: () => {
-  //       ReactGA.event({
-  //         category: "click.link",
-  //         action: "Go to map"
-  //       });
-  //     }
-  //   },
+  {
+    title: "Collectors Map",
+    target: "_blank",
+    appLink: true,
+    url: "/map",
+    onclick: () => {
+      ReactGA.event({
+        category: "click.link",
+        action: "Go to map"
+      });
+    }
+  },
   {
     title: "About",
     url: "/about",
