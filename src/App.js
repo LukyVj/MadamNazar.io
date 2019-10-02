@@ -20,15 +20,13 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { env: process.env.NODE_ENV };
+    this.state = { env: process.env.NODE_ENV, navOpen: false };
   }
 
   componentDidMount() {
     ReactGA.initialize("UA-148400737-1");
     ReactGA.pageview(window.location.pathname);
   }
-
-  componentDidUpdate() {}
 
   render() {
     return (
@@ -56,6 +54,32 @@ class App extends Component {
                 center;
             `}
           >
+            <div
+              className="d-flex ai-center jc-center md:d-none pos-fixed top-0 right-0 m-16 p-8 cu-pointer"
+              css={css`
+                border: 4px solid var(--Armadillo);
+                background: url(${require("./images/bgMainSml.jpg")});
+                border-image-slice: 10;
+                border-image-source: url(${require("./images/frame.png")});
+                border-style: solid;
+                border-width: 6px;
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+
+                z-index: 100;
+                button {
+                  font-weight: bold;
+                }
+              `}
+            >
+              <button
+                className="m-0 va-middle"
+                onClick={() => {
+                  this.setState({ navOpen: !this.state.navOpen });
+                }}
+              >
+                Menu
+              </button>
+            </div>
             <div>
               <div className="pv-32">
                 <h1
@@ -63,16 +87,33 @@ class App extends Component {
                     text-shadow: -1px 1px 0 black;
                   `}
                 >
-                  <span role="img" aria-label="emoji nazar" className="ph-8">
+                  <span className="ph-8 d-inline md:d-none">
+                    <span role="img" aria-label="emoji nazar">
+                      🧿
+                    </span>
+                    <br />
+                  </span>
+                  <span
+                    role="img"
+                    aria-label="emoji nazar"
+                    className="ph-8 d-none md:d-inline-block"
+                  >
                     🧿
                   </span>
                   Madam Nazar Finder
-                  <span role="img" aria-label="emoji nazar" className="ph-8">
+                  <span
+                    role="img"
+                    aria-label="emoji nazar"
+                    className="ph-8 d-none md:d-inline-block"
+                  >
                     🧿
                   </span>
                 </h1>
               </div>
               <ul
+                className={`md:d-block md:pos-relative pos-fixed w-90p md:w-100p ${
+                  this.state.navOpen ? "d-flex fxd-column jc-center" : "d-none"
+                }`}
                 css={css`
                   padding: 0;
                   margin: 0;
@@ -92,7 +133,17 @@ class App extends Component {
                   border-width: 6px 0;
 
                   @media (max-width: 960px) {
-                    display: none;
+                    height: 50vh;
+                    background: var(--EcruWhite);
+                    background: url(${require("./images/bgMainSml.jpg")});
+                    border-width: 6px;
+                    top: 0;
+                    right: 0;
+                    left: 0;
+                    bottom: 0;
+                    margin: auto;
+                    z-index: 100;
+                    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
                   }
 
                   li {
@@ -108,7 +159,7 @@ class App extends Component {
                 {navigation.map((item, index) => (
                   <li
                     key={item.link}
-                    className="p-8 pl-8 mr-24 pos-relative d-flex ai-center jc-center"
+                    className="p-8 pl-8 mr-24 pos-relative md:d-flex ai-center jc-center w-100p md:w-auto"
                     css={
                       (index !== navigation.length - 1 &&
                         css`
@@ -134,7 +185,10 @@ class App extends Component {
                     {item.appLink === true ? (
                       <NavLink
                         to={item.url}
-                        onClick={item.onclick}
+                        onClick={() => {
+                          this.setState({ navOpen: false });
+                          item.onclick();
+                        }}
                         activeStyle={{ color: "var(--Tabasco)" }}
                         exact
                       >
@@ -155,7 +209,10 @@ class App extends Component {
                     ) : (
                       <a
                         href={item.url}
-                        onClick={item.onclick}
+                        onClick={() => {
+                          this.setState({ navOpen: false });
+                          item.onclick();
+                        }}
                         title={item.title}
                         rel={item.rel}
                         target={item.target}

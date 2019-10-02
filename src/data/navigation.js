@@ -1,5 +1,5 @@
 import ReactGA from "react-ga";
-
+import { rudr_favorite } from "../scripts/helpers";
 export const navigation = [
   {
     title: "Home",
@@ -57,6 +57,17 @@ export const navigation = [
       ReactGA.event({
         category: "click.link",
         action: "Click Contact link (twitter)"
+      });
+    }
+  },
+  {
+    title: "add to favorite",
+    url: "#",
+    onclick: e => {
+      rudr_favorite(e, this);
+      ReactGA.event({
+        category: "click.link",
+        action: "Add to Favorite"
       });
     }
   },

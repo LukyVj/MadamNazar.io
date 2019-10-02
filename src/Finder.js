@@ -187,27 +187,24 @@ const InfoBox = props => {
                   In the {capitalize(props.cardinals.split(" ")[0])} 
                   {capitalize(props.cardinals.split(" ")[1])} side of the map.
                   nearby{" "}
-                  {props.nearby.map(
-                    (poi, id) =>
-                      console.log(id, props.nearby.length - 1) || (
-                        <>
-                          {id === props.nearby.length - 1 && " & "}
+                  {props.nearby.map((poi, id) => (
+                    <>
+                      {id === props.nearby.length - 1 && " & "}
 
-                          <b
-                            key={id}
-                            css={css`
-                              border-bottom: 2px solid var(--Tabasco);
-                              display: inline-block;
-                              margin: 0 2px;
-                            `}
-                          >
-                            {capitalize(poi)}
-                          </b>
-                          {id !== props.nearby.length - 1 &&
-                            (id !== props.nearby.length - 2 && ", ")}
-                        </>
-                      )
-                  )}
+                      <b
+                        key={id}
+                        css={css`
+                          border-bottom: 2px solid var(--Tabasco);
+                          display: inline-block;
+                          margin: 0 2px;
+                        `}
+                      >
+                        {capitalize(poi)}
+                      </b>
+                      {id !== props.nearby.length - 1 &&
+                        (id !== props.nearby.length - 2 && ", ")}
+                    </>
+                  ))}
                   .
                 </p>
                 <a href={props.link}>{props.link}</a>
@@ -325,17 +322,11 @@ class Finder extends Component {
         Authorization:
           "Bearer AAAAAAAAAAAAAAAAAAAAABrO0AAAAAAA8qTMsAShpS43PMvZweECxqTZ728%3DFF6BCPcE2CBuqYeTo00Z88tQxNIPWerPb7fEzmpaUE75nzF8LO",
         "Cache-Control": "no-cache",
-        Connection: "keep-alive",
-        Cookie:
-          "personalization_id='v1_OHHCF5O+kmx2t+clOEL/6Q=='; guest_id=v1%3A156699205346221382",
-        Host: "api.twitter.com'",
-        "cache-control": "no-cache"
+        Connection: "keep-alive"
       }
     })
       .then(response => response.json())
       .then(data => {
-        console.log(data);
-
         this.setState({ data });
       })
       .catch(function(err) {
@@ -369,7 +360,6 @@ class Finder extends Component {
 
   render() {
     const dataExists = this.state.data !== null && this.state.data.data;
-    console.log(this.state);
     return (
       <>
         <div id="frame">
