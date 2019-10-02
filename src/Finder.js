@@ -295,7 +295,11 @@ class Finder extends Component {
   }
 
   fetchData = () => {
-    fetch("https://madam-nazar-location-api.herokuapp.com/current", {
+    const url =
+      this.props.env === "development"
+        ? "https://madam-nazar-location-api-2.herokuapp.com/current"
+        : "https://madam-nazar-location-api.herokuapp.com/current";
+    fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

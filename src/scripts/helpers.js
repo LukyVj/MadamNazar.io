@@ -7,7 +7,8 @@ export const isBrowser =
   window.document === document;
 
 // eslint-disable no-restricted-globals
-export const rudr_favorite = a => {
+export const rudr_favorite = (e, a) => {
+  e.preventDefault();
   const pageTitle = document.title;
   const pageURL = document.location;
   try {

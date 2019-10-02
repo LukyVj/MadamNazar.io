@@ -19,16 +19,7 @@ class Map extends Component {
     console.log(this.state.loc);
     return (
       <>
-        <h3>
-          This is all her potential locations, the{" "}
-          <b
-            css={css`
-              text-shadow: 1px -1px 0 rgba(0, 0, 0, 0.3);
-            `}
-          >
-            location of the day will be in red
-          </b>
-        </h3>
+        <h2>On the map :</h2>
         <svg
           width="100%"
           viewBox="0 0 1280 960"
@@ -40,9 +31,9 @@ class Map extends Component {
           <g
             id="Page-1"
             stroke="none"
-            stroke-width="1"
+            strokeWidth="1"
             fill="none"
-            fill-rule="evenodd"
+            fillRule="evenodd"
           >
             <g id="Group">
               <image
@@ -56,7 +47,7 @@ class Map extends Component {
               <circle
                 id="12_twelve"
                 stroke="#000000"
-                stroke-width="2.39999986"
+                strokeWidth="2.39999986"
                 fill="#FFFFFF"
                 cx="288"
                 cy="836"
@@ -65,7 +56,7 @@ class Map extends Component {
               <circle
                 id="11_eleven"
                 stroke="#000000"
-                stroke-width="2.39999986"
+                strokeWidth="2.39999986"
                 fill="#FFFFFF"
                 cx="667"
                 cy="694"
@@ -74,7 +65,7 @@ class Map extends Component {
               <circle
                 id="10_ten"
                 stroke="#000000"
-                stroke-width="2.39999986"
+                strokeWidth="2.39999986"
                 fill="#FFFFFF"
                 cx="397"
                 cy="657"
@@ -83,7 +74,7 @@ class Map extends Component {
               <circle
                 id="9_nine"
                 stroke="#000000"
-                stroke-width="2.39999986"
+                strokeWidth="2.39999986"
                 fill="#FFFFFF"
                 cx="1046"
                 cy="584"
@@ -92,7 +83,7 @@ class Map extends Component {
               <circle
                 id="8_eight"
                 stroke="#000000"
-                stroke-width="2.39999986"
+                strokeWidth="2.39999986"
                 fill="#FFFFFF"
                 cx="648"
                 cy="538"
@@ -101,7 +92,7 @@ class Map extends Component {
               <circle
                 id="7_seven"
                 stroke="#000000"
-                stroke-width="2.39999986"
+                strokeWidth="2.39999986"
                 fill="#FFFFFF"
                 cx="1163"
                 cy="402"
@@ -110,7 +101,7 @@ class Map extends Component {
               <circle
                 id="6_six"
                 stroke="#000000"
-                stroke-width="2.39999986"
+                strokeWidth="2.39999986"
                 fill="#FFFFFF"
                 cx="1011"
                 cy="360"
@@ -119,7 +110,7 @@ class Map extends Component {
               <circle
                 id="5_five"
                 stroke="#000000"
-                stroke-width="2.39999986"
+                strokeWidth="2.39999986"
                 fill="#FFFFFF"
                 cx="820"
                 cy="383"
@@ -128,7 +119,7 @@ class Map extends Component {
               <circle
                 id="4_four"
                 stroke="#000000"
-                stroke-width="2.39999986"
+                strokeWidth="2.39999986"
                 fill="#FFFFFF"
                 cx="620"
                 cy="329"
@@ -137,7 +128,7 @@ class Map extends Component {
               <circle
                 id="3_three"
                 stroke="#000000"
-                stroke-width="2.39999986"
+                strokeWidth="2.39999986"
                 fill="#FFFFFF"
                 cx="1182"
                 cy="182"
@@ -146,7 +137,7 @@ class Map extends Component {
               <circle
                 id="2_two"
                 stroke="#000000"
-                stroke-width="2.39999986"
+                strokeWidth="2.39999986"
                 fill="#FFFFFF"
                 cx="1027"
                 cy="227"
@@ -155,7 +146,7 @@ class Map extends Component {
               <circle
                 id="1_one"
                 stroke="#000000"
-                stroke-width="2.39999986"
+                strokeWidth="2.39999986"
                 fill="#FFFFFF"
                 cx="849"
                 cy="211"
