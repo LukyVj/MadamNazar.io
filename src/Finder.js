@@ -288,7 +288,7 @@ const InfoBox = props => {
               });
             }}
           >
-            <Map localisation={props.id} />;
+            <Map localisation={props.id} />
           </section>
         </div>
       </div>
