@@ -198,9 +198,11 @@ const InfoBox = props => {
             text-align: center;
           `}
         >
-          <p>
+          {/* <p>
             She was found today {props.parent.state.dataFor} cycle {dayCycle}
-          </p>
+          </p> */}
+
+          <h3 className="m-0 p-0">Cycle {dayCycle}</h3>
         </div>
       ) : (
         <div>
