@@ -194,6 +194,7 @@ const InfoBox = props => {
           border-width: 6px;
           margin: 16px auto;
           text-align: center;
+          width: 90%;
         `}
       >
         {/* <p>
