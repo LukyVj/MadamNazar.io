@@ -184,31 +184,32 @@ const InfoBox = props => {
           }}
         />
       </div>
-
-      {props.isNewLocation === today ? (
-        <div
-          css={css`
-            border-color: #2e2e2e;
-            border-image-repeat: all;
-            border-image-slice: 14;
-            border-image-source: url(${require("./images/frame.png")});
-            border-style: solid;
-            border-width: 6px;
-            margin: 16px auto;
-            text-align: center;
-          `}
-        >
-          {/* <p>
+      <div
+        css={css`
+          border-color: #2e2e2e;
+          border-image-repeat: all;
+          border-image-slice: 14;
+          border-image-source: url(${require("./images/frame.png")});
+          border-style: solid;
+          border-width: 6px;
+          margin: 16px auto;
+          text-align: center;
+        `}
+      >
+        {/* <p>
             She was found today {props.parent.state.dataFor} cycle {dayCycle}
           </p> */}
 
-          <h3 className="m-0 p-0">Cycle {dayCycle}</h3>
-        </div>
+        <h3 className="m-0 p-0">Cycle {dayCycle}</h3>
+      </div>
+
+      {/* {props.isNewLocation === today ? (
+        
       ) : (
         <div>
           <p>Oops, we haven't found her yer</p>
         </div>
-      )}
+      )} */}
 
       <div css={styles.posterWrapper}>
         <div css={[styles.posterGrid, styles.posterLayout]}>
