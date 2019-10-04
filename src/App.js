@@ -171,7 +171,7 @@ class App extends Component {
             `}
           >
             <div
-              className="d-flex ai-center jc-center md:d-none pos-fixed top-0 right-0 m-16 p-8 cu-pointer"
+              className="d-flex ai-center jc-center md:d-none pos-fixed top-48 right-0 m-16 p-8 cu-pointer"
               css={css`
                 border: 4px solid var(--Armadillo);
                 background: url(${require("./images/bgMainSml.jpg")});
