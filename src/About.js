@@ -121,7 +121,18 @@ class About extends Component {
         <h2>Thanks:</h2>
         <p>
           To{" "}
-          <a href="#" title="Jean ropke twitter">
+          <a
+            href="https://github.com/jeanropke"
+            title="Jean ropke github"
+            target="_blank"
+            rel="noreferrer noopener"
+            onClick={() => {
+              ReactGA.event({
+                category: "click.link",
+                action: "Click on Jean Ropke Github profile"
+              });
+            }}
+          >
             @JeanRopke
           </a>{" "}
           for his amazing work on the collector's map &amp; for allowing us to
