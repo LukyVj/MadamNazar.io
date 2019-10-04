@@ -9,7 +9,9 @@ class CollectorMap extends Component {
     this.state = {};
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    this.props.parent.setState({ currentPage: window.location.pathname });
+  }
 
   render() {
     return (

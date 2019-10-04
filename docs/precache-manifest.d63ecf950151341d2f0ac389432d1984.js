@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "c34d2b906c5000d186211e2a0eb0f324",
+    "revision": "4580b2a2807fe711ce607e74c9b24bbb",
     "url": "/index.html"
   },
   {
-    "revision": "cce246810b2f70b9963e",
-    "url": "/static/css/main.3a8644e9.chunk.css"
+    "revision": "cce7927a9833063d8d4b",
+    "url": "/static/css/main.1eef21a0.chunk.css"
   },
   {
-    "revision": "e9dfd739110ef72bf89c",
-    "url": "/static/js/2.52c94358.chunk.js"
+    "revision": "afafd6fbb23ff310693a",
+    "url": "/static/js/2.a0a2a5f3.chunk.js"
   },
   {
-    "revision": "cce246810b2f70b9963e",
-    "url": "/static/js/main.23434745.chunk.js"
+    "revision": "cce7927a9833063d8d4b",
+    "url": "/static/js/main.7866f254.chunk.js"
   },
   {
     "revision": "90ef1414120681e7723f",
@@ -36,8 +36,16 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/bgMainSml.4fb59aca.jpg"
   },
   {
+    "revision": "008052215dd822b4e5faf9c540cfded4",
+    "url": "/static/media/bgOnline.00805221.png"
+  },
+  {
     "revision": "c1e174395a2da24a71d39ef73133bec7",
     "url": "/static/media/bgRip.c1e17439.png"
+  },
+  {
+    "revision": "37b9944b65f6b0d277b7dea8d8a12652",
+    "url": "/static/media/chinese-rocks-rg.37b9944b.woff"
   },
   {
     "revision": "a05239b5fdca8927552617fbce83415a",

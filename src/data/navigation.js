@@ -12,7 +12,17 @@ export const navigation = [
       });
     }
   },
-
+//   {
+//     title: "Cycles",
+//     url: "/cycles",
+//     appLink: true,
+//     onclick: () => {
+//       ReactGA.event({
+//         category: "click.link",
+//         action: "Click Cycle link"
+//       });
+//     }
+//   },
   {
     title: "Collectors Map",
     target: "_blank",
@@ -59,8 +69,11 @@ export const navigation = [
         action: "Click Contact link (twitter)"
       });
     }
-  },
-  {
+  }
+];
+
+/**
+ * {
     title: "add to favorite",
     url: "#",
     onclick: e => {
@@ -84,4 +97,4 @@ export const navigation = [
       });
     }
   }
-];
+ */

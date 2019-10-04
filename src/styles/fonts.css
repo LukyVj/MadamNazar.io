@@ -21,3 +21,12 @@
   src: local("RDRCatalogueBold-Bold"),
     url("../fonts/RDRCatalogueBold-Bold.woff2") format("woff2");
 }
+
+/* for menus */
+@font-face {
+  font-family: "RDRrocks-sg";
+  font-style: normal;
+  font-weight: 400;
+  src: local("RDRCatalogueBold-Bold"),
+    url("../fonts/chinese-rocks-rg.woff") format("woff");
+}

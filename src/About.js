@@ -13,7 +13,11 @@ class About extends Component {
 
   render() {
     return (
-      <>
+      <div className="pv-32">
+        <h2>Disclaimer:</h2>
+        <b>
+          <i>This project is not affiliated to RockStar in any way</i>
+        </b>
         <h2>Information:</h2>
         <p>
           Hello and thank you for visiting this website, I've put a lot of love
@@ -113,7 +117,17 @@ class About extends Component {
           </a>{" "}
           on Twitch
         </p>
-      </>
+
+        <h2>Thanks:</h2>
+        <p>
+          To{" "}
+          <a href="#" title="Jean ropke twitter">
+            @JeanRopke
+          </a>{" "}
+          for his amazing work on the collector's map &amp; for allowing us to
+          use it on madamnazar.io
+        </p>
+      </div>
     );
   }
 }

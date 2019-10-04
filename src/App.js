@@ -12,43 +12,159 @@ import { css, jsx } from "@emotion/core";
 
 import { navigation } from "./data/navigation";
 
+import Frame from "./Frame";
 import Finder from "./Finder";
 import CollectorMap from "./CollectorMap";
 import About from "./About";
+import Cycles from "./Cycles";
+const weekDay = new Date().getUTCDay();
+
+let dayCycle;
+switch (weekDay) {
+  case 2: //tuesday
+  case 4: //thursday
+  case 6: //saturday
+    dayCycle = 1;
+    break;
+
+  case 0: //sunday
+  case 3: //wednesday
+    dayCycle = 2;
+    break;
+
+  case 1: //monday
+  case 5: //friday
+    dayCycle = 3;
+    break;
+  default:
+    dayCycle = 0;
+}
+
+const dateEvent = new Date();
+const dateOptions = {
+  weekday: "long",
+  year: "numeric",
+  month: "long",
+  day: "numeric"
+};
+
+const styles = {
+  badge: css`
+    width: 120px;
+    height: 120px;
+    border-radius: 100px;
+    border: 4px solid var(--Armadillo);
+    background: var(--Twine);
+    box-shadow: 0 0 32px rgba(0, 0, 0, 0.2);
+    display: block;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 100px auto;
+    animation: roll 2s ease infinite;
+    filter: sepia(1) saturate(0.65);
+
+    img {
+      width: 100%;
+      height: auto;
+      vertical-align: middle;
+    }
+
+    @keyframes roll {
+      from {
+        transform: rotate(0);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  `
+};
 
 class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { env: process.env.NODE_ENV, navOpen: false };
+    this.state = {
+      env: process.env.NODE_ENV,
+      navOpen: false,
+      cycle: undefined,
+      currentPage:
+        window.location.pathname === "/" ? "/home" : window.location.pathname
+    };
   }
+
+  fetchData = () => {
+    const url =
+      this.state.env === "development"
+        ? "https://madam-nazar-location-api-2.herokuapp.com/today"
+        : "https://madam-nazar-location-api.herokuapp.com/today";
+    fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "*/*",
+        "Access-Control-Allow-Origin": "*",
+        "Accept-Encoding": "gzip, deflate",
+
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive"
+      }
+    })
+      .then(response => response.json())
+      .then(json => {
+        const data = json.data;
+        console.log(data);
+        this.setState({
+          today: data.date,
+          data: data.current_location.data,
+          dataFor: data.current_location.dataFor,
+          cycle: data.cycle,
+          fetched: true
+        });
+        this.props.parent.setState({ cycle: data.cycle });
+
+        console.log("state", this.state);
+      })
+      .catch(function(err) {
+        console.log("error", err);
+      });
+  };
 
   componentDidMount() {
     ReactGA.initialize("UA-148400737-1");
-    ReactGA.pageview(window.location.pathname);
+    ReactGA.pageview(this.state.currentPage);
+    this.fetchData();
+    this.setState({
+      readableDate: dateEvent.toLocaleDateString("us-EN", dateOptions)
+    });
   }
 
   render() {
+    const dataExists = this.state.data && this.state.data.location;
     return (
       <Router>
         <div
           className="App"
           css={css`
-            height: 100%;
             z-index: 2;
             position: relative;
-            overflow: auto;
 
             h1 {
               display: inline-block;
             }
           `}
         >
+          {dataExists && (
+            <Frame day={this.state.readableDate} cycle={this.state.cycle} />
+          )}
           <header
             className="App-header"
             css={css`
               height: auto;
               padding-bottom: 2em;
+              padding-top: 100px;
               text-align: center;
               background: url(${require("./images/bgRip.png")}) repeat-x bottom -10px
                 center;
@@ -85,6 +201,7 @@ class App extends Component {
                 <h1
                   css={css`
                     text-shadow: -1px 1px 0 black;
+                    color: var(--Armadillo);
                   `}
                 >
                   <span className="ph-8 d-inline md:d-none">
@@ -119,11 +236,12 @@ class App extends Component {
                   margin: 0;
                   text-transform: uppercase;
                   text-decoration: none;
-                  font-size: 1.8em;
+                  font-size: 1em;
+                  letter-spacing: 0.045em;
                   list-style: none;
                   line-height: 1.5em;
                   height: 1.5em;
-                  font-family: RDRCatalogueBold-Bold;
+                  font-family: RDRrocks-sg;
 
                   border-color: #2e2e2e;
                   border-image-repeat: all;
@@ -247,36 +365,42 @@ class App extends Component {
           >
             <Switch>
               <Route path="/map">
-                <CollectorMap />
+                <CollectorMap parent={this} />
               </Route>
               <Route path="/about">
                 <About />
               </Route>
+              <Route path="/cycles">
+                <Cycles parent={this} cycle={this.state.cycle} />
+              </Route>
               <Route path="/">
-                <Finder env={this.state.env} />
+                {dataExists ? (
+                  <Finder
+                    parent={this}
+                    env={this.state.env}
+                    data={this.state.data}
+                  />
+                ) : (
+                  <span css={styles.badge}>
+                    <img src={require("./images/hat.png")} alt="loading" />
+                  </span>
+                )}
               </Route>
             </Switch>
           </section>
-          <div
+          <footer
             css={css`
-              margin: 16px auto;
+              margin: 16px auto 0;
               height: 200px;
               text-align: center;
-              background: url(${require("./images/bgRip.png")}) repeat-x top
-                center;
+              background: url(${require("./images/bgOnline.png")}) repeat;
               position: relative;
-              &::before {
-                content: "";
-                display: block;
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: url(${require("./images/bgMainSml.jpg")}) repeat
-                  center top;
-                top: 25px;
-              }
+              color: white;
+              border-image-repeat: all;
+              border-image-slice: 14;
+              border-image-source: url(${require("./images/frame.png")});
+              border-style: solid;
+              border-width: 6px 0 0 0;
             `}
           >
             <div
@@ -311,7 +435,7 @@ class App extends Component {
                 Message to RockStar: Sorry for stealing the font.. :)
               </small>
             </div>
-          </div>
+          </footer>
         </div>
       </Router>
     );

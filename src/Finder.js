@@ -28,6 +28,8 @@ switch (weekDay) {
   case 5: //friday
     dayCycle = 3;
     break;
+  default:
+    dayCycle = 0;
 }
 
 const styles = {
@@ -134,12 +136,6 @@ const styles = {
   `
 };
 
-const dateObj = new Date();
-const month = dateObj.getUTCMonth() + 1; //months from 1-12
-const day = dateObj.getUTCDate();
-const year = dateObj.getUTCFullYear();
-
-const today = year + "/" + month + "/" + day;
 const InfoBox = props => {
   return (
     <>
@@ -184,25 +180,6 @@ const InfoBox = props => {
           }}
         />
       </div>
-      <div
-        css={css`
-          border-color: #2e2e2e;
-          border-image-repeat: all;
-          border-image-slice: 14;
-          border-image-source: url(${require("./images/frame.png")});
-          border-style: solid;
-          border-width: 6px;
-          margin: 16px auto;
-          text-align: center;
-          width: 90%;
-        `}
-      >
-        {/* <p>
-            She was found today {props.parent.state.dataFor} cycle {dayCycle}
-          </p> */}
-
-        <h3 className="m-0 p-0">Cycle {dayCycle}</h3>
-      </div>
 
       {/* {props.isNewLocation === today ? (
         
@@ -212,7 +189,7 @@ const InfoBox = props => {
         </div>
       )} */}
 
-      <div css={styles.posterWrapper}>
+      <div css={styles.posterWrapper} className="pv-32">
         <div css={[styles.posterGrid, styles.posterLayout]}>
           <section
             className="pv-48"
@@ -272,13 +249,14 @@ const InfoBox = props => {
                 `}
               >
                 <RDAppear
-                  image={props.media.full}
+                  image={props.media["tilt_shift"].full}
                   width={props.parent.state.frameWidth / 2}
                   height={480}
                   onClick={() => {
                     props.parent.setState({
                       modal: true,
-                      modalImage: props.media.full
+                      modalImage: props.media.normal.full,
+                      modalImageDarkMode: props.media.negative.full
                     });
                     ReactGA.event({
                       category: "click.modal",
@@ -294,21 +272,17 @@ const InfoBox = props => {
                       width: 100% !important;
                     }
                   `}
-                  css={css`
-                    @media (max-width: 960px) {
-                      width: 100% !important;
-                    }
-                  `}
                 />
 
                 <RDAppear
-                  image={props.media.zoom}
+                  image={props.media["tilt_shift"].zoom}
                   width={props.parent.state.frameWidth / 2}
                   height={480}
                   onClick={() => {
                     props.parent.setState({
                       modal: true,
-                      modalImage: props.media.zoom
+                      modalImage: props.media.normal.zoom,
+                      modalImageDarkMode: props.media.negative.zoom
                     });
                     ReactGA.event({
                       category: "click.modal",
@@ -320,11 +294,6 @@ const InfoBox = props => {
                     transform: rotate(-0.3deg);
                     filter: sepia(1) saturate(0.65);
 
-                    @media (max-width: 960px) {
-                      width: 100% !important;
-                    }
-                  `}
-                  css={css`
                     @media (max-width: 960px) {
                       width: 100% !important;
                     }
@@ -353,44 +322,11 @@ class Finder extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: null,
-      failed: null,
-      modal: false,
-      mapLoc: null
+      modal: false
     };
   }
 
-  fetchData = () => {
-    const url =
-      this.props.env === "development"
-        ? "https://madam-nazar-location-api-2.herokuapp.com/current"
-        : "https://madam-nazar-location-api.herokuapp.com/current";
-    fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "*/*",
-        "Access-Control-Allow-Origin": "*",
-        "Accept-Encoding": "gzip, deflate",
-        Authorization:
-          "Bearer AAAAAAAAAAAAAAAAAAAAABrO0AAAAAAA8qTMsAShpS43PMvZweECxqTZ728%3DFF6BCPcE2CBuqYeTo00Z88tQxNIPWerPb7fEzmpaUE75nzF8LO",
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive"
-      }
-    })
-      .then(response => response.json())
-      .then(data => {
-        this.setState({ data: data, dataFor: data.dataFor });
-        console.log(this.state);
-      })
-      .catch(function(err) {
-        console.log("error", err);
-      });
-  };
-
-  componentDidMount() {
-    this.fetchData();
-
+  setSize = () => {
     this.setState({
       frameWidth:
         document.getElementById("frame").getBoundingClientRect().width - 100
@@ -402,6 +338,11 @@ class Finder extends Component {
           document.getElementById("frame").getBoundingClientRect().width - 100
       });
     });
+  };
+
+  componentDidMount() {
+    this.props.parent.setState({ currentPage: window.location.pathname });
+    this.setSize();
 
     setTimeout(() => {
       this.setState({ loadMore: true });
@@ -413,77 +354,21 @@ class Finder extends Component {
   }
 
   render() {
-    const dataExists = this.state.data !== null && this.state.data.data;
+    const dataExists = this.props.data && this.props.data.location;
+    console.log("props", this.props);
     return (
-      <>
-        <div id="frame">
-          {dataExists ? (
-            <InfoBox
-              id={this.state.data.data._id}
-              media={this.state.data.data.location.image}
-              region={this.state.data.data.location.region.name}
-              region_precise={this.state.data.data.location.region.precise}
-              nearby={this.state.data.data.location["near_by"]}
-              cardinals={this.state.data.data.location.cardinals.full}
-              isNewLocation={this.state.data.dataFor}
-              parent={this}
-            />
-          ) : (
-            <figure
-              css={css`
-                text-align: center;
-              `}
-            >
-              <figcaption
-                css={css`
-                  margin-top: 3em;
-                `}
-              >
-                Loading... Fetching some data
-                {this.state.loadMore === true && (
-                  <p>It can take a few seconds, hang tight</p>
-                )}
-                {this.state.loadEvenMore === true && (
-                  <>
-                    {" "}
-                    <p>
-                      I know pal, it's long, but you know, technology works in
-                      mysterious ways
-                    </p>
-                    <p>
-                      The cause of this time to load can be a lot of things..
-                      From the Twitter API to a bunch of mices eating your
-                      internet cable, but stay here
-                    </p>
-                  </>
-                )}
-              </figcaption>
-              <span css={styles.badge}>
-                <img src={require("./images/hat.png")} alt="loading" />
-              </span>
-            </figure>
-          )}
-          {this.state.fail === true && (
-            <div
-              css={css`
-                background: rgba(255, 0, 0, 0.1);
-                color: red;
-                padding: 16px;
-                border-radius: 8px;
-                border: 1px solid red;
-                margin: 100px auto;
-                max-width: 600px;
-                line-height: 2;
-              `}
-            >
-              <p>
-                An error occured or there is no data to display. <br />
-                Please refresh the page, or send us a tweet at @LukyVj
-              </p>
-            </div>
-          )}
-        </div>
-      </>
+      <div id="frame">
+        <InfoBox
+          id={this.props.data._id}
+          media={this.props.data.location.image}
+          region={this.props.data.location.region.name}
+          region_precise={this.props.data.location.region.precise}
+          nearby={this.props.data.location["near_by"]}
+          cardinals={this.props.data.location.cardinals.full}
+          isNewlocation={this.props.dataFor}
+          parent={this}
+        />
+      </div>
     );
   }
 }
