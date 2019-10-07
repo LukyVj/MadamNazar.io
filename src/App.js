@@ -184,7 +184,7 @@ class App extends Component {
                 right: 0;
                 max-width: 100px;
                 margin: auto;
-                top: 16px;
+                top: 12px;
                 button {
                   font-weight: bold;
                 }

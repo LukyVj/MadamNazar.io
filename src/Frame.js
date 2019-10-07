@@ -26,7 +26,7 @@ const styles = {
     z-index: 10;
 
     @media (max-width: 960px) {
-      font-size: 1.65em;
+      font-size: 1.45em;
     }
   `
 };
