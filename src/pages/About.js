@@ -1,7 +1,5 @@
-/** @jsx jsx */
 import React, { Component } from "react";
 import ReactGA from "react-ga";
-import { css, jsx } from "@emotion/core";
 
 class About extends Component {
   constructor(props) {
@@ -137,6 +135,22 @@ class About extends Component {
           </a>{" "}
           for his amazing work on the collector's map &amp; for allowing us to
           use it on madamnazar.io
+        </p>
+        <p>
+          Also, thanks to{" "}
+          <a
+            href="https://levelup.gitconnected.com/recreating-the-red-dead-redemption-2-tintype-loading-screen-effect-in-css-10ca87d5b9de"
+            onClick={() => {
+              ReactGA.event({
+                category: "click.link",
+                action: "Click on Lee Martin's article link"
+              });
+            }}
+          >
+            Lee Martin
+          </a>{" "}
+          for his top notch work on the css effect to "Recreate the Red Dead
+          Redemption 2 Tintype Loading Screen Effect in CSS"
         </p>
       </div>
     );

@@ -2,9 +2,10 @@
 import React, { Component } from "react";
 import { css, jsx } from "@emotion/core";
 import ReactGA from "react-ga";
-import RDAppear from "./RDAppear";
-import Map from "./Map";
-import { isConditional } from "@babel/types";
+import RDAppear from "../components/RDAppear/RDAppear";
+import Map from "../components/Map/Map";
+import styles from "./Finder.css";
+import bgMainSml from "../images/bgMainSml.jpg";
 
 const capitalize = string => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -32,110 +33,6 @@ switch (weekDay) {
     dayCycle = 0;
 }
 
-const styles = {
-  posterGrid: css``,
-  posterWrapper: css`
-    filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.4));
-  `,
-  posterLayout: css`
-    position: relative;
-
-    margin: auto;
-    border-radius: 138px;
-    z-index: 2;
-
-    .header {
-      text-align: center;
-    }
-
-    @media (min-width: 960px) {
-      padding: 0 2em;
-    }
-  `,
-  badge: css`
-    width: 120px;
-    height: 120px;
-    border-radius: 100px;
-    border: 4px solid var(--Armadillo);
-    background: var(--Twine);
-    box-shadow: 0 0 32px rgba(0, 0, 0, 0.2);
-    display: block;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 100px auto;
-    animation: roll 2s ease infinite;
-    filter: sepia(1) saturate(0.65);
-
-    img {
-      width: 100%;
-      height: auto;
-      vertical-align: middle;
-    }
-
-    @keyframes roll {
-      from {
-        transform: rotate(0);
-      }
-      to {
-        transform: rotate(360deg);
-      }
-    }
-  `,
-  avatar: css`
-    animation: blur 5s forwards;
-    height: 100px;
-    max-height: 640px;
-    max-width: 640px;
-    position: relative;
-    width: 100px;
-    overflow: hidden;
-
-    div {
-      height: 100%;
-      position: absolute;
-      width: 100%;
-    }
-
-    .normal {
-      background-size: cover;
-    }
-
-    .invert {
-      animation: mask 5s steps(69) forwards;
-      background-size: cover;
-      filter: invert(1) grayscale(1);
-      -webkit-mask: url(${require("./images/sheet.png")});
-      -webkit-mask-size: 7000% 100%;
-      mask: url(${require("./images/sheet.png")});
-      mask-size: 7000% 100%;
-    }
-
-    @keyframes blur {
-      from {
-        filter: blur(3px);
-        opacity: 0;
-      }
-      to {
-        filter: blur(0px);
-        opacity: 1;
-      }
-    }
-
-    @keyframes mask {
-      from {
-        -webkit-mask-position: 0% 0;
-        mask-position: 0% 0;
-      }
-      to {
-        -webkit-mask-position: 100% 0;
-        mask-position: 100% 0;
-      }
-    }
-  `
-};
-
 const InfoBox = props => {
   return (
     <>
@@ -151,11 +48,23 @@ const InfoBox = props => {
           max-width: 90%;
           max-height: 90%;
           position: fixed;
-          top: 0;
           left: 0;
           right: 0;
-          bottom: 0;
           margin: auto;
+
+          background: var(--EcruWhite);
+          background: url(${bgMainSml});
+          border-width: 6px;
+
+          margin: auto;
+          z-index: 100;
+          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2),
+            0 6px 22px rgba(0, 0, 0, 0.5), 0 0 45px rgba(0, 0, 0, 0.25);
+
+          @media (max-width: 960px) {
+            width: 80%;
+            height: auto;
+          }
         `}
       >
         <button
@@ -204,7 +113,6 @@ const InfoBox = props => {
                   css={css`
                     display: inline-block;
                     font-size: 38px;
-                    letter-spacing: 2px;
                     vertical-align: middle;
                   `}
                 >

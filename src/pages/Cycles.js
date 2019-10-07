@@ -2,9 +2,6 @@
 import React, { Component } from "react";
 import { css, jsx } from "@emotion/core";
 import ReactGA from "react-ga";
-import RDAppear from "./RDAppear";
-import Map from "./Map";
-import { isConditional } from "@babel/types";
 
 const capitalize = string => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -82,7 +79,7 @@ class Cycles extends Component {
               <div className="d-inline-block">
                 <p>
                   {item.text.replace(/_/g, " ")} {item.day} - {this.state.cycle}
-                  <img src={require(`./images/icons/${item.icon}.png`)} />
+                  <img src={require(`../images/icons/${item.icon}.png`)} />
                 </p>
               </div>
             ))

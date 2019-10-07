@@ -1,7 +1,8 @@
 /** @jsx jsx */
 import React, { Component } from "react";
 import Iframe from "react-iframe";
-import { css, jsx } from "@emotion/core";
+import { jsx } from "@emotion/core";
+import styles from "./CollectorMap.css";
 
 class CollectorMap extends Component {
   constructor(props) {
@@ -27,10 +28,7 @@ class CollectorMap extends Component {
           className="mv-32"
           display="initial"
           position="relative"
-          css={css`
-            border: 4px solid var(--Armadillo);
-            background: #d2b790;
-          `}
+          css={styles.iframe}
         />
         <h4>
           Credit:{" "}

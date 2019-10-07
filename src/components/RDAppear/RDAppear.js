@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import React, { Component } from "react";
 import { css, jsx } from "@emotion/core";
+import sheet from "../../images/sheet.png";
 
 class RDAppear extends Component {
   render() {
@@ -57,9 +58,9 @@ class RDAppear extends Component {
           background-size: cover;
           background-position: center;
           filter: invert(1) grayscale(1);
-          -webkit-mask: url(${require("./images/sheet.png")});
+          -webkit-mask: url(${sheet});
           -webkit-mask-size: 7000% 100%;
-          mask: url(${require("./images/sheet.png")});
+          mask: url(${sheet});
           mask-size: 7000% 100%;
         }
 

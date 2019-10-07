@@ -12,12 +12,13 @@ import { css, jsx } from "@emotion/core";
 
 import { navigation } from "./data/navigation";
 
-import Frame from "./Frame";
-import Finder from "./Finder";
-import CollectorMap from "./CollectorMap";
-import About from "./About";
-import Cycles from "./Cycles";
-import Tweet from "./Tweet";
+import Frame from "./components/Frame/Frame";
+import Finder from "./pages/Finder";
+import CollectorMap from "./pages/CollectorMap";
+import About from "./pages/About";
+import Cycles from "./pages/Cycles";
+import Tweet from "./pages/Tweet";
+import styles from "./styles/globalStyles.css";
 const weekDay = new Date().getUTCDay();
 
 let dayCycle;
@@ -47,40 +48,6 @@ const dateOptions = {
   year: "numeric",
   month: "long",
   day: "numeric"
-};
-
-const styles = {
-  badge: css`
-    width: 120px;
-    height: 120px;
-    border-radius: 100px;
-    border: 4px solid var(--Armadillo);
-    background: var(--Twine);
-    box-shadow: 0 0 32px rgba(0, 0, 0, 0.2);
-    display: block;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 100px auto;
-    animation: roll 2s ease infinite;
-    filter: sepia(1) saturate(0.65);
-
-    img {
-      width: 100%;
-      height: auto;
-      vertical-align: middle;
-    }
-
-    @keyframes roll {
-      from {
-        transform: rotate(0);
-      }
-      to {
-        transform: rotate(360deg);
-      }
-    }
-  `
 };
 
 class App extends Component {
@@ -165,8 +132,16 @@ class App extends Component {
               padding-bottom: 2em;
               padding-top: 100px;
               text-align: center;
-              background: url(${require("./images/bgRip.png")}) repeat-x bottom -10px
-                center;
+              position: relative;
+              &:after {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                content: "";
+                display: block;
+                background: url(${require("./images/bgRip.png")}) repeat-x
+                  bottom -10px center;
+              }
             `}
           >
             <div
@@ -200,7 +175,7 @@ class App extends Component {
               </button>
             </div>
             <div>
-              <div className="pv-32">
+              <div className="pv-32 pos-relative z-10">
                 <h1
                   css={css`
                     text-shadow: -1px 1px 0 black;
@@ -234,50 +209,7 @@ class App extends Component {
                 className={`md:d-block md:pos-relative pos-fixed w-90p md:w-100p ${
                   this.state.navOpen ? "d-flex fxd-column jc-center" : "d-none"
                 }`}
-                css={css`
-                  padding: 0;
-                  margin: 0;
-                  text-transform: uppercase;
-                  text-decoration: none;
-                  font-size: 1em;
-                  letter-spacing: 0.045em;
-                  list-style: none;
-                  line-height: 1.5em;
-                  height: 1.5em;
-                  font-family: RDRrocks-sg;
-
-                  border-color: #2e2e2e;
-                  border-image-repeat: all;
-                  border-image-slice: 14;
-                  border-image-source: url(${require("./images/frame.png")});
-                  border-style: solid;
-                  border-width: 6px 0;
-
-                  @media (max-width: 960px) {
-                    height: 50vh;
-                    background: var(--EcruWhite);
-                    background: url(${require("./images/bgMainSml.jpg")});
-                    border-width: 6px;
-                    top: 0;
-                    right: 0;
-                    left: 0;
-                    bottom: 0;
-                    margin: auto;
-                    z-index: 100;
-                    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2),
-                      0 6px 22px rgba(0, 0, 0, 0.5),
-                      0 0 45px rgba(0, 0, 0, 0.25);
-                  }
-
-                  li {
-                    display: inline-block;
-                    padding: 0 8px;
-                  }
-                  a {
-                    text-decoration: none;
-                    color: var(--Armadillo);
-                  }
-                `}
+                css={styles.modal}
               >
                 {navigation.map((item, index) => (
                   <li
@@ -361,6 +293,7 @@ class App extends Component {
             </div>
           </header>
           <section
+            id="frame"
             css={css`
               max-width: 1200px;
               width: 90%;
@@ -441,7 +374,7 @@ class App extends Component {
                 css={css`
                   letter-spacing: 2px;
                   font-size: 16px;
-                  font-family: "RDRLino-Regular";
+                  font-family: "RDRrocks-sg";
                   line-height: 3;
                 `}
               >
