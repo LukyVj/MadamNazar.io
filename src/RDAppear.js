@@ -16,6 +16,12 @@ class RDAppear extends Component {
         border: 2px solid var(--Armadillo);
         position: relative;
 
+        @media (max-width: 960px) {
+          height: 300px;
+          width: 300px;
+          margin: 0 auto 1em;
+        }
+
         &:before {
           content: "Click to expand";
           position: absolute;

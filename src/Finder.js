@@ -243,7 +243,7 @@ const InfoBox = props => {
 
             <div>
               <div
-                className="cursor-pointer d-grid g-2"
+                className="cursor-pointer d-grid md:g-2"
                 css={css`
                   padding: 8px;
                 `}
