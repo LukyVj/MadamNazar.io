@@ -41,3 +41,15 @@ export const rudr_favorite = (e, a) => {
   }
   return false;
 };
+
+export const capitalize = s => {
+  if (typeof s !== "string") return "";
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
+
+export const formatDateTweet = date => {
+  let newDate = date.toDateString().slice(4);
+  newDate.substring(0, date.length - 5);
+
+  return newDate.substring(0, newDate.length - 5);
+};

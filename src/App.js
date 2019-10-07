@@ -17,6 +17,7 @@ import Finder from "./Finder";
 import CollectorMap from "./CollectorMap";
 import About from "./About";
 import Cycles from "./Cycles";
+import Tweet from "./Tweet";
 const weekDay = new Date().getUTCDay();
 
 let dayCycle;
@@ -115,7 +116,6 @@ class App extends Component {
       .then(response => response.json())
       .then(json => {
         const data = json.data;
-        console.log(data);
         this.setState({
           today: data.date,
           data: data.current_location.data,
@@ -123,9 +123,7 @@ class App extends Component {
           cycle: data.cycle,
           fetched: true
         });
-        this.props.parent.setState({ cycle: data.cycle });
-
-        console.log("state", this.state);
+        // this.props.parent.setState({ cycle: data.cycle });
       })
       .catch(function(err) {
         console.log("error", err);
@@ -143,6 +141,7 @@ class App extends Component {
 
   render() {
     const dataExists = this.state.data && this.state.data.location;
+
     return (
       <Router>
         <div
@@ -180,8 +179,12 @@ class App extends Component {
                 border-style: solid;
                 border-width: 6px;
                 box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-
                 z-index: 100;
+                left: 0;
+                right: 0;
+                max-width: 100px;
+                margin: auto;
+                top: 16px;
                 button {
                   font-weight: bold;
                 }
@@ -261,7 +264,9 @@ class App extends Component {
                     bottom: 0;
                     margin: auto;
                     z-index: 100;
-                    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+                    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2),
+                      0 6px 22px rgba(0, 0, 0, 0.5),
+                      0 0 45px rgba(0, 0, 0, 0.25);
                   }
 
                   li {
@@ -372,6 +377,29 @@ class App extends Component {
               </Route>
               <Route path="/cycles">
                 <Cycles parent={this} cycle={this.state.cycle} />
+              </Route>
+              <Route path="/tweet">
+                {dataExists && (
+                  <Tweet
+                    parent={this}
+                    env={this.state.env}
+                    dataFor={this.state.dataFor}
+                    location={this.state.data && this.state.data.location}
+                    imageNormal={
+                      this.state.data &&
+                      this.state.data.location.image.normal.full
+                    }
+                    imageNegative={
+                      this.state.data &&
+                      this.state.data.location.image.negative.full
+                    }
+                    imageTilt={
+                      this.state.data &&
+                      this.state.data.location.image.tilt_shift.full
+                    }
+                    loaded={true}
+                  />
+                )}
               </Route>
               <Route path="/">
                 {dataExists ? (

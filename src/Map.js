@@ -16,7 +16,6 @@ class Map extends Component {
       "var(--Tabasco)";
   }
   render() {
-    console.log(this.state.loc);
     return (
       <>
         <h2>On the map :</h2>

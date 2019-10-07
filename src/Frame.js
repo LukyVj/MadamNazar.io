@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import React, { Component } from "react";
 import { css, jsx } from "@emotion/core";
+import { formatDateTweet } from "./scripts/helpers";
 
 const styles = {
   root: css`
@@ -23,6 +24,10 @@ const styles = {
     left: 0;
     font-size: 2em;
     z-index: 10;
+
+    @media (max-width: 960px) {
+      font-size: 1.65em;
+    }
   `
 };
 
@@ -30,17 +35,15 @@ class Frame extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cycle: null,
-      day: null
+      cycle: 0,
+      day: 0
     };
   }
-
   componentDidMount() {
-    console.log("state", this.state);
     this.props.cycle !== undefined &&
       this.setState({
         cycle: this.props.cycle,
-        day: this.props.day
+        day: formatDateTweet(new Date(Date.parse(this.props.day)))
       });
   }
 

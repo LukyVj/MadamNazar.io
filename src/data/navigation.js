@@ -12,17 +12,17 @@ export const navigation = [
       });
     }
   },
-//   {
-//     title: "Cycles",
-//     url: "/cycles",
-//     appLink: true,
-//     onclick: () => {
-//       ReactGA.event({
-//         category: "click.link",
-//         action: "Click Cycle link"
-//       });
-//     }
-//   },
+  //   {
+  //     title: "Cycles",
+  //     url: "/cycles",
+  //     appLink: true,
+  //     onclick: () => {
+  //       ReactGA.event({
+  //         category: "click.link",
+  //         action: "Click Cycle link"
+  //       });
+  //     }
+  //   },
   {
     title: "Collectors Map",
     target: "_blank",
@@ -43,6 +43,17 @@ export const navigation = [
       ReactGA.event({
         category: "click.link",
         action: "Click About link"
+      });
+    }
+  },
+  {
+    title: "Tweet",
+    url: "/tweet",
+    appLink: true,
+    onclick: () => {
+      ReactGA.event({
+        category: "click.link",
+        action: "Click Tweet page link"
       });
     }
   },

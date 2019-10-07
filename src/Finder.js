@@ -355,7 +355,6 @@ class Finder extends Component {
 
   render() {
     const dataExists = this.props.data && this.props.data.location;
-    console.log("props", this.props);
     return (
       <div id="frame">
         <InfoBox
