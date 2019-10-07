@@ -264,7 +264,7 @@ class Finder extends Component {
   render() {
     const dataExists = this.props.data && this.props.data.location;
     return (
-      <div id="frame">
+      <div>
         <InfoBox
           id={this.props.data._id}
           media={this.props.data.location.image}
