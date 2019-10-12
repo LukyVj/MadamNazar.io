@@ -88,8 +88,8 @@ class App extends Component {
     // This emulates the needed cookie.
     // I know, it's not ideal and might break
     // things, but hey, you do what you can :)
-    document.cookie = "removed-items=undefined";
-    document.cookie = "removed-markers-daily=undefined";
+    document.cookie = "removed-items= ";
+    document.cookie = "removed-markers-daily=true";
     ////////////////////////////////////////////
 
     if (this.state.env === "production") {
