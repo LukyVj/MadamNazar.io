@@ -15,23 +15,7 @@ const config = {
     xxl: "1920px"
   },
   // Define your brand colors and any others you might want to reuse across your project
-  colors: {
-    white: "#fff",
-    black: "#000",
-    nebula: "#5468ff",
-    moon: " #f5f5fa",
-    proton: "#c5c9e0",
-    nova: "#848ab8",
-    telluric: "#5d6494",
-    solstice: "#3a416f",
-    cosmos: "#21243d",
-    neptune: ["#3944a0", "#565db6", "#7178cc", "#8c93e2", "#a6b0f9"],
-    mercury: ["#008fba", "#2da7cb", "#5bbfdd", "#88d6ee", "#b5eeff"],
-    jupiter: ["#3ab2bd", "#61c5c8", "#89d9d3", "#b0ecde", "#d7ffe9"],
-    saturn: ["#ec8b63", "#f3a57e", "#f8be9a", "#fcd7b7", "#fdf1d4"],
-    mars: ["#ed5a6a", "#f27885", "#f695a0", "#fbb3ba", "#ffd0d5"],
-    venus: ["#ae3e88", "#d44fa4", "#ea71bc", "#f89ad3", "#ffcae9"]
-  },
+
   // Spacing is used mainly for paddings and margins
   spacing: {
     0: 0,

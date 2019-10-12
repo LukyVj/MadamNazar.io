@@ -76,5 +76,13 @@ export default {
         transform: rotate(360deg);
       }
     }
+  `,
+  boxBorders: css`
+    border-color: #2e2e2e;
+    border-image-repeat: all;
+    border-image-slice: 14;
+    border-image-source: url(${frame});
+    border-style: solid;
+    border-width: 6px;
   `
 };

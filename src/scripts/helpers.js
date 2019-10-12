@@ -1,3 +1,5 @@
+export const isOnline = navigator.onLine;
+
 /**
  * Detects whether window and document objects are available in current environment.
  */

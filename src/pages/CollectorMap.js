@@ -17,7 +17,10 @@ class CollectorMap extends Component {
   render() {
     return (
       <>
-        <h2>Read dead redemption collectors map :</h2>
+        <h2>
+          Read dead redemption collectors map from{" "}
+          <a href="https://twitter.com/_jeanropke">@JeanRopke</a> :
+        </h2>
         <Iframe
           url="https://jeanropke.github.io/RDR2CollectorsMap/?utm_source=madamnazar.io"
           title="Jean Ropke RDR2 Collector Map"

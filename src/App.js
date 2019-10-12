@@ -16,31 +16,16 @@ import Frame from "./components/Frame/Frame";
 import Finder from "./pages/Finder";
 import CollectorMap from "./pages/CollectorMap";
 import About from "./pages/About";
-import Cycles from "./pages/Cycles";
+import Sachel from "./pages/Sachel";
 import Tweet from "./pages/Tweet";
 import styles from "./styles/globalStyles.css";
-const weekDay = new Date().getUTCDay();
 
-let dayCycle;
-switch (weekDay) {
-  case 2: //tuesday
-  case 4: //thursday
-  case 6: //saturday
-    dayCycle = 1;
-    break;
+import { isOnline } from "./scripts/helpers";
 
-  case 0: //sunday
-  case 3: //wednesday
-    dayCycle = 2;
-    break;
-
-  case 1: //monday
-  case 5: //friday
-    dayCycle = 3;
-    break;
-  default:
-    dayCycle = 0;
-}
+//// Define apis
+import mockData from "./data/mock";
+const devApi = "https://madam-nazar-location-api-2.herokuapp.com/today";
+const prodApi = "https://madam-nazar-location-api.herokuapp.com/today";
 
 const dateEvent = new Date();
 const dateOptions = {
@@ -64,10 +49,8 @@ class App extends Component {
   }
 
   fetchData = () => {
-    const url =
-      this.state.env === "development"
-        ? "https://madam-nazar-location-api-2.herokuapp.com/today"
-        : "https://madam-nazar-location-api.herokuapp.com/today";
+    const url = this.state.env === "development" ? devApi : prodApi;
+
     fetch(url, {
       method: "GET",
       headers: {
@@ -98,16 +81,40 @@ class App extends Component {
   };
 
   componentDidMount() {
-    ReactGA.initialize("UA-148400737-1");
-    ReactGA.pageview(this.state.currentPage);
-    this.fetchData();
+    // Hello safari ////////////////////////////
+    ////////////////////////////////////////////
+    // On safari the map on /map cannot load
+    // because of a missing cookie.
+    // This emulates the needed cookie.
+    // I know, it's not ideal and might break
+    // things, but hey, you do what you can :)
+    document.cookie = "removed-items=foo;bar"; //
+    ////////////////////////////////////////////
+
+    if (this.state.env === "production") {
+      ReactGA.initialize("UA-148400737-1");
+      ReactGA.pageview(this.state.currentPage);
+      this.fetchData();
+    } else {
+      isOnline === false && mockData !== false
+        ? this.setState({
+            today: mockData.date,
+            data: mockData.current_location.data,
+            dataFor: mockData.current_location.dataFor,
+            cycle: mockData.cycle,
+            fetched: true,
+            apiUrl: isOnline === true ? `hello ${devApi}` : "./data/mock.js"
+          })
+        : this.fetchData();
+    }
     this.setState({
-      readableDate: dateEvent.toLocaleDateString("us-EN", dateOptions)
+      readableDate: dateEvent.toDateString("us-EN", dateOptions)
     });
   }
 
   render() {
     const dataExists = this.state.data && this.state.data.location;
+    const apiDefined = isOnline === true ? `hello ${devApi}` : "./data/mock.js";
 
     return (
       <Router>
@@ -122,6 +129,29 @@ class App extends Component {
             }
           `}
         >
+          {process.env.NODE_ENV === "development" && (
+            <>
+              <div
+                css={css`
+                  background: ${isOnline
+                    ? "rgba(120, 200, 120)"
+                    : "rgba(255, 100, 100)"};
+                  color: white;
+                  position: fixed;
+                  z-index: 999999999;
+                  bottom: 0;
+                  left: 0;
+                  width: 100%;
+                  padding: 4px;
+                  font-size: 14px;
+                `}
+              >
+                The site is running locally,{" "}
+                {isOnline === true ? "with" : "without"} an internet access{" "}
+                <br /> The data are fetched from {apiDefined}
+              </div>
+            </>
+          )}
           {dataExists && (
             <Frame day={this.state.readableDate} cycle={this.state.cycle} />
           )}
@@ -308,8 +338,10 @@ class App extends Component {
               <Route path="/about">
                 <About />
               </Route>
-              <Route path="/cycles">
-                <Cycles parent={this} cycle={this.state.cycle} />
+              <Route path="/sachel">
+                {dataExists && (
+                  <Sachel parent={this} cycle={this.state.cycle} />
+                )}
               </Route>
               <Route path="/tweet">
                 {dataExists && (

@@ -262,7 +262,6 @@ class Finder extends Component {
   }
 
   render() {
-    const dataExists = this.props.data && this.props.data.location;
     return (
       <div>
         <InfoBox

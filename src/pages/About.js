@@ -152,6 +152,12 @@ class About extends Component {
           for his top notch work on the css effect to "Recreate the Red Dead
           Redemption 2 Tintype Loading Screen Effect in CSS"
         </p>
+
+        <h2>Show some support</h2>
+        <p>
+          You can support my work on{" "}
+          <a href="https://patreon.com/lukyvj">Patreon</a>
+        </p>
       </div>
     );
   }

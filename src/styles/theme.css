@@ -83,6 +83,7 @@ h1,
 h2 {
   letter-spacing: 0.15em;
 }
+
 h1 {
   font-weight: normal;
   font-size: 46px;
@@ -95,8 +96,7 @@ p {
 }
 
 .label {
-  font-family: "RDRCatalogueBold-Bold";
-  font-size: 38px;
+  font-family: "RDRrocks-sg";
   text-transform: uppercase;
   font-weight: bold;
 }

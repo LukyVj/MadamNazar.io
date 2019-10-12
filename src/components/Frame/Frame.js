@@ -22,13 +22,15 @@ class Frame extends Component {
 
   render() {
     return (
-      <div css={styles.root} className="d-grid g-2 p-16">
+      <div css={styles.root} className="p-16">
         {/* <p>
             She was found today {props.parent.state.dataFor} cycle {dayCycle}
           </p> */}
 
-        <h4 className="m-0 p-0 ta-left">{this.state.day}</h4>
-        <h4 className="m-0 p-0 ta-right"> Cycle {this.state.cycle}</h4>
+        <div className="maw-1200 m-auto d-grid g-2 ">
+          <h4 className="m-0 p-0 ta-left">{this.state.day}</h4>
+          <h4 className="m-0 p-0 ta-right"> Cycle {this.state.cycle}</h4>
+        </div>
       </div>
     );
   }

@@ -13,13 +13,13 @@ export const navigation = [
     }
   },
   //   {
-  //     title: "Cycles",
-  //     url: "/cycles",
+  //     title: "Sachel",
+  //     url: "/sachel",
   //     appLink: true,
   //     onclick: () => {
   //       ReactGA.event({
   //         category: "click.link",
-  //         action: "Click Cycle link"
+  //         action: "Click Sachel link"
   //       });
   //     }
   //   },
