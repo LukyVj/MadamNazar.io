@@ -39,11 +39,11 @@ class CollectorMap extends Component {
             this.state.expandMap === true &&
             css`
               position: fixed;
-              width: calc(100% - 48px);
-              height: 78vh;
               top: 90px;
-              left: 16px;
               z-index: 9999999999;
+              left: 2px;
+              width: calc(100% - 16px);
+              height: 82vh;
             `
           }
         >
