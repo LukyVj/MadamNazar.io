@@ -9,6 +9,7 @@ export default {
     border-color: #2e2e2e;
     border-image-repeat: all;
     border-image-slice: 14;
+    border-image-outset: 3px;
     border-image-source: url(${frame});
     border-style: solid;
     border-width: 6px;
@@ -21,6 +22,7 @@ export default {
     border-style: solid;
 
     border-image-slice: 30;
+    border-image-outset: 3px;
     letter-spacing: 0.15em;
   `,
   activeButton: css`
@@ -30,6 +32,7 @@ export default {
   itemBox: css`
     border-image-repeat: repeat;
     border-image-slice: 24;
+    border-image-outset: 3px;
     border-image-source: url(${doubleBorder});
     border-style: solid;
     border-width: 17px;

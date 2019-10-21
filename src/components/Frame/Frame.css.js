@@ -7,6 +7,7 @@ export default {
     border-color: #2e2e2e;
     border-image-repeat: all;
     border-image-slice: 14;
+    border-image-outset: 3px;
     border-image-source: url(${frame});
     border-style: solid;
     border-width: 6px 0;
@@ -18,7 +19,6 @@ export default {
     color: white;
     -webkit-font-smoothing: antialiased;
     background: url(${blueBg});
-    top: 0;
     position: fixed;
     left: 0;
     font-size: 2em;

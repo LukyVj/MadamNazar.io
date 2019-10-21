@@ -1,0 +1,1 @@
+echo "Build Beta version" && yarn build && rm build/static/js/*.map && surge ./build --domain https://www-beta-madamnazar-io-1.surge.sh && echo "Beta version built ✅"

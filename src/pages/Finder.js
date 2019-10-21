@@ -11,28 +11,6 @@ const capitalize = string => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
-const weekDay = new Date().getUTCDay();
-let dayCycle;
-switch (weekDay) {
-  case 2: //tuesday
-  case 4: //thursday
-  case 6: //saturday
-    dayCycle = 1;
-    break;
-
-  case 0: //sunday
-  case 3: //wednesday
-    dayCycle = 2;
-    break;
-
-  case 1: //monday
-  case 5: //friday
-    dayCycle = 3;
-    break;
-  default:
-    dayCycle = 0;
-}
-
 const InfoBox = props => {
   return (
     <>
@@ -43,17 +21,19 @@ const InfoBox = props => {
         css={css`
           z-index: 9999999999;
           border: 4px solid var(--Armadillo);
-          background: var(--Armadillo);
           box-shadow: 0 0 32px rgba(0, 0, 0, 0.2);
           max-width: 90%;
-          max-height: 90%;
+          max-height: 60%;
           position: fixed;
           left: 0;
           right: 0;
           margin: auto;
 
-          background: var(--EcruWhite);
-          background: url(${bgMainSml});
+          background-image: url(${props.parent.state.modalImage}),
+            url(${bgMainSml});
+          background-repeat: no-repeat, repeat;
+          background-position: center center, center;
+          background-size: contain, auto;
           border-width: 6px;
 
           margin: auto;
@@ -77,31 +57,12 @@ const InfoBox = props => {
         >
           Close window
         </button>
-        <img
-          src={props.parent.state.modalImage}
-          className="w-100p h-100p obf-contain obp-center"
-          alt={props.parent.state.modalImage}
-          onClick={() => {
-            props.parent.setState({
-              modal: !props.parent.state.modal,
-              modalImage: null
-            });
-          }}
-        />
+        <div className="w-100p h-100p "></div>
       </div>
-
-      {/* {props.isNewLocation === today ? (
-        
-      ) : (
-        <div>
-          <p>Oops, we haven't found her yer</p>
-        </div>
-      )} */}
 
       <div css={styles.posterWrapper} className="pv-32">
         <div css={[styles.posterGrid, styles.posterLayout]}>
           <section
-            className="pv-48"
             css={css`
               text-align: center;
             `}
@@ -167,7 +128,7 @@ const InfoBox = props => {
                       modalImageDarkMode: props.media.negative.full
                     });
                     ReactGA.event({
-                      category: "click.modal",
+                      category: "click.finder.modal",
                       action: "Open First image"
                     });
                   }}
@@ -193,7 +154,7 @@ const InfoBox = props => {
                       modalImageDarkMode: props.media.negative.zoom
                     });
                     ReactGA.event({
-                      category: "click.modal",
+                      category: "click.finder.modal",
                       action: "Open Second image"
                     });
                   }}
@@ -213,7 +174,7 @@ const InfoBox = props => {
           <section
             onClick={() => {
               ReactGA.event({
-                category: "click.map",
+                category: "click.finder.map",
                 action: "Clicked the map"
               });
             }}

@@ -6,6 +6,7 @@ export default {
   textarea: css`
     border-image-repeat: all;
     border-image-slice: 14;
+    border-image-outset: 3px;
     border-image-source: url(${frame});
     border-style: solid;
     border-width: 6px;
@@ -17,6 +18,7 @@ export default {
     &:hover {
       border-image-repeat: all;
       border-image-slice: 14;
+      border-image-outset: 3px;
       border-image-source: url(${frame});
       border-style: solid;
       border-width: 6px;
@@ -41,6 +43,7 @@ export default {
   tweet: css`
     border-image-repeat: all;
     border-image-slice: 10;
+    border-image-outset: 3px;
     border-image-source: url(${frame});
     border-style: solid;
     border-width: 6px;

@@ -13,6 +13,10 @@ const itemGuid = item => `${item.text}-${item.tool}-${item.day}`;
 let database = new localStorageDB("setPerCycle", localStorage);
 
 const getCategory = filename => filename.split("_")[0];
+const onlyUnique = (value, index, self) => {
+  console.log(value, index, self);
+  return value.category.indexOf(value) === index;
+};
 
 const Sachel = (category, cycle) => {
   // return ls.get("collections").map(item => {
@@ -71,6 +75,7 @@ class Cycles extends Component {
       data: collectionItems,
       cycle: this.props.cycle,
       selectedCategory: "all",
+
       itemsForCurrentCycle: 0,
       openSachel: false,
       objectTypes: [
@@ -150,16 +155,6 @@ class Cycles extends Component {
       // If the table doesn't exist, create the needed ones
       console.log("new");
       database.createTable("setPerCycle", ["ID", "sets", "cycle"]);
-      database.createTable("sachel", [
-        "ID",
-        "guid",
-        "name",
-        "tool",
-        "day",
-        "dupplicate"
-      ]);
-      database.commit();
-
       [1, 2, 3].forEach(cycleDay => {
         const setPerDay = [];
         collectionItems.forEach(item => {
@@ -174,6 +169,21 @@ class Cycles extends Component {
         database.commit();
       });
     }
+
+    if (database.tableExists("sachel")) {
+      console.log("sachel exists");
+    } else {
+      database.createTable("sachel", [
+        "ID",
+        "guid",
+        "name",
+        "tool",
+        "day",
+        "count",
+        "category"
+      ]);
+      database.commit();
+    }
   };
 
   componentDidMount() {
@@ -181,14 +191,23 @@ class Cycles extends Component {
       currentPage: window.location.pathname
     });
 
+    // Populate the collection by fetching ./src/data/collection-items.json
     this.getLocalData();
-  }
+    const itemsLength = database.tableExists("sachel")
+      ? database.queryAll("sachel").length
+      : 0;
 
-  componentWillUnmount() {
+    // Here we use the onlyUnique function to find how many uniques categories there is
+    const collectionsLength = () => {
+      if (database.tableExists("sachel")) {
+        const num = database.queryAll("sachel").filter(onlyUnique);
+        return num;
+      }
+    };
     this.setState({
-      // itemsForCurrentCycle: this.tempCollect.length
+      itemsInSachel: itemsLength,
+      collectionsInSachel: collectionsLength()
     });
-    // console.log(this.tempCollect.length);
   }
 
   getCategory = filename => filename.split("_")[0];
@@ -212,84 +231,66 @@ class Cycles extends Component {
   };
 
   clearStorage = () => {
-    collection = [];
-    this.setState({ updated: true, itemsInSachel: collection.length });
+    database.dropTable("sachel");
+    database.commit();
+    this.setState({
+      updated: true,
+      itemsInSachel: 0
+    });
   };
 
   addItemToCollection = item => {
-    // const itemExist = () =>
+    // if (database.queryAll("sachel").length !== 0) {
     //   database.queryAll("sachel", {
-    //     query: function(row) {
-    //       // the callback function is applied to every row in the table
-    //       if (row.guid === itemGuid(item)) {
-    //         // if it returns true, the row is selected
-    //         return true;
+    //     query: function(it) {
+    //       console.log(it.guid, itemGuid(item));
+    //       if (it.guid === itemGuid(item)) {
+    //         // item exist, increase amount
+    //         database.update("sachel", { guid: itemGuid(item) }, function(row) {
+    //           row.count = row.count + 1;
+    //           return row;
+    //         });
+    //         database.commit();
     //       } else {
-    //         return false;
+    //         //item does not exist add it
+    //         database.insert("sachel", {
+    //           ID: itemGuid(item),
+    //           guid: itemGuid(item),
+    //           name: item.text,
+    //           tool: item.tool,
+    //           day: item.day,
+    //           count: 0
+    //         });
+    //         database.commit();
     //       }
     //     }
     //   });
-    // if (itemExist === false) {
-    //   database.insert("sachel", {
-    //     ID: itemGuid(item),
-    //     guid: itemGuid(item),
-    //     name: item.text,
-    //     tool: item.tool,
-    //     day: item.day,
-    //     dupplicate: 0
-    //   });
-    //   database.commit();
     // } else {
-    //   database.alterTable("sachel", {
-    //     ID: itemGuid(item),
-    //     guid: itemGuid(item),
-    //     name: item.text,
-    //     tool: item.tool,
-    //     day: item.day,
-    //     dupplicate: "yes"
-    //   });
-    //   database.commit();
+    //item does not exist add it
+    database.insert("sachel", {
+      ID: itemGuid(item),
+      guid: itemGuid(item),
+      name: item.text,
+      tool: item.tool,
+      day: item.day,
+      category: getCategory(item.text)
+    });
     // }
 
-    database.queryAll("sachel", {
-      query: function(row) {
-        // the callback function is applied to every row in the table
-        if (row.guid === itemGuid(item)) {
-          database.alterTable("sachel", {
-            ID: itemGuid(item),
-            guid: itemGuid(item),
-            name: item.text,
-            tool: item.tool,
-            day: item.day,
-            dupplicate: "yes"
-          });
-          database.commit();
-        } else {
-          database.insert("sachel", {
-            ID: itemGuid(item),
-            guid: itemGuid(item),
-            name: item.text,
-            tool: item.tool,
-            day: item.day,
-            dupplicate: 0
-          });
-          database.commit();
+    database.commit();
 
-        }
-      }
-    });
-          database.commit();
+    const itemsLength = database.tableExists("sachel")
+      ? database.queryAll("sachel").length
+      : 0;
 
-    this.setState({ updated: true });
+    this.setState({ updated: true, itemsInSachel: itemsLength });
   };
 
-  removeItemFromCollection = (item, collection) => {
-    var index = collection.find(it => it._id === itemGuid(item));
-    console.log(index);
-    index && collection.splice(index, 1);
+  removeItemFromCollection = item => {
+    database.deleteRows("sachel", { guid: itemGuid(item) });
+    database.commit();
 
     this.setState({ updated: true, itemsInSachel: collection.length });
-    // console.table(ls.get("collections"));
   };
 
   openSachel = () => {
@@ -299,6 +300,24 @@ class Cycles extends Component {
   refineWithSelectedCycle = cycle => {
     this.setState({ cycle: cycle });
     this.setState({ updated: true });
+  };
+
+  getCount = item => {
+    if (
+      database.tableExists("sachel") &&
+      database.queryAll("sachel").length !== 0
+    ) {
+      if (
+        database.queryAll("sachel", { query: { guid: itemGuid(item) } })
+          .length !== 0
+      ) {
+        return database.queryAll("sachel", {
+          query: { guid: itemGuid(item) }
+        }).length;
+      } else {
+        return 0;
+      }
+    }
   };
 
   render() {
@@ -315,7 +334,10 @@ class Cycles extends Component {
               All items {this.state.itemsForCurrentCycle}
             </li>
             <li className={cx(styles.boxBorders, "mr-8 p-8")}>
-              Your collections {this.state.itemsInSachel}
+              All your items {this.state.itemsInSachel}
+            </li>
+            <li className={cx(styles.boxBorders, "mr-8 p-8")}>
+              Your collections {this.state.collectionsInSachel}
             </li>
             <li className={cx(styles.boxBorders, "mr-8 ")}>
               <button
@@ -442,6 +464,8 @@ class Cycles extends Component {
                               {capitalize(item.text.replace(/_/g, " "))}
                             </h3>
 
+                            <p>You own {this.getCount(item)} of them</p>
+
                             <div className=" p-8">
                               <p>
                                 Available during the cycle {parseInt(item.day)}
@@ -472,10 +496,7 @@ class Cycles extends Component {
                               <div className="d-grid g-2">
                                 <button
                                   onClick={() =>
-                                    this.removeItemFromCollection(
-                                      item,
-                                      collection
-                                    )
+                                    this.removeItemFromCollection(item)
                                   }
                                   className={cx(
                                     styles.button,

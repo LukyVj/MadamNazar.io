@@ -1,29 +1,37 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /** @jsx jsx */
 import React, { Component } from "react";
+import ReactGA from "react-ga";
+import { css, jsx } from "@emotion/core";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   NavLink
 } from "react-router-dom";
-import ReactGA from "react-ga";
-import { css, jsx } from "@emotion/core";
 
-import { navigation } from "./data/navigation";
-
-import Frame from "./components/Frame/Frame";
 import Finder from "./pages/Finder";
 import CollectorMap from "./pages/CollectorMap";
 import About from "./pages/About";
 import Sachel from "./pages/Sachel";
 import Tweet from "./pages/Tweet";
+import Resources from "./pages/Resources";
+import PatreonModal from "./components/PatreonModal/PatreonModal";
+import Frame from "./components/Frame/Frame";
+
+import { docCookies } from "./scripts/cookies";
+import { isOnline, getCycleDay } from "./scripts/helpers";
+import { WEBSITE_NAME } from "./scripts/constants";
+
 import styles from "./styles/globalStyles.css";
 
-import { isOnline } from "./scripts/helpers";
+import frame from "./images/frame.png";
+
+import { navigation } from "./data/navigation";
 
 //// Define apis
 import mockData from "./data/mock";
+
 const devApi = "https://madam-nazar-location-api-2.herokuapp.com/today";
 const prodApi = "https://madam-nazar-location-api.herokuapp.com/today";
 
@@ -34,6 +42,95 @@ const dateOptions = {
   month: "long",
   day: "numeric"
 };
+const todayDate = dateEvent.toDateString("us-EN", dateOptions);
+
+const apiDefined = isOnline === true ? `hello ${devApi}` : "./data/mock.js";
+
+const NetworkInfo = () =>
+  process.env.NODE_ENV === "development" && (
+    <>
+      <div
+        css={css`
+          background: ${isOnline
+            ? "rgba(120, 200, 120)"
+            : "rgba(255, 100, 100)"};
+          color: white;
+          position: fixed;
+          z-index: 999999999;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          padding: 4px;
+          font-size: 14px;
+        `}
+      >
+        The site is running locally, {isOnline === true ? "with" : "without"} an
+        internet access <br /> The data are fetched from {apiDefined}
+      </div>
+    </>
+  );
+
+const SupportBanner = parent => (
+  <div
+    className="pos-fixed pv-16 ta-center d-flex ai-cente jc-center fsz-12 md:fsz-16"
+    css={css`
+      top: 84px;
+      background: url("${require("./images/rockstar-rdr2-banner.png")}") repeat center center /
+        800px;
+      width: 100%;
+      left: 0;
+      color: white;
+      z-index: 999;
+      top: 0;
+      
+    border-color: #2e2e2e;
+    border-image-repeat: all;
+    border-image-slice: 14;
+    border-image-outset: 3px;
+    border-image-source: url(${frame});
+    border-style: solid;
+    border-width: 6px 0;
+  
+    `}
+  >
+    <div className="maw-600 pos-relative m-auto">
+      {" "}
+      <span
+        className="cursor-pointer"
+        css={css`
+          color: white;
+          text-decoration: none;
+        `}
+        onClick={() => {
+          parent.parent.setState({ showPatreonAbout: true, patreonAd: false });
+        }}
+      >
+        <span role="img" aria-label="emoji pink double hearts">
+          💕
+        </span>{" "}
+        <b>Support {WEBSITE_NAME}! Click to learn more</b> 
+        <span role="img" aria-label="emoji pink double hearts">
+          💕
+        </span>{" "}
+      </span>
+      <span>
+        <button
+          className="app-none bdw-0 bgc-transparent p-0 m-0 va-middle cursor-pointer"
+          onClick={() => {
+            docCookies.setItem("patreon-ad", "false", 999);
+            parent.parent.setState({ updated: true, patreonAd: false });
+          }}
+        >
+          <img
+            src={require("./images/cancel-icon.svg")}
+            className="va-middle"
+            alt="close icon"
+          />
+        </button>
+      </span>
+    </div>
+  </div>
+);
 
 class App extends Component {
   constructor(props) {
@@ -42,7 +139,9 @@ class App extends Component {
     this.state = {
       env: process.env.NODE_ENV,
       navOpen: false,
-      cycle: undefined,
+      readableDate: todayDate,
+      cycle: getCycleDay(todayDate),
+      showPatreonBanner: true,
       currentPage:
         window.location.pathname === "/" ? "/home" : window.location.pathname
     };
@@ -73,7 +172,6 @@ class App extends Component {
           cycle: data.cycle,
           fetched: true
         });
-        // this.props.parent.setState({ cycle: data.cycle });
       })
       .catch(function(err) {
         console.log("error", err);
@@ -90,7 +188,21 @@ class App extends Component {
     // things, but hey, you do what you can :)
     document.cookie = "removed-items= ";
     document.cookie = "removed-markers-daily=true";
-    ////////////////////////////////////////////
+    // docCookies.getItem("patreon-ad");
+    if (
+      !docCookies.getItem("patreon-ad") &&
+      docCookies.getItem("patreon-ad") !== "false"
+    ) {
+      document.cookie = "patreon-ad=true";
+    }
+
+    const e = document.cookie
+      .split(";")
+      .find(cookie => cookie === " patreon-ad=true");
+
+    docCookies.getItem("patreon-ad") === "true"
+      ? this.setState({ patreonAd: true })
+      : this.setState({ patreonAd: false });
 
     if (this.state.env === "production") {
       ReactGA.initialize("UA-148400737-1");
@@ -108,14 +220,10 @@ class App extends Component {
           })
         : this.fetchData();
     }
-    this.setState({
-      readableDate: dateEvent.toDateString("us-EN", dateOptions)
-    });
   }
 
   render() {
     const dataExists = this.state.data && this.state.data.location;
-    const apiDefined = isOnline === true ? `hello ${devApi}` : "./data/mock.js";
 
     return (
       <Router>
@@ -130,38 +238,23 @@ class App extends Component {
             }
           `}
         >
-          {process.env.NODE_ENV === "development" && (
-            <>
-              <div
-                css={css`
-                  background: ${isOnline
-                    ? "rgba(120, 200, 120)"
-                    : "rgba(255, 100, 100)"};
-                  color: white;
-                  position: fixed;
-                  z-index: 999999999;
-                  bottom: 0;
-                  left: 0;
-                  width: 100%;
-                  padding: 4px;
-                  font-size: 14px;
-                `}
-              >
-                The site is running locally,{" "}
-                {isOnline === true ? "with" : "without"} an internet access{" "}
-                <br /> The data are fetched from {apiDefined}
-              </div>
-            </>
+          <NetworkInfo />
+          {this.state.showPatreonAbout === true && (
+            <PatreonModal parent={this} />
           )}
-          {dataExists && (
-            <Frame day={this.state.readableDate} cycle={this.state.cycle} />
-          )}
+
+          <Frame
+            day={this.state.readableDate}
+            cycle={this.state.cycle}
+            offsetTop={this.state.patreonAd}
+          />
+
           <header
             className="App-header"
             css={css`
               height: auto;
               padding-bottom: 2em;
-              padding-top: 100px;
+              padding-top: ${this.state.patreonAd === true ? "160px" : "100px"};
               text-align: center;
               position: relative;
               &:after {
@@ -171,16 +264,19 @@ class App extends Component {
                 content: "";
                 display: block;
                 background: url(${require("./images/bgRip.png")}) repeat-x
-                  bottom -10px center;
+                  bottom 10px center;
               }
             `}
           >
+            {this.state.patreonAd === true && <SupportBanner parent={this} />}
+
             <div
               className="d-flex ai-center jc-center md:d-none pos-fixed top-48 right-0 m-16 p-8 cu-pointer"
               css={css`
                 border: 4px solid var(--Armadillo);
                 background: url(${require("./images/bgMainSml.jpg")});
                 border-image-slice: 10;
+                border-image-outset: 3px;
                 border-image-source: url(${require("./images/frame.png")});
                 border-style: solid;
                 border-width: 6px;
@@ -190,7 +286,8 @@ class App extends Component {
                 right: 0;
                 max-width: 100px;
                 margin: auto;
-                top: 12px;
+                top: ${this.state.patreonAd === true ? "70px" : "12px"};
+
                 button {
                   font-weight: bold;
                 }
@@ -245,9 +342,9 @@ class App extends Component {
                 {navigation.map((item, index) => (
                   <li
                     key={item.link}
-                    className="p-8 pl-8 mr-24 pos-relative md:d-flex ai-center jc-center w-100p md:w-auto"
-                    css={
-                      (index !== navigation.length - 1 &&
+                    className="pv-8 md:pv-0 md:pl-8 md:pr-8 md:mr-24 pos-relative md:d-flex ai-center jc-center md:w-auto"
+                    css={[
+                      index !== navigation.length - 1 &&
                         css`
                           &:after {
                             content: "";
@@ -260,13 +357,22 @@ class App extends Component {
                             top: 50%;
                             right: -16px;
                             transform: translateY(-50%);
+
+                            @media (max-width: 960px) {
+                              display: none;
+                            }
                           }
                         `,
                       window.location.pathname === item.url &&
                         css`
                           color: red;
-                        `)
-                    }
+                        `,
+                      css`
+                        @media (max-width: 960px) {
+                          font-size: 32px;
+                        }
+                      `
+                    ]}
                   >
                     {item.appLink === true ? (
                       <NavLink
@@ -325,6 +431,7 @@ class App extends Component {
           </header>
           <section
             id="frame"
+            className="pv-32"
             css={css`
               max-width: 1200px;
               width: 90%;
@@ -333,6 +440,9 @@ class App extends Component {
             `}
           >
             <Switch>
+              <Route path="/resources">
+                <Resources />
+              </Route>
               <Route path="/map">
                 <CollectorMap parent={this} />
               </Route>
@@ -392,6 +502,7 @@ class App extends Component {
               color: white;
               border-image-repeat: all;
               border-image-slice: 14;
+              border-image-outset: 3px;
               border-image-source: url(${require("./images/frame.png")});
               border-style: solid;
               border-width: 6px 0 0 0;

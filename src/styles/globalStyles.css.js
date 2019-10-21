@@ -18,6 +18,7 @@ export default {
     border-color: #2e2e2e;
     border-image-repeat: all;
     border-image-slice: 14;
+    border-image-outset: 3px;
     border-image-source: url(${frame});
     border-style: solid;
     border-width: 6px 0;
@@ -39,7 +40,6 @@ export default {
 
     li {
       display: inline-block;
-      padding: 0 8px;
     }
     a {
       text-decoration: none;
@@ -81,6 +81,7 @@ export default {
     border-color: #2e2e2e;
     border-image-repeat: all;
     border-image-slice: 14;
+    border-image-outset: 3px;
     border-image-source: url(${frame});
     border-style: solid;
     border-width: 6px;

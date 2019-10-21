@@ -8,6 +8,33 @@ export const isBrowser =
   typeof document !== "undefined" &&
   window.document === document;
 
+// Get cycle day
+export const getCycleDay = () => {
+  let dayCycle;
+  let weekDay = new Date().getUTCDay();
+  switch (weekDay) {
+    case 2: //tuesday
+    case 4: //thursday
+    case 6: //saturday
+      dayCycle = 1;
+      break;
+
+    case 0: //sunday
+    case 3: //wednesday
+      dayCycle = 2;
+      break;
+
+    case 1: //monday
+    case 5: //friday
+      dayCycle = 3;
+      break;
+    default:
+      dayCycle = undefined;
+      break;
+  }
+  return dayCycle;
+};
+
 // eslint-disable no-restricted-globals
 export const rudr_favorite = (e, a) => {
   e.preventDefault();

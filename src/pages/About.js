@@ -1,5 +1,12 @@
 import React, { Component } from "react";
+import { css, jsx } from "@emotion/core";
 import ReactGA from "react-ga";
+import {
+  WEBSITE_NAME,
+  PATREON_URL,
+  TWITTER_URL,
+  TWITTER_NAME
+} from "../scripts/constants";
 
 class About extends Component {
   constructor(props) {
@@ -11,9 +18,13 @@ class About extends Component {
 
   render() {
     return (
-      <div className="pv-32">
+      <>
         <h2>Disclaimer:</h2>
-        <b>
+        <b
+          css={css`
+            background: rgba(255, 255, 255, 0.15);
+          `}
+        >
           <i>This project is not affiliated to RockStar in any way</i>
         </b>
         <h2>Information:</h2>
@@ -32,7 +43,7 @@ class About extends Component {
         <p>
           The API runs on a simple heroku instance, and is maintained manually,
           which can explain some delay sometimes between Madam Nazar location
-          and what the API return.
+          and what the API returns.
         </p>
 
         <p>
@@ -49,7 +60,7 @@ class About extends Component {
             rel="noreferrer noopener"
             onClick={() => {
               ReactGA.event({
-                category: "click.link",
+                category: "click.about.link",
                 action: "Click on LukyVj Twitter profile"
               });
             }}
@@ -63,7 +74,7 @@ class About extends Component {
             rel="noreferrer noopener"
             onClick={() => {
               ReactGA.event({
-                category: "click.link",
+                category: "click.about.link",
                 action: "Click on API link"
               });
             }}
@@ -72,19 +83,21 @@ class About extends Component {
           </a>{" "}
           - Follow{" "}
           <a
-            href="https://twitter.com/FinderNazar"
+            href={TWITTER_URL}
             target="_blank"
             rel="noreferrer noopener"
             onClick={() => {
               ReactGA.event({
-                category: "click.link",
-                action: "Click on FinderNazar Twitter profile"
+                category: "click.about.link",
+                action: `Click on ${TWITTER_NAME} Twitter profile`
               });
             }}
           >
-            @FinderNazar
+            {TWITTER_NAME}
           </a>{" "}
-          for regular updates about this project. <br />
+          for regular updates about this project.{" "}
+        </p>
+        <p>
           You can also find{" "}
           <a
             href="https://www.twitch.tv/iamfabriceg"
@@ -106,14 +119,14 @@ class About extends Component {
             rel="noreferrer noopener"
             onClick={() => {
               ReactGA.event({
-                category: "click.link",
+                category: "click.about.link",
                 action: "Click on LukyVj Twitch profile"
               });
             }}
           >
             myself
           </a>{" "}
-          on Twitch
+          on Twitch.
         </p>
 
         <h2>Thanks:</h2>
@@ -126,7 +139,7 @@ class About extends Component {
             rel="noreferrer noopener"
             onClick={() => {
               ReactGA.event({
-                category: "click.link",
+                category: "click.about.link",
                 action: "Click on Jean Ropke Github profile"
               });
             }}
@@ -134,7 +147,7 @@ class About extends Component {
             @JeanRopke
           </a>{" "}
           for his amazing work on the collector's map &amp; for allowing us to
-          use it on madamnazar.io
+          use it on {WEBSITE_NAME}
         </p>
         <p>
           Also, thanks to{" "}
@@ -142,7 +155,7 @@ class About extends Component {
             href="https://levelup.gitconnected.com/recreating-the-red-dead-redemption-2-tintype-loading-screen-effect-in-css-10ca87d5b9de"
             onClick={() => {
               ReactGA.event({
-                category: "click.link",
+                category: "click.about.link",
                 action: "Click on Lee Martin's article link"
               });
             }}
@@ -153,12 +166,22 @@ class About extends Component {
           Redemption 2 Tintype Loading Screen Effect in CSS"
         </p>
 
-        <h2>Show some support</h2>
+        <h2>Donations are welcome!</h2>
         <p>
-          You can support my work on{" "}
-          <a href="https://patreon.com/lukyvj">Patreon</a>
+          You can support us on{" "}
+          <a
+            href="https://patreon.com/lukyvj"
+            onClick={() => {
+              ReactGA.event({
+                category: "click.about.link",
+                action: "Click on Patreon link"
+              });
+            }}
+          >
+            Patreon
+          </a>
         </p>
-      </div>
+      </>
     );
   }
 }

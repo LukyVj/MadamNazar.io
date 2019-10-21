@@ -24,7 +24,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "sh ./scripts/deploy.sh"
+    "beta": "sh ./scripts/beta.sh",
+    "backup": "sh ./scripts/backup.sh",
+    "deploy": "yarn beta && sh ./scripts/deploy.sh && yarn backup"
   },
   "eslintConfig": {
     "extends": "react-app"

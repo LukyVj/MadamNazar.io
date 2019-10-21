@@ -1,5 +1,6 @@
 import ReactGA from "react-ga";
-import { rudr_favorite } from "../scripts/helpers";
+import { TWITTER_URL } from "../scripts/constants";
+
 export const navigation = [
   {
     title: "Home",
@@ -7,31 +8,41 @@ export const navigation = [
     appLink: true,
     onclick: () => {
       ReactGA.event({
-        category: "click.link",
+        category: "click.nav.link",
         action: "Click Home link"
       });
     }
   },
   //   {
-  //     title: "Sachel",
-  //     url: "/sachel",
+  //     title: "Satchel",
+  //     url: "/satchel",
   //     appLink: true,
   //     onclick: () => {
   //       ReactGA.event({
-  //         category: "click.link",
-  //         action: "Click Sachel link"
+  //         category: "click.nav.link",
+  //         action: "Click Satchel link"
   //       });
   //     }
   //   },
   {
     title: "Collectors Map",
-    target: "_blank",
     appLink: true,
     url: "/map",
     onclick: () => {
       ReactGA.event({
-        category: "click.link",
+        category: "click.nav.link",
         action: "Go to map"
+      });
+    }
+  },
+  {
+    title: "Resources",
+    appLink: true,
+    url: "/resources",
+    onclick: () => {
+      ReactGA.event({
+        category: "click.nav.link",
+        action: "Go to Resources"
       });
     }
   },
@@ -41,7 +52,7 @@ export const navigation = [
     appLink: true,
     onclick: () => {
       ReactGA.event({
-        category: "click.link",
+        category: "click.nav.link",
         action: "Click About link"
       });
     }
@@ -52,7 +63,7 @@ export const navigation = [
     appLink: true,
     onclick: () => {
       ReactGA.event({
-        category: "click.link",
+        category: "click.nav.link",
         action: "Click Tweet page link"
       });
     }
@@ -64,7 +75,7 @@ export const navigation = [
     rel: "noreferrer noopener",
     onclick: () => {
       ReactGA.event({
-        category: "click.link",
+        category: "click.nav.link",
         action: "Click API link"
       });
     }
@@ -73,10 +84,10 @@ export const navigation = [
     title: "Contact",
     target: "_blank",
     rel: "noreferrer noopener",
-    url: "https://twitter.com/FinderNazar",
+    url: TWITTER_URL,
     onclick: () => {
       ReactGA.event({
-        category: "click.link",
+        category: "click.nav.link",
         action: "Click Contact link (twitter)"
       });
     }
@@ -90,7 +101,7 @@ export const navigation = [
     onclick: e => {
       rudr_favorite(e, this);
       ReactGA.event({
-        category: "click.link",
+        category: "click.nav.link",
         action: "Add to Favorite"
       });
     }
@@ -103,7 +114,7 @@ export const navigation = [
       "https://twitter.com/intent/tweet?text=%F0%9F%A7%BF%20NazarFinder%20-%20Get%20the%20updated%20location%20of%20Madam%20Nazar%20in%20Red%20Dead%20Redemption%202%20Online%20https%3A%2F%2Fmadamnazar.io%20from%20%40lukyvj",
     onclick: () => {
       ReactGA.event({
-        category: "click.link",
+        category: "click.nav.link",
         action: "Click Share link"
       });
     }
