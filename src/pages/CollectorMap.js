@@ -33,6 +33,25 @@ class CollectorMap extends Component {
           </a>{" "}
           :
         </h2>
+        <span
+          className="mb-16 p-8 d-inline-block"
+          css={css`
+            border-image-slice: 10;
+            border-image-outset: 3px;
+            border-image-source: url(${require("../images/frame.png")});
+            border-style: solid;
+            border-width: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            color: var(--Armadillo);
+          `}
+        >
+          <span role="img" aria-label="information icon">
+            ℹ️
+          </span>{" "}
+          If the map is not loading, please visit{" "}
+          <a href="https://jeanropke.github.io/RDR2CollectorsMap/">this link</a>{" "}
+          and come back
+        </span>
         <div
           className="pos-relative"
           css={
@@ -68,7 +87,7 @@ class CollectorMap extends Component {
           </button>
 
           <Iframe
-            url="https://jeanropke.github.io/RDR2CollectorsMap/?utm_source=madamnazar.io"
+            url="https://jeanropke.github.io/RDR2CollectorsMap?v=x/?utm_source=madamnazar.io"
             title="Jean Ropke RDR2 Collector Map"
             height={this.state.expandMap === false ? "640px" : "100%"}
             frameBorder="border: 4px solid var(--Armadillo);"
