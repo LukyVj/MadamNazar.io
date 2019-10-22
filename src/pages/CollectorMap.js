@@ -8,7 +8,7 @@ import styles from "./CollectorMap.css";
 class CollectorMap extends Component {
   constructor(props) {
     super(props);
-    this.state = { expandMap: false };
+    this.state = { expandMap: false, iframeUrl: false };
   }
 
   componentDidMount() {
@@ -66,6 +66,7 @@ class CollectorMap extends Component {
           >
             {this.state.expandMap === false ? "Expand Map" : "Reduce Map"}
           </button>
+
           <Iframe
             url="https://jeanropke.github.io/RDR2CollectorsMap/?utm_source=madamnazar.io"
             title="Jean Ropke RDR2 Collector Map"
