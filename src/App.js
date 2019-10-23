@@ -186,9 +186,9 @@ class App extends Component {
     // This emulates the needed cookie.
     // I know, it's not ideal and might break
     // things, but hey, you do what you can :)
-    // docCookies.setItem("removed-items", "a;b");
-    // docCookies.setItem("removed-markers-daily", "true");
-    // docCookies.setItem("removed-markers-daily", "true");
+    docCookies.setItem("removed-items", "a;b");
+    docCookies.setItem("removed-markers-daily", "true");
+    docCookies.setItem("removed-markers-daily", "true");
     if (
       !docCookies.getItem("patreon-ad") &&
       docCookies.getItem("patreon-ad") !== "false"

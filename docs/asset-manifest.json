@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/static/css/main.56f0f70a.chunk.css",
-    "main.js": "/static/js/main.ebd4351d.chunk.js",
-    "main.js.map": "/static/js/main.ebd4351d.chunk.js.map",
+    "main.js": "/static/js/main.72846c32.chunk.js",
+    "main.js.map": "/static/js/main.72846c32.chunk.js.map",
     "runtime~main.js": "/static/js/runtime~main.c82138e8.js",
     "runtime~main.js.map": "/static/js/runtime~main.c82138e8.js.map",
     "static/js/2.ef298acf.chunk.js": "/static/js/2.ef298acf.chunk.js",
     "static/js/2.ef298acf.chunk.js.map": "/static/js/2.ef298acf.chunk.js.map",
     "index.html": "/index.html",
-    "precache-manifest.cdfbacb733c98d141cd848f706789c1e.js": "/precache-manifest.cdfbacb733c98d141cd848f706789c1e.js",
+    "precache-manifest.d73b6e40a11507f9e9c6106e7fab853a.js": "/precache-manifest.d73b6e40a11507f9e9c6106e7fab853a.js",
     "service-worker.js": "/service-worker.js",
     "static/css/main.56f0f70a.chunk.css.map": "/static/css/main.56f0f70a.chunk.css.map",
     "static/media/fonts.css": "/static/media/chinese-rocks-rg.37b9944b.woff",

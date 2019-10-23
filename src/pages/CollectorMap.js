@@ -49,7 +49,17 @@ class CollectorMap extends Component {
             ℹ️
           </span>{" "}
           If the map is not loading, please visit{" "}
-          <a href="https://jeanropke.github.io/RDR2CollectorsMap/">this link</a>{" "}
+          <a
+            href="https://jeanropke.github.io/poggers/"
+            onClick={() => {
+              ReactGA.event({
+                category: "click.map.link",
+                action: "🛑 Click on map resolver"
+              });
+            }}
+          >
+            this link
+          </a>{" "}
           and come back
         </span>
         <div
@@ -87,7 +97,7 @@ class CollectorMap extends Component {
           </button>
 
           <Iframe
-            url="https://jeanropke.github.io/RDR2CollectorsMap?v=x/?utm_source=madamnazar.io"
+            url="https://jeanropke.github.io/poggers?utm_source=madamnazar.io"
             title="Jean Ropke RDR2 Collector Map"
             height={this.state.expandMap === false ? "640px" : "100%"}
             frameBorder="border: 4px solid var(--Armadillo);"
