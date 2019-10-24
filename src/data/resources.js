@@ -35,6 +35,22 @@ export const resources = [
         }
       },
       {
+        title: "RDO Map",
+        description:
+          "An other Interactive Map of all Lootables In Red Dead Online",
+        author: {
+          name: "LawlaffTV",
+          url: "https://twitter.com/LawlaffTV"
+        },
+        url: "https://www.rdomap.com/",
+        onclick: () => {
+          ReactGA.event({
+            category: "click.resources.link",
+            action: "Click RDO Map"
+          });
+        }
+      },
+      {
         title: "Red dead Collector",
         description:
           "This website help you find the elusive Madam Nazar and her hidden treasures in Red Dead Online",
@@ -63,6 +79,22 @@ export const resources = [
           ReactGA.event({
             category: "click.resources.link",
             action: "Click https://www.reddit.com/r/RedDeadDailies"
+          });
+        }
+      },
+      {
+        title: "Red Dead Redemption outage map",
+        description:
+          "Shows on a worldmap if Red dead redemption 2 servers are down",
+        author: {
+          name: "DownDetector",
+          url: "https://downdetector.com/status/red-dead-redemption/map/"
+        },
+        url: "https://downdetector.com/status/red-dead-redemption/map/",
+        onclick: () => {
+          ReactGA.event({
+            category: "click.resources.link",
+            action: "Click DownDetector"
           });
         }
       }
