@@ -12,7 +12,7 @@ export default {
     border-width: 6px;
     background: var(--EcruWhite);
     background: #d2b790;
-    width: 100%;
+    width: calc(100% - 14px);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3),
       0 4px 8px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.3),
       0 16px 32px rgba(0, 0, 0, 0.3), 0 32px 64px rgba(0, 0, 0, 0.3);

@@ -15,6 +15,7 @@ import CollectorMap from "./pages/CollectorMap";
 import About from "./pages/About";
 import Sachel from "./pages/Sachel";
 import Tweet from "./pages/Tweet";
+import Maps from "./pages/Maps";
 import Resources from "./pages/Resources";
 import PatreonModal from "./components/PatreonModal/PatreonModal";
 import Frame from "./components/Frame/Frame";
@@ -445,6 +446,9 @@ class App extends Component {
               </Route>
               <Route path="/map">
                 <CollectorMap parent={this} />
+              </Route>
+              <Route path="/maps">
+                <Maps parent={this} />
               </Route>
               <Route path="/about">
                 <About />
