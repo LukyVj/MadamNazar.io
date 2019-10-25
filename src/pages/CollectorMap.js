@@ -71,7 +71,7 @@ class CollectorMap extends Component {
               top: 90px;
               z-index: 9999999999;
               left: 2px;
-              width: calc(100% - 16px);
+              width: calc(100%);
               height: 82vh;
             `
           }
