@@ -185,7 +185,7 @@ class SimpleMap extends React.Component {
           <TileLayer
             attribution="© madamnazar.io"
             // url="http://jeanropke.github.io/RDR2CollectorsMap/assets/maps/detailed/{z}/{x}_{y}.jpg"
-            url="https://s.rsg.sc/sc/images/games/RDR2/map/game/{z}/{x}/{y}.jpg"
+            url="https://lukyvj.github.io/nazarfinder-images/{z}/{x}_{y}.jpg"
           />
         </Map>
       </div>
