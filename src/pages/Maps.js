@@ -222,7 +222,11 @@ class Maps extends Component {
           </div>
           <ul className="lis-none p-0 d-flex">
             {[
-              { id: "simple", name: "Default", status: 0 },
+              {
+                id: "simple",
+                name: "Default",
+                status: process.env.NODE_ENV === "development" ? 1 : 0
+              },
               { id: "collector", name: "Collector's map", status: 1 },
               { id: "random", name: "Random collectibles", status: 0 },
               { id: "photo", name: "Photos spot", status: 0 },

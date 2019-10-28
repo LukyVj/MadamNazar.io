@@ -27,7 +27,6 @@ export default {
     @media (max-width: 960px) {
       font-size: 1.45em;
       position: fixed;
-      top: 54px;
     }
   `
 };
