@@ -29,6 +29,7 @@ class Tweet extends Component {
       loaded: true,
       imagesReady: this.props.location.image && true
     });
+    ReactGA.pageview("/tweet");
   }
   focusTextInput() {
     this.textInput.current.focus();

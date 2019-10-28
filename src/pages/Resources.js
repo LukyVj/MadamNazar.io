@@ -10,7 +10,9 @@ class Ecosystem extends Component {
     this.state = {};
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    ReactGA.pageview("/resources");
+  }
 
   render() {
     return (

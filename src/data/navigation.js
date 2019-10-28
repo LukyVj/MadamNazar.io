@@ -25,13 +25,13 @@ export const navigation = [
   //     }
   //   },
   {
-    title: "Collectors Map",
+    title: "Maps",
     appLink: true,
-    url: "/map",
+    url: "/maps",
     onclick: () => {
       ReactGA.event({
         category: "click.nav.link",
-        action: "Go to map"
+        action: "Go to maps"
       });
     }
   },
