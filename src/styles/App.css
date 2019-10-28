@@ -9,3 +9,16 @@ body,
   width: 100%;
   height: 100%;
 }
+canvas,
+.heatmap {
+  pointer-events: none;
+}
+
+.leaflet-container {
+  background-color: rgb(213, 182, 142) !important;
+}
+
+[disabled] {
+  opacity: 0.6;
+  order: 1;
+}

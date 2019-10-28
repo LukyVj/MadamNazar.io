@@ -29,7 +29,7 @@ class Frame extends Component {
           styles.root,
           this.props.offsetTop
             ? css`
-                top: 70px;
+                top: 60px;
               `
             : css`
                 top: 0;

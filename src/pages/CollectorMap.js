@@ -5,20 +5,18 @@ import Iframe from "react-iframe";
 import { jsx, css } from "@emotion/core";
 import styles from "./CollectorMap.css";
 
+import Infos from "../components/Infos";
+
 class CollectorMap extends Component {
   constructor(props) {
     super(props);
     this.state = { expandMap: false, iframeUrl: false };
   }
 
-  componentDidMount() {
-    this.props.parent.setState({ currentPage: window.location.pathname });
-  }
-
   render() {
     return (
       <>
-        <h2>
+        <Infos>
           Read dead redemption collectors map from{" "}
           <a
             href="https://twitter.com/_jeanropke"
@@ -31,26 +29,13 @@ class CollectorMap extends Component {
           >
             @JeanRopke
           </a>{" "}
-          :
-        </h2>
-        <span
-          className="mb-16 p-8 d-inline-block"
-          css={css`
-            border-image-slice: 10;
-            border-image-outset: 3px;
-            border-image-source: url(${require("../images/frame.png")});
-            border-style: solid;
-            border-width: 6px;
-            background: rgba(255, 255, 255, 0.3);
-            color: var(--Armadillo);
-          `}
-        >
+          <br />
           <span role="img" aria-label="information icon">
             ℹ️
           </span>{" "}
           If the map is not loading, please visit{" "}
           <a
-            href="https://jeanropke.github.io/poggers?v=1&utm_source=madamnazar.io"
+            href="https://jeanropke.github.io/poggers/?v=1"
             onClick={() => {
               ReactGA.event({
                 category: "click.map.link",
@@ -61,7 +46,7 @@ class CollectorMap extends Component {
             this link
           </a>{" "}
           and come back
-        </span>
+        </Infos>
         <div
           className="pos-relative"
           css={
@@ -71,7 +56,7 @@ class CollectorMap extends Component {
               top: 0;
               z-index: 9999999999;
               left: 2px;
-              width: calc(100%);
+              width: 100%;
               height: 100vh;
             `
           }

@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "15ff0ff7659c4ec28ba2df3fcd3b536c",
+    "revision": "d6c6157920a3f277ac556ba7339f5d43",
     "url": "/index.html"
   },
   {
-    "revision": "0d53cfe10d9eb9453ee2",
-    "url": "/static/css/main.217d60a4.chunk.css"
+    "revision": "e705ac741e2d1461b1d0",
+    "url": "/static/css/main.d21a1a66.chunk.css"
   },
   {
-    "revision": "23aacd3802c3d5724168",
-    "url": "/static/js/2.ef298acf.chunk.js"
+    "revision": "9c66d5869e518a471292",
+    "url": "/static/js/2.c2ae5419.chunk.js"
   },
   {
-    "revision": "0d53cfe10d9eb9453ee2",
-    "url": "/static/js/main.cb025515.chunk.js"
+    "revision": "e705ac741e2d1461b1d0",
+    "url": "/static/js/main.fe140ab1.chunk.js"
   },
   {
     "revision": "90ef1414120681e7723f",
@@ -52,8 +52,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/chinese-rocks-rg.37b9944b.woff"
   },
   {
-    "revision": "a3473617af07611beda787b2897fa119",
-    "url": "/static/media/double_5.a3473617.png"
+    "revision": "e5e5a8badb05f8d2e9622fcf82a8d87e",
+    "url": "/static/media/danger-shadow.e5e5a8ba.png"
   },
   {
     "revision": "30a37219b403938729b76cfd51b9be19",
@@ -62,10 +62,6 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "741b1c275de18d71bb0f584d983055d3",
     "url": "/static/media/hat.741b1c27.png"
-  },
-  {
-    "revision": "ba73996fc4e3748491690cb2f58eb230",
-    "url": "/static/media/metal-detector.ba73996f.png"
   },
   {
     "revision": "27d44777a2fe3aef45bfccc69102b744",
@@ -78,9 +74,5 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "fea53fb6e249670e879998eb9c2a4990",
     "url": "/static/media/sheet.fea53fb6.png"
-  },
-  {
-    "revision": "c3613af9362de768af949e1f4961a739",
-    "url": "/static/media/shovel.c3613af9.png"
   }
 ]);

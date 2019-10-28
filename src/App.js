@@ -2,6 +2,7 @@
 /** @jsx jsx */
 import React, { Component } from "react";
 import ReactGA from "react-ga";
+import { useHistory } from "react-router-dom";
 import { css, jsx } from "@emotion/core";
 import {
   BrowserRouter as Router,
@@ -13,19 +14,17 @@ import {
 import Finder from "./pages/Finder";
 import CollectorMap from "./pages/CollectorMap";
 import About from "./pages/About";
-import Sachel from "./pages/Sachel";
 import Tweet from "./pages/Tweet";
+import Maps from "./pages/Maps";
 import Resources from "./pages/Resources";
 import PatreonModal from "./components/PatreonModal/PatreonModal";
 import Frame from "./components/Frame/Frame";
+import { SupportBanner } from "./components/SupportBanner";
 
 import { docCookies } from "./scripts/cookies";
 import { isOnline, getCycleDay } from "./scripts/helpers";
-import { WEBSITE_NAME } from "./scripts/constants";
 
 import styles from "./styles/globalStyles.css";
-
-import frame from "./images/frame.png";
 
 import { navigation } from "./data/navigation";
 
@@ -70,67 +69,16 @@ const NetworkInfo = () =>
     </>
   );
 
-const SupportBanner = parent => (
-  <div
-    className="pos-fixed pv-16 ta-center d-flex ai-cente jc-center fsz-12 md:fsz-16"
-    css={css`
-      top: 84px;
-      background: url("${require("./images/rockstar-rdr2-banner.png")}") repeat center center /
-        800px;
-      width: 100%;
-      left: 0;
-      color: white;
-      z-index: 999;
-      top: 0;
-      
-    border-color: #2e2e2e;
-    border-image-repeat: all;
-    border-image-slice: 14;
-    border-image-outset: 3px;
-    border-image-source: url(${frame});
-    border-style: solid;
-    border-width: 6px 0;
-  
-    `}
-  >
-    <div className="maw-600 pos-relative m-auto">
-      {" "}
-      <span
-        className="cursor-pointer"
-        css={css`
-          color: white;
-          text-decoration: none;
-        `}
-        onClick={() => {
-          parent.parent.setState({ showPatreonAbout: true, patreonAd: false });
-        }}
-      >
-        <span role="img" aria-label="emoji pink double hearts">
-          💕
-        </span>{" "}
-        <b>Support {WEBSITE_NAME}! Click to learn more</b> 
-        <span role="img" aria-label="emoji pink double hearts">
-          💕
-        </span>{" "}
-      </span>
-      <span>
-        <button
-          className="app-none bdw-0 bgc-transparent p-0 m-0 va-middle cursor-pointer"
-          onClick={() => {
-            docCookies.setItem("patreon-ad", "false", 999);
-            parent.parent.setState({ updated: true, patreonAd: false });
-          }}
-        >
-          <img
-            src={require("./images/cancel-icon.svg")}
-            className="va-middle"
-            alt="close icon"
-          />
-        </button>
-      </span>
-    </div>
-  </div>
-);
+const URLHandler = props => {
+  let history = useHistory();
+  const url = new URL(window.location.href);
+  if (url.searchParams.get("page")) {
+    props.parent.setState({ reqUrl: url.searchParams.get("page") });
+    history.push(`/${props.parent.state.reqUrl}`);
+  }
+
+  return null;
+};
 
 class App extends Component {
   constructor(props) {
@@ -227,6 +175,7 @@ class App extends Component {
 
     return (
       <Router>
+        <URLHandler parent={this} />
         <div
           className="App"
           css={css`
@@ -446,14 +395,13 @@ class App extends Component {
               <Route path="/map">
                 <CollectorMap parent={this} />
               </Route>
+              <Route path="/maps">
+                <Maps parent={this} />
+              </Route>
               <Route path="/about">
                 <About />
               </Route>
-              <Route path="/sachel">
-                {dataExists && (
-                  <Sachel parent={this} cycle={this.state.cycle} />
-                )}
-              </Route>
+
               <Route path="/tweet">
                 {dataExists && (
                   <Tweet

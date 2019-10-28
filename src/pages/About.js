@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { css, jsx } from "@emotion/core";
 import ReactGA from "react-ga";
+import { css, jsx } from "@emotion/core";
 import {
   WEBSITE_NAME,
   PATREON_URL,
@@ -14,7 +14,9 @@ class About extends Component {
     this.state = {};
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    ReactGA.pageview("/about");
+  }
 
   render() {
     return (

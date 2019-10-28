@@ -19,13 +19,15 @@ export default {
     color: white;
     -webkit-font-smoothing: antialiased;
     background: url(${blueBg});
-    position: fixed;
+    position: absolute;
     left: 0;
     font-size: 2em;
     z-index: 10;
 
     @media (max-width: 960px) {
       font-size: 1.45em;
+      position: fixed;
+      top: 54px;
     }
   `
 };
