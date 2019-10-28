@@ -268,22 +268,22 @@ class Maps extends Component {
             ))}
           </ul>
           {this.state.selectedMap === "simple" && (
-            <div className="w-100p top-200 left-0 right-0 m-auto z-5">
+            <div className="w-100p top-200 left-0 right-0 m-auto z-4">
               <SimpleMap data={hideouts} parent={this} map="simple" />
             </div>
           )}
           {this.state.selectedMap === "photo" && (
-            <div className="w-100p top-200 left-0 right-0 m-auto z-5">
+            <div className="w-100p top-200 left-0 right-0 m-auto z-4">
               <SimpleMap data={hideouts} parent={this} map="photo" />
             </div>
           )}
           {this.state.selectedMap === "random" && (
-            <div className="w-100p top-200 left-0 right-0 m-auto z-5">
+            <div className="w-100p top-200 left-0 right-0 m-auto z-4">
               <SimpleMap data={hideouts} parent={this} map="random" />
             </div>
           )}
           {this.state.selectedMap === "curiosities" && (
-            <div className="w-100p top-200 left-0 right-0 m-auto z-5">
+            <div className="w-100p top-200 left-0 right-0 m-auto z-4">
               <SimpleMap data={curiosities} parent={this} map="curiosities" />
             </div>
           )}
@@ -293,14 +293,14 @@ class Maps extends Component {
                 If there is some missing hideouts, please contact me on twitter
                 using the link on the navigation
               </Infos>
-              <div className="w-100p top-200 left-0 right-0 m-auto z-5">
+              <div className="w-100p top-200 left-0 right-0 m-auto z-4">
                 <SimpleMap data={hideouts} parent={this} map="hideouts" />
               </div>
             </>
           )}
 
           {this.state.selectedMap === "collector" && (
-            <div className="w-100p top-200 left-0 right-0 m-auto z-5">
+            <div className="w-100p top-200 left-0 right-0 m-auto z-4">
               <CollectorMap parent={this} />
             </div>
           )}
