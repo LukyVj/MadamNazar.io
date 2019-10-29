@@ -1,5 +1,5 @@
 import ReactGA from "react-ga";
-import { TWITTER_URL } from "../scripts/constants";
+import { TWITTER_URL, DISCORD_URL } from "../scripts/constants";
 
 export const navigation = [
   {
@@ -89,6 +89,18 @@ export const navigation = [
       ReactGA.event({
         category: "click.nav.link",
         action: "Click Contact link (twitter)"
+      });
+    }
+  },
+  {
+    title: "Discord",
+    target: "_blank",
+    rel: "noreferrer noopener",
+    url: DISCORD_URL,
+    onclick: () => {
+      ReactGA.event({
+        category: "click.nav.link",
+        action: "Click Discord link"
       });
     }
   }
