@@ -83,6 +83,61 @@ const hideouts = [
     name: "willard's rest",
     lat: 79.81187718411466,
     lng: 41.94203935873498
+  },
+  {
+    name: "Manteca Falls",
+    lat: 30.32902735042595,
+    lng: -55.54687500000001
+  },
+  {
+    name: "South of tall trees",
+    lat: 44.47152122299265,
+    lng: -68.90625000000001
+  },
+  {
+    name: "Hennigan Stead",
+    lat: 36.251472021249235,
+    lng: -82.85888671875001
+  },
+  {
+    name: "Gaptooth Ridge",
+    lat: 29.481298237025918,
+    lng: -151.43923759460452
+  },
+  {
+    name: "South east of Bolger Glade",
+    lat: 44.21487875171158,
+    lng: 18.17619323730469
+  },
+  {
+    name: "Cumberland Forest",
+    lat: 75.39236881734969,
+    lng: -24.978103637695316
+  },
+  {
+    name: "Kamassa River, New Hanover",
+    lat: 69.1693348483684,
+    lng: 29.93233680725098
+  },
+  {
+    name: "Kamassa River, Bayou Nwa",
+    lat: 58.70378868759623,
+    lng: 12.095861434936523
+  },
+  {
+    name: "Kamassa River, Bluewater Marsh",
+    lat: 66.99441633120212,
+    lng: 31.855545043945316
+  },
+  {
+    name: "Upper Montana River, West Elizabeth",
+    lat: 57.50051551654672,
+    lng: -57.74688720703126
+  },
+  {
+    name: "South of Cumberland forest",
+    lat: 73.91348142950415,
+    lng: -19.04265403747559
   }
 ];
 

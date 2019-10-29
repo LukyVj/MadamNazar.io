@@ -143,5 +143,26 @@ export const resources = [
         }
       }
     ]
+  },
+  {
+    type: "Other",
+    content: [
+      {
+        title: "Madam Nazar for Alexa",
+        description:
+          "This unofficial skill will describe today's wherabouts of the character Madam Nazar in Red Dead Redemption 2.",
+        author: {
+          name: "Pete Gunter",
+          url: "https://twitter.com/Guntereno"
+        },
+        url: "https://www.amazon.co.uk/dp/B07ZNXBD9M",
+        onclick: () => {
+          ReactGA.event({
+            category: "click.resources.link",
+            action: "Click Alexa skill"
+          });
+        }
+      }
+    ]
   }
 ];

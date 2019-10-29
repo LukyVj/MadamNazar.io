@@ -28,12 +28,12 @@ class Ecosystem extends Component {
             top: 80px;
           `}
         >
-          <section className="d-grid md:g-3">
+          <section className="d-grid g-2 md:g-2 lg:g-4">
             {resources.map(resource => (
               <div className="p-8">
                 <div>
                   <h3
-                    className="p-0 m-0 mb-32 label pv-16 ta-center"
+                    className="p-0 m-0 mb-32 label pv-8 ta-center"
                     css={css`
                       background: url(${require("../images/button-bg.png")})
                         no-repeat center left / 100%;

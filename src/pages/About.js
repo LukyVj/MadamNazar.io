@@ -168,6 +168,22 @@ class About extends Component {
           Redemption 2 Tintype Loading Screen Effect in CSS"
         </p>
 
+        <h2>Contributors:</h2>
+        <p>Special thanks to all these amazing contributors</p>
+        <ul>
+          {["@Noha69980668", "SethStar16T"].map(contributor => (
+            <li key={contributor}>
+              <a
+                href={`https://twitter.com/${contributor}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {contributor}
+              </a>
+            </li>
+          ))}
+        </ul>
+
         <h2>Donations are welcome!</h2>
         <p>
           You can support us on{" "}

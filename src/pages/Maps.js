@@ -186,6 +186,7 @@ class SimpleMap extends React.Component {
             attribution="© madamnazar.io"
             // url="http://jeanropke.github.io/RDR2CollectorsMap/assets/maps/detailed/{z}/{x}_{y}.jpg"
             url="https://lukyvj.github.io/nazarfinder-images/{z}/{x}_{y}.jpg"
+            // url="https://lukyvj.github.io/fortnite-maps/0/{z}-{x}-{y}.jpg?v=99"
           />
         </Map>
       </div>
@@ -296,6 +297,22 @@ class Maps extends Component {
               </Infos>
               <div className="w-100p top-200 left-0 right-0 m-auto z-4">
                 <SimpleMap data={hideouts} parent={this} map="hideouts" />
+              </div>
+              <div>
+                <p>Thanks to these awesome contributors:</p>
+                <ul>
+                  {["@Noha69980668", "SethStar16T"].map(contributor => (
+                    <li key={contributor}>
+                      <a
+                        href={`https://twitter.com/${contributor}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {contributor}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </>
           )}
