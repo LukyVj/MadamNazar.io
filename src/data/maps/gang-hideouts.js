@@ -85,7 +85,7 @@ const hideouts = [
     lng: 41.94203935873498
   },
   {
-    name: "Manteca Falls",
+    name: "North of Manteca Falls",
     lat: 30.32902735042595,
     lng: -55.54687500000001
   },
@@ -138,6 +138,11 @@ const hideouts = [
     name: "South of Cumberland forest",
     lat: 73.91348142950415,
     lng: -19.04265403747559
+  },
+  {
+    name: "Manteca Falls",
+    lat: 28.304380682962783,
+    lng: -59.76562500000001
   }
 ];
 

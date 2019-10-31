@@ -82,3 +82,8 @@ export const formatDateTweet = date => {
 
   return newDate.substring(0, newDate.length - 5);
 };
+
+export const maxAgeToGMT = nMaxAge =>
+  nMaxAge === Infinity
+    ? "Fri, 31 Dec 9999 23:59:59 GMT"
+    : new Date(nMaxAge * 1e3 + Date.now()).toUTCString();

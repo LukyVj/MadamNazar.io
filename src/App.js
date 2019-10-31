@@ -22,7 +22,7 @@ import Frame from "./components/Frame/Frame";
 import { SupportBanner } from "./components/SupportBanner";
 
 import { docCookies } from "./scripts/cookies";
-import { isOnline, getCycleDay } from "./scripts/helpers";
+import { isOnline, getCycleDay, maxAgeToGMT } from "./scripts/helpers";
 
 import styles from "./styles/globalStyles.css";
 
@@ -89,7 +89,6 @@ class App extends Component {
       navOpen: false,
       readableDate: todayDate,
       cycle: getCycleDay(todayDate),
-      showPatreonBanner: true,
       currentPage:
         window.location.pathname === "/" ? "/home" : window.location.pathname
     };
@@ -137,20 +136,23 @@ class App extends Component {
     docCookies.setItem("removed-items", "a;b");
     docCookies.setItem("removed-markers-daily", "true");
     docCookies.setItem("removed-markers-daily", "true");
-    if (
-      !docCookies.getItem("patreon-ad") &&
-      docCookies.getItem("patreon-ad") !== "false"
-    ) {
-      document.cookie = "patreon-ad=true";
+    // if (
+    //   !docCookies.getItem("patreon-ad") &&
+    //   docCookies.getItem("patreon-ad") !== "false"
+    // ) {
+    //   document.cookie = "patreon-ad=true";
+    // }
+
+    if (!docCookies.getItem("patreon-ad")) {
+      docCookies.setItem("patreon-ad", "true", maxAgeToGMT(150));
+    } else {
     }
 
-    const e = document.cookie
-      .split(";")
-      .find(cookie => cookie === " patreon-ad=true");
-
     docCookies.getItem("patreon-ad") === "true"
-      ? this.setState({ patreonAd: true })
-      : this.setState({ patreonAd: false });
+      ? this.setState({ showPatreonAd: true })
+      : docCookies.getItem("patreon-ad") === "false"
+      ? this.setState({ showPatreonAd: false })
+      : this.setState({ updated: true });
 
     if (this.state.env === "production") {
       ReactGA.initialize("UA-148400737-1");
@@ -195,7 +197,7 @@ class App extends Component {
           <Frame
             day={this.state.readableDate}
             cycle={this.state.cycle}
-            offsetTop={this.state.patreonAd}
+            offsetTop={this.state.showPatreonAd}
           />
 
           <header
@@ -203,7 +205,9 @@ class App extends Component {
             css={css`
               height: auto;
               padding-bottom: 2em;
-              padding-top: ${this.state.patreonAd === true ? "160px" : "100px"};
+              padding-top: ${this.state.showPatreonAd === true
+                ? "160px"
+                : "100px"};
               text-align: center;
               position: relative;
               &:after {
@@ -217,7 +221,9 @@ class App extends Component {
               }
             `}
           >
-            {this.state.patreonAd === true && <SupportBanner parent={this} />}
+            {this.state.showPatreonAd === true && (
+              <SupportBanner parent={this} />
+            )}
 
             <div
               className="d-flex ai-center jc-center md:d-none pos-fixed top-48 right-0 m-16 p-8 cu-pointer"
@@ -235,7 +241,7 @@ class App extends Component {
                 right: 0;
                 max-width: 100px;
                 margin: auto;
-                top: ${this.state.patreonAd === true ? "70px" : "12px"};
+                top: ${this.state.showPatreonAd === true ? "70px" : "12px"};
 
                 button {
                   font-weight: bold;

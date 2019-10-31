@@ -7,6 +7,8 @@ import styles from "./CollectorMap.css";
 
 import Infos from "../components/Infos";
 
+import { COLLECTOR_MAP_URL } from "../scripts/constants";
+
 class CollectorMap extends Component {
   constructor(props) {
     super(props);
@@ -35,7 +37,7 @@ class CollectorMap extends Component {
           </span>{" "}
           If the map is not loading, please visit{" "}
           <a
-            href="https://jeanropke.github.io/poggers/?v=1"
+            href={COLLECTOR_MAP_URL}
             onClick={() => {
               ReactGA.event({
                 category: "click.map.link",
@@ -72,7 +74,7 @@ class CollectorMap extends Component {
               background: rgba(0, 0, 0, 0.8);
               padding: 1em;
               font-size: 16px;
-              border-radius: 100px;
+              border-radius: 4px;
               color: white;
               z-index: 99999999999;
               cursor: pointer;
@@ -82,9 +84,9 @@ class CollectorMap extends Component {
           </button>
 
           <Iframe
-            url="https://jeanropke.github.io/poggers?v=1&utm_source=madamnazar.io"
+            url={`${COLLECTOR_MAP_URL}&utm_source=madamnazar.io`}
             title="Jean Ropke RDR2 Collector Map"
-            height={this.state.expandMap === false ? "640px" : "100%"}
+            height={this.state.expandMap === false ? 700 : "100%"}
             frameBorder="border: 4px solid var(--Armadillo);"
             id="myId"
             display="initial"

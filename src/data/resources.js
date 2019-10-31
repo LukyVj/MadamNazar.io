@@ -119,6 +119,22 @@ export const resources = [
               "Click https://www.youtube.com/channel/UCeaZMXEpCzrzOXVtAyIl49A/videos"
           });
         }
+      },
+      {
+        title: "GTA Series Videos ",
+        description:
+          "Daily videos on the GTASeries video channel, contains a lot of daily videos about red dead redemption 2",
+        author: {
+          name: "GTASeriesVideos",
+          url: "https://www.youtube.com/user/GTASeriesVideos/about"
+        },
+        url: "https://www.youtube.com/user/GTASeriesVideos/videos",
+        onclick: () => {
+          ReactGA.event({
+            category: "click.resources.link",
+            action: "Click on GTASeries"
+          });
+        }
       }
     ]
   },

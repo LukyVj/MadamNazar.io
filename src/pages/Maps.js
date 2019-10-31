@@ -14,6 +14,8 @@ import mapStyles from "../pages/CollectorMap.css";
 import hideouts from "../data/maps/gang-hideouts";
 import curiosities from "../data/maps/curiosities";
 
+import { JSON_COLLECTOR_ITEMS_URL } from "../scripts/constants";
+
 const styles = {
   button: css`
     background: rgba(0, 0, 0, 0.78);
@@ -22,12 +24,11 @@ const styles = {
     padding: 10px 20px;
     border-radius: 4px;
     text-decoration: none;
-    margin-right: 16px;
     cursor: pointer;
     display: block;
-    margin-right: 8px;
     text-align: center;
     border: none;
+    width: 100%;
 
     &:hover {
       background: var(--Tabasco);
@@ -38,32 +39,153 @@ const styles = {
   `
 };
 
+const SimpleMapNavigation = ({ parent }) => {
+  return (
+    <ul
+      className="pos-absolute h-100p top-0 right-0 ta-right lis-none p-0 pv-8 m-0 d-flex fxd-column jc-start"
+      css={css`
+        z-index: 999;
+        width: 200px;
+      `}
+    >
+      <li className="fx-1">
+        <span
+          className="d-flex fxd-row"
+          css={css`
+            button {
+              appearance: none;
+              border: none;
+              border-radius: 4px;
+              background: rgba(0, 0, 0, 0.8);
+              color: white;
+              font-size: 16px;
+
+              &[disabled] {
+                opacity: 0.5;
+                pointer-events: none;
+              }
+            }
+
+            button:nth-of-type(1) {
+              border-top-right-radius: 0;
+              border-bottom-right-radius: 0;
+            }
+            button:nth-of-type(2) {
+              border-top-left-radius: 0;
+              border-bottom-left-radius: 0;
+            }
+          `}
+        >
+          <button
+            onClick={parent.zoomOut}
+            disabled={parent.state.currentZoom === parent.state.minZoom}
+            className={`pv-8 ph-16 d-inline-block fx-6 cursor-pointer`}
+          >
+            -
+          </button>
+          <button
+            onClick={parent.zoomIn}
+            disabled={parent.state.currentZoom === parent.state.maxZoom}
+            className={`pv-8 ph-16 d-inline-block fx-6 cursor-pointer `}
+          >
+            +
+          </button>
+        </span>
+      </li>
+      <li className="fx-1">
+        <button
+          onClick={() =>
+            parent.setState({
+              heatMapOn: !parent.state.heatMapOn,
+              currentZoom: 2
+            })
+          }
+          css={styles.button}
+        >
+          {parent.state.heatMapOn ? "remove heatmap" : "Add heatmap"}
+        </button>
+      </li>
+      <li className="fx-1">
+        <button
+          onClick={() =>
+            parent.setState({ markersOn: !parent.state.markersOn })
+          }
+          css={styles.button}
+        >
+          {parent.state.markersOn ? "remove markers" : "Add markers"}
+        </button>
+      </li>
+      <li className="fx-1">
+        <button
+          onClick={() =>
+            parent.setState({
+              mapExpanded: !parent.state.mapExpanded,
+              currentZoom: 4
+            })
+          }
+          className="pos-absolute"
+          css={styles.button}
+        >
+          {parent.state.mapExpanded ? "Reduce map" : "Expand map"}
+        </button>
+      </li>
+    </ul>
+  );
+};
+
 class SimpleMap extends React.Component {
   constructor() {
     super();
     this.state = {
       lat: 51.0,
       lng: 0.0,
-      zoom: 7,
+      zoom: 3,
+      minZoom: 2,
+      maxZoom: 7,
+      currentZoom: 3,
       mapHidden: false,
       layerHidden: false,
-      radius: 7,
-      blur: 10,
+      radius: 10,
+      blur: 12,
       max: 0.6,
       limitAddressPoints: true,
       currentPos: null,
       heatMapOn: false,
-      markersOn: true
+      markersOn: true,
+      mapExpanded: false
     };
     this.handleClick = this.handleClick.bind(this);
+
+    this.zoomIn = () =>
+      this.setState({
+        currentZoom: this.state.currentZoom + 1,
+        radius: this.state.radius
+      });
+    this.zoomOut = () =>
+      this.setState({
+        currentZoom: this.state.currentZoom - 1,
+        radius: this.state.radius
+      });
   }
 
   handleClick(e) {
     this.setState({ currentPos: e.latlng });
+    console.log(this.state);
+  }
+
+  handleZoomstart = map => {
+    this.map && this.setState({ currentZoom: this.map.leafletElement._zoom });
+  };
+
+  getBounds = () => this.map && this.map.leafletElement.getBounds();
+  fitBounds = () =>
+    this.map && this.map.leafletElement.fitBounds([this.getBounds()]);
+
+  componentDidMount() {
+    this.handleZoomstart();
   }
 
   render() {
-    console.log(this.props);
     const gradient = {
       0.1: "#89BDE0",
       0.2: "#96E3E6",
@@ -92,56 +214,49 @@ class SimpleMap extends React.Component {
     });
 
     return (
-      <div css={mapStyles.iframe} className="pos-relative">
-        <button
-          onClick={() =>
-            this.setState({
-              heatMapOn: !this.state.heatMapOn,
-              markersOn: false
-            })
-          }
-          className="pos-absolute"
-          css={[
+      <div
+        css={[
+          mapStyles.iframe,
+          this.state.mapExpanded === true &&
             css`
-              z-index: 9000;
-              top: 16px;
-              right: 16px;
-            `,
-            styles.button
-          ]}
-        >
-          {this.state.heatMapOn ? "remove heatmap" : "Add heatmap"}
-        </button>
-
-        <button
-          onClick={() => this.setState({ markersOn: !this.state.markersOn })}
-          className="pos-absolute"
-          css={[
-            css`
-              z-index: 9000;
-              top: 64px;
-              right: 16px;
-            `,
-            styles.button
-          ]}
-        >
-          {this.state.markersOn ? "remove markers" : "Add markers"}
-        </button>
+              position: fixed;
+              top: 0;
+              z-index: 9999999999;
+              left: 2px;
+              width: 100%;
+              height: 100vh;
+            `
+        ]}
+        className="pos-relative"
+      >
+        <SimpleMapNavigation parent={this} />
         <Map
           center={[40, -60]}
-          zoom={4}
-          minZoom={2}
-          maxZoom={8}
+          zoom={this.state.currentZoom}
+          minZoom={this.state.minZoom}
+          maxZoom={this.state.maxZoom}
+          noWrap={true}
+          bounds={this.getBounds()}
+          boundsOptions={{ padding: [1, 1] }}
+          // maxBounds={[
+          //   [-17.476432197195518, -140.44921875000003],
+          //   [71.91088787611528, 20.566406250000004]
+          // ]}
+          boxZoom={true}
+          zoomControl={false}
           gradient={gradient}
-          style={{ height: 700 }}
+          style={{ height: this.state.mapExpanded === false ? 700 : "100%" }}
           dragging={true}
           detectRetina={true}
           onClick={this.handleClick}
+          ref={ref => {
+            this.map = ref;
+          }}
         >
           {this.state.markersOn &&
             this.props.data.map(it => (
               <Marker
-                position={[it.lat, it.lng]}
+                position={it.x && it.y ? [it.x, it.y] : [it.lat, it.lng]}
                 key={it.name}
                 icon={
                   this.props.map === "hideouts" ? hideoutMarker : normalMarker
@@ -182,6 +297,7 @@ class SimpleMap extends React.Component {
               max={Number.parseFloat(this.state.max)}
             />
           )}
+
           <TileLayer
             attribution="© madamnazar.io"
             // url="http://jeanropke.github.io/RDR2CollectorsMap/assets/maps/detailed/{z}/{x}_{y}.jpg"
@@ -197,7 +313,7 @@ class SimpleMap extends React.Component {
 class Maps extends Component {
   constructor(props) {
     super(props);
-    this.state = { selectedMap: "collector" };
+    this.state = { selectedMap: "collector", collectorUpdated: false };
   }
 
   componentDidMount() {
@@ -205,6 +321,11 @@ class Maps extends Component {
       currentPage: window.location.pathname
     });
     ReactGA.pageview("/maps");
+
+    fetch(JSON_COLLECTOR_ITEMS_URL)
+      .then(response => response.json())
+      .then(data => this.setState({ collector: data, collectorUpdated: true }))
+      .then(() => console.log(this.state));
   }
 
   render() {
@@ -236,7 +357,7 @@ class Maps extends Component {
               { id: "hideouts", name: "Gang hideouts", status: 1 }
             ].map(map => (
               <li
-                className="d-inline-block"
+                className="d-inline-block pr-8"
                 key={map.id}
                 disabled={map.status === 0 && "disabled"}
                 css={
@@ -271,7 +392,11 @@ class Maps extends Component {
           </ul>
           {this.state.selectedMap === "simple" && (
             <div className="w-100p top-200 left-0 right-0 m-auto z-4">
-              <SimpleMap data={hideouts} parent={this} map="simple" />
+              <SimpleMap
+                data={this.state.collectorUpdated && this.state.collector}
+                parent={this}
+                map="simple"
+              />
             </div>
           )}
           {this.state.selectedMap === "photo" && (

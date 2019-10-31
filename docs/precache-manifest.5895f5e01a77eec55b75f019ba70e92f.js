@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "4a0e32ccd7c9033feda56606ae9d1b4b",
+    "revision": "e2227bd2b8890741122a04c3348a552e",
     "url": "/index.html"
   },
   {
-    "revision": "0fba3957a135ddcac69f",
-    "url": "/static/css/main.d21a1a66.chunk.css"
+    "revision": "bb32fe2031f4fd11f71e",
+    "url": "/static/css/main.97de3827.chunk.css"
   },
   {
-    "revision": "9c66d5869e518a471292",
-    "url": "/static/js/2.c2ae5419.chunk.js"
+    "revision": "d563a57ba0db1b263cb9",
+    "url": "/static/js/2.100481da.chunk.js"
   },
   {
-    "revision": "0fba3957a135ddcac69f",
-    "url": "/static/js/main.c2639e84.chunk.js"
+    "revision": "bb32fe2031f4fd11f71e",
+    "url": "/static/js/main.7d9a6189.chunk.js"
   },
   {
     "revision": "90ef1414120681e7723f",
@@ -52,12 +52,16 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/static/media/chinese-rocks-rg.37b9944b.woff"
   },
   {
-    "revision": "e5e5a8badb05f8d2e9622fcf82a8d87e",
-    "url": "/static/media/danger-shadow.e5e5a8ba.png"
+    "revision": "47412ca2179d6394da2d577f6c09ce01",
+    "url": "/static/media/danger-shadow.47412ca2.png"
   },
   {
     "revision": "30a37219b403938729b76cfd51b9be19",
     "url": "/static/media/frame.30a37219.png"
+  },
+  {
+    "revision": "9b172bdc86ef255ab73899d636889c59",
+    "url": "/static/media/gtabase_com_logo_red.9b172bdc.png"
   },
   {
     "revision": "741b1c275de18d71bb0f584d983055d3",

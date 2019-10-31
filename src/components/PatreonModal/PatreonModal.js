@@ -8,6 +8,8 @@ import {
   TWITTER_URL,
   TWITTER_NAME
 } from "../../scripts/constants";
+import { docCookies } from "../../scripts/cookies";
+import { maxAgeToGMT } from "../../scripts/helpers";
 import frame from "../../images/frame.png";
 
 const styles = {
@@ -52,7 +54,7 @@ const styles = {
   `
 };
 
-const PatreonModal = parent => (
+const PatreonModal = ({ parent }) => (
   <div
     className="pos-fixed top-120 left-0 right-0 m-auto maw-600 p-24 bxs-default bdr-6"
     css={[styles.root, styles.border]}
@@ -140,7 +142,11 @@ const PatreonModal = parent => (
     <button
       css={styles.button}
       onClick={() => {
-        parent.parent.setState({ showPatreonAbout: false });
+        docCookies.setItem("patreon-ad", "false", maxAgeToGMT(150));
+        parent.setState({
+          showPatreonAbout: false,
+          showPatreonAd: false
+        });
 
         ReactGA.event({
           category: "click.patreon.modal.button",

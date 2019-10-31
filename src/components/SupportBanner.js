@@ -5,9 +5,10 @@ import { css, jsx } from "@emotion/core";
 
 import { docCookies } from "../scripts/cookies";
 import { WEBSITE_NAME } from "../scripts/constants";
+import { maxAgeToGMT } from "../scripts/helpers";
 import frame from "../images/frame.png";
 
-export const SupportBanner = parent => (
+export const SupportBanner = ({ parent }) => (
   <div
     className=" pv-8 ta-center d-flex ai-cente jc-center fsz-12 md:fsz-16"
     css={css`
@@ -44,7 +45,10 @@ export const SupportBanner = parent => (
           text-decoration: none;
         `}
         onClick={() => {
-          parent.parent.setState({ showPatreonAbout: true, patreonAd: false });
+          parent.setState({
+            showPatreonAbout: true,
+            showPatreonAd: false
+          });
         }}
       >
         <span role="img" aria-label="emoji pink double hearts">
@@ -59,8 +63,11 @@ export const SupportBanner = parent => (
         <button
           className="app-none bdw-0 bgc-transparent p-0 m-0 va-middle cursor-pointer"
           onClick={() => {
-            docCookies.setItem("patreon-ad", false, 999);
-            parent.parent.setState({ updated: true, patreonAd: false });
+            parent.setState({
+              showPatreonAd: false,
+              showPatreonAbout: false
+            });
+            docCookies.setItem("patreon-ad", "false", maxAgeToGMT(150));
           }}
         >
           <img
