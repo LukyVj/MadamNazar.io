@@ -1,10 +1,11 @@
 /** @jsx jsx */
 import React, { Component } from "react";
 import { jsx } from "@emotion/core";
-import styles from "./Tweet.css";
+import ReactGA from "react-ga";
 
 import { capitalize, formatDateTweet } from "../scripts/helpers";
-import ReactGA from "react-ga";
+import styles from "./Tweet.css";
+import Infos from "../components/Infos";
 
 class Tweet extends Component {
   constructor(props) {
@@ -39,7 +40,7 @@ class Tweet extends Component {
   }
   render() {
     return (
-      <div>
+      <Infos>
         <h2 className="ta-center mt-48">
           Help your Twitter followers to find Madam Nazar
         </h2>
@@ -161,7 +162,7 @@ class Tweet extends Component {
             </a>
           </div>
         </div>
-      </div>
+      </Infos>
     );
   }
 }

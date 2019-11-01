@@ -15,6 +15,16 @@ const config = {
     xxl: "1920px"
   },
   // Define your brand colors and any others you might want to reuse across your project
+  colors: {
+    white: "white",
+    black: "black",
+    Twine: " #c79f6f",
+    Armadillo: "#36322a",
+    OldTown: "rgb(82, 42, 10)",
+    EcruWhite: "#f4efe5",
+    CuttySark: "#5c7775",
+    Tabasco: "#ad1c18"
+  },
 
   // Spacing is used mainly for paddings and margins
   spacing: {
@@ -270,6 +280,7 @@ module.exports = {
           2: "repeat(2, 6fr)",
           3: "repeat(3, 4fr)",
           4: "repeat(4, 3fr)",
+          5: "repeat(5, 1fr)",
           6: "repeat(6, 2fr)",
           12: "repeat(12, 1fr)",
           "1-11": "1fr 11fr",

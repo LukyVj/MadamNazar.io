@@ -24,22 +24,46 @@ class Frame extends Component {
 
   render() {
     return (
-      <div
-        css={[
-          styles.root,
-          this.props.offsetTop
-            ? css`
-                top: 54px;
-              `
-            : css`
-                top: 0;
-              `
-        ]}
-        className="p-16"
-      >
-        <div className="maw-1200 m-auto d-grid g-2 ">
-          <h4 className="m-0 p-0 ta-left">{this.state.day}</h4>
-          <h4 className="m-0 p-0 ta-right"> Cycle {this.state.cycle}</h4>
+      <div css={[styles.root]} className="p-16">
+        <div className="maw-1200 m-auto d-flex ai-center jc-between md:jc-center fxw-wrap md:fxw-nowrap">
+          <h4
+            className="m-0 p-0 ta-left"
+            css={css`
+              order: 1;
+              @media (max-width: 960px) {
+                order: 2;
+              }
+            `}
+          >
+            {this.state.day}
+          </h4>
+          <div
+            className="fx-12 md:fx-8 mb-16 md:mb-0"
+            css={css`
+              order: 1;
+            `}
+          >
+            <h1 className="p-0 m-0 pos-relative ph-8">
+              <a href="/" className="td-none color-current">
+                MadamNazar.io
+              </a>
+            </h1>
+            <p className="d-none md:d-block  label p-0 m-0">
+              Resources for Red dead redemption online
+            </p>
+          </div>
+          <h4
+            className="m-0 p-0 ta-right"
+            css={css`
+              order: 1;
+              @media (max-width: 960px) {
+                order: 2;
+              }
+            `}
+          >
+            {" "}
+            Cycle {this.state.cycle}
+          </h4>
         </div>
       </div>
     );

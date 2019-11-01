@@ -52,7 +52,6 @@ body:before {
   display: block;
   position: fixed;
   left: 0;
-  top: 100px;
   width: 100%;
   height: 100%;
   background: url("../images/nazarBg.png"), url("../images/bgMainSml.jpg");
@@ -73,7 +72,6 @@ body:before {
 h1,
 h2,
 nav,
-footer a,
 .information {
   font-family: "RDRrocks-sg";
 }
@@ -114,6 +112,38 @@ p {
   padding: 12px 0 12px 0;
 }
 
-a {
+a:not([class*="color-"]) {
   color: var(--Tabasco);
+}
+
+@keyframes cardDetailsAnim {
+  20% {
+    -webkit-transform: perspective(400px) rotate3d(1, 0.5, 0, -30deg) scale(0.8);
+    transform: perspective(400px) rotate3d(1, 0.5, 0, -30deg) scale(0.8);
+    -webkit-transition-timing-function: ease-in;
+    transition-timing-function: ease-in;
+    box-shadow: 0 5px 15px 0 rgba(37, 44, 97, 0),
+      0 2px 4px 0 rgba(93, 100, 148, 0);
+  }
+
+  40% {
+    -webkit-transform: perspective(400px) rotate3d(1, 0.5, 0, 8deg) scale(0.8);
+    transform: perspective(400px) rotate3d(1, 0.5, 0, 8deg) scale(0.8);
+    box-shadow: 0 5px 15px 0 rgba(37, 44, 97, 0),
+      0 2px 4px 0 rgba(93, 100, 148, 0);
+  }
+
+  60% {
+    -webkit-transform: perspective(400px) rotate3d(1, 0.5, 0, -4deg) scale(1);
+    transform: perspective(400px) rotate3d(1, 0.5, 0, -4deg) scale(1);
+    box-shadow: 0 5px 15px 0 rgba(37, 44, 97, 0),
+      0 2px 4px 0 rgba(93, 100, 148, 0);
+  }
+
+  80% {
+    -webkit-transform: perspective(400px) rotate3d(1, 0.5, 0, 2deg) scale(1);
+    transform: perspective(400px) rotate3d(1, 0.5, 0, 2deg) scale(1);
+    box-shadow: 0 5px 15px 0 rgba(37, 44, 97, 0.15),
+      0 2px 4px 0 rgba(93, 100, 148, 0.2);
+  }
 }

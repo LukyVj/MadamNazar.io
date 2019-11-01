@@ -135,6 +135,22 @@ export const resources = [
             action: "Click on GTASeries"
           });
         }
+      },
+      {
+        title: "Dirty Tyler Videos ",
+        description:
+          "Regular red dead redemption videos, showing special bounty hunts, Madam Nazar location and other collections related videos",
+        author: {
+          name: "Dirty Tyler",
+          url: "https://www.youtube.com/channel/UC3LdKFizyou1RfkkmDUUVsg/about"
+        },
+        url: "https://www.youtube.com/channel/UC3LdKFizyou1RfkkmDUUVsg/videos",
+        onclick: () => {
+          ReactGA.event({
+            category: "click.resources.link",
+            action: "Click on Dirty Tyler videos"
+          });
+        }
       }
     ]
   },

@@ -6,6 +6,10 @@ export const DISCORD_URL = "https://discord.gg/yXFq4E6";
 
 export const COLLECTOR_MAP_URL = "https://jeanropke.github.io/poggers/?v=99";
 
+// CLOUDINARY
+export const IMAGES_CDN =
+  "https://res.cloudinary.com/hckp6e9ap/image/upload/v1572616700/website";
+
 // DATA FILES ( thanks @jeanRopke )
 export const JSON_COLLECTOR_ITEMS_URL =
   "https://rawcdn.githack.com/jeanropke/RDR2CollectorsMap/a3dee17a11e1bb67ccb2fe14b07fddb580ec3b35/data/items.json";

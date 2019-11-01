@@ -69,6 +69,11 @@ const curiosities = [
     name: "Dark margic symbols",
     lat: 59.8217395313782,
     lng: 28.448238372802738
+  },
+  {
+    name: "Cave with strange statues",
+    lat: 78.68661904824121,
+    lng: -6.207747459411622
   }
 ];
 

@@ -1,0 +1,30 @@
+{
+  "files": {
+    "main.css": "/static/css/main.53e1d79f.chunk.css",
+    "main.js": "/static/js/main.ebe7b081.chunk.js",
+    "main.js.map": "/static/js/main.ebe7b081.chunk.js.map",
+    "runtime~main.js": "/static/js/runtime~main.c82138e8.js",
+    "runtime~main.js.map": "/static/js/runtime~main.c82138e8.js.map",
+    "static/js/2.c9c32101.chunk.js": "/static/js/2.c9c32101.chunk.js",
+    "static/js/2.c9c32101.chunk.js.map": "/static/js/2.c9c32101.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.00afc274fab8f6d2213c15b82776a91d.js": "/precache-manifest.00afc274fab8f6d2213c15b82776a91d.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.53e1d79f.chunk.css.map": "/static/css/main.53e1d79f.chunk.css.map",
+    "static/media/CARD_BACK.png": "/static/media/CARD_BACK.68d1bcdc.png",
+    "static/media/fonts.css": "/static/media/chinese-rocks-rg.37b9944b.woff",
+    "static/media/bg-cowboys.jpg": "/static/media/bg-cowboys.253fd430.jpg",
+    "static/media/theme.css": "/static/media/nazarBg.27d44777.png",
+    "static/media/bgOnline.png": "/static/media/bgOnline.71028cdc.png",
+    "static/media/bgRip.png": "/static/media/bgRip.c1e17439.png",
+    "static/media/button-bg.png": "/static/media/button-bg.d6a7fda4.png",
+    "static/media/cancel-icon.svg": "/static/media/cancel-icon.8338a172.svg",
+    "static/media/danger-shadow.png": "/static/media/danger-shadow.47412ca2.png",
+    "static/media/frame.png": "/static/media/frame.30a37219.png",
+    "static/media/gang-icon.png": "/static/media/gang-icon.c7acf65c.png",
+    "static/media/gtabase_com_logo_red.png": "/static/media/gtabase_com_logo_red.9b172bdc.png",
+    "static/media/hat.png": "/static/media/hat.741b1c27.png",
+    "static/media/rank_shield.png": "/static/media/rank_shield.95096071.png",
+    "static/media/sheet.png": "/static/media/sheet.fea53fb6.png"
+  }
+}

@@ -3,6 +3,20 @@ import frame from "../images/frame.png";
 import bgMainSml from "../images/bgMainSml.jpg";
 
 export default {
+  root: css`
+    z-index: 2;
+    position: relative;
+
+    h1 {
+      display: inline-block;
+    }
+  `,
+  wrapper: css`
+    max-width: 1200px;
+    width: 90%;
+    min-height: 50vh;
+    margin: auto;
+  `,
   modal: css`
     padding: 0;
     margin: 0;
@@ -85,5 +99,44 @@ export default {
     border-image-source: url(${frame});
     border-style: solid;
     border-width: 6px;
+  `,
+  button: css`
+    background: rgba(0, 0, 0, 0.78);
+    color: var(--EcruWhite);
+    font-size: 18px;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    text-align: center;
+    border: none;
+    outline: none;
+
+    &:hover {
+      background: var(--Tabasco);
+    }
+  `,
+  active: css`
+    background: var(--Tabasco);
+  `,
+  card_animation_wrapper: css`
+    position: relative;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    -webkit-animation-fill-mode: backwards;
+    animation-fill-mode: backwards;
+    -webkit-transition: none;
+    transition: none;
+    -webkit-transform-origin: center;
+    transform-origin: center;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    perspective: 1000;
+    border-radius: 8px;
+  `,
+  card_animation: css`
+    transform-origin: center !important;
+    animation: cardDetailsAnim 0.4s ease;
   `
 };

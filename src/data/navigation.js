@@ -3,27 +3,16 @@ import { TWITTER_URL, DISCORD_URL } from "../scripts/constants";
 
 export const navigation = [
   {
-    title: "Home",
+    title: "Finder",
     url: "/",
     appLink: true,
     onclick: () => {
       ReactGA.event({
         category: "click.nav.link",
-        action: "Click Home link"
+        action: "Click Finder link"
       });
     }
   },
-  //   {
-  //     title: "Satchel",
-  //     url: "/satchel",
-  //     appLink: true,
-  //     onclick: () => {
-  //       ReactGA.event({
-  //         category: "click.nav.link",
-  //         action: "Click Satchel link"
-  //       });
-  //     }
-  //   },
   {
     title: "Maps",
     appLink: true,
@@ -32,6 +21,17 @@ export const navigation = [
       ReactGA.event({
         category: "click.nav.link",
         action: "Go to maps"
+      });
+    }
+  },
+  {
+    title: "Deck",
+    appLink: true,
+    url: "/deck",
+    onclick: () => {
+      ReactGA.event({
+        category: "click.nav.link",
+        action: "Go to deck"
       });
     }
   },
@@ -65,30 +65,6 @@ export const navigation = [
       ReactGA.event({
         category: "click.nav.link",
         action: "Click Tweet page link"
-      });
-    }
-  },
-  {
-    title: "API",
-    url: "https://documenter.getpostman.com/view/6602370/SVtN3rnY",
-    target: "_blank",
-    rel: "noreferrer noopener",
-    onclick: () => {
-      ReactGA.event({
-        category: "click.nav.link",
-        action: "Click API link"
-      });
-    }
-  },
-  {
-    title: "Contact",
-    target: "_blank",
-    rel: "noreferrer noopener",
-    url: TWITTER_URL,
-    onclick: () => {
-      ReactGA.event({
-        category: "click.nav.link",
-        action: "Click Contact link (twitter)"
       });
     }
   },

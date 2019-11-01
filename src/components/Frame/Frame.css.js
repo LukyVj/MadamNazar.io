@@ -19,14 +19,51 @@ export default {
     color: white;
     -webkit-font-smoothing: antialiased;
     background: url(${blueBg});
-    position: absolute;
+    position: relative;
     left: 0;
-    font-size: 2em;
     z-index: 10;
 
+    h1,
+    h4 {
+      font-size: 2em;
+    }
+
+    p {
+      font-family: "RDRHapna-Regular";
+    }
+
+    h1 {
+      text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.6);
+      &::before,
+      &::after {
+        content: "";
+        display: block;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 40px;
+        left: -40px;
+        background: url(${require("../../images/header-left.png")}) no-repeat
+          center center / contain;
+        z-index: 999999;
+      }
+
+      &::after {
+        left: inherit;
+        right: -40px;
+        background: url(${require("../../images/header-right.png")}) no-repeat
+          center center / contain;
+      }
+    }
+
     @media (max-width: 960px) {
-      font-size: 1.45em;
       position: fixed;
+      h4 {
+        font-size: 1.05em;
+      }
+      h1 {
+        font-size: 1.45em;
+      }
     }
   `
 };
