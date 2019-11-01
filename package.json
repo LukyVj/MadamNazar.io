@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@algolia/fragments.js": "^2.0.0-beta.15",
     "@emotion/core": "^10.0.17",
     "algoliasearch": "^3.35.1",
     "emotion": "^10.0.17",

@@ -373,12 +373,9 @@ const DeckPreviewer = ({ fav_deck, dead_eye, parent }) => {
       >
         x
       </button>
-      <div className="d-grid md:g-4 ggap-16">
+      <div className="d-grid md:g-4 pv-32">
         {
           <div>
-            <div>
-              <h2>{dead_eye[0] ? dead_eye[0].name : "Not selected"}</h2>
-            </div>
             <div className="d-grid g-2">
               <div
                 css={css`
@@ -400,50 +397,54 @@ const DeckPreviewer = ({ fav_deck, dead_eye, parent }) => {
                       ? `Card dead_eye/${imageName(dead_eye[0].name)}`
                       : "back card"
                   }
-                  className="w-auto h-400"
+                  className="w-100p"
                 />
               </div>
-              <div>
-                {dead_eye[0] ? dead_eye[0].description : "Not selected"}
+              <div className="p-8">
+                <div>
+                  <h2 className="mt-0">
+                    {dead_eye[0] ? dead_eye[0].name : "Not selected"}
+                  </h2>
+                </div>
+                <p>{dead_eye[0] ? dead_eye[0].description : "Not selected"}</p>
               </div>
             </div>
           </div>
         }
-        {fav_deck.map(
-          card =>
-            console.log(card) || (
-              <div>
-                <div>
-                  <h2>{card ? card.name : "Not selected"}</h2>
-                </div>
-                <div className="d-grid g-2">
-                  <div
-                    css={css`
-                      border-radius: 8px;
-                    `}
-                  >
-                    <img
-                      css={css`
-                        background: ${card ? card.color : "black"};
-                      `}
-                      src={
-                        card
-                          ? card.image
-                          : require("../images/ability_cards/CARD_BACK.png")
-                      }
-                      alt={
-                        card
-                          ? `Card ${card.type}/${imageName(card.name)}`
-                          : "back card"
-                      }
-                      className="w-auto h-400"
-                    />
-                  </div>
-                  <div>{card ? card.description : "Not selected"}</div>
-                </div>
+        {fav_deck.map(card => (
+          <div>
+            <div className="d-grid g-2">
+              <div
+                css={css`
+                  border-radius: 8px;
+                `}
+              >
+                <img
+                  css={css`
+                    background: ${card ? card.color : "black"};
+                  `}
+                  src={
+                    card
+                      ? card.image
+                      : require("../images/ability_cards/CARD_BACK.png")
+                  }
+                  alt={
+                    card
+                      ? `Card ${card.type}/${imageName(card.name)}`
+                      : "back card"
+                  }
+                  className="w-100p"
+                />
               </div>
-            )
-        )}
+              <div className="p-8">
+                <div>
+                  <h2 className="mt-0">{card ? card.name : "Not selected"}</h2>
+                </div>
+                <p>{card ? card.description : "Not selected"}</p>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -501,7 +502,8 @@ class Deck extends Component {
           image: `${IMAGES_CDN}/ability_cards/${card.type}/${imageName(
             card.name
           )}.webp`,
-          color: card_colors[card.type][this.state.card_level]
+          color: card_colors[card.type][this.state.card_level],
+          description: card.description
         });
       } else {
         favDeadEye = [];
@@ -513,7 +515,8 @@ class Deck extends Component {
           image: `${IMAGES_CDN}/ability_cards/${card.type}/${imageName(
             card.name
           )}.webp`,
-          color: card_colors[card.type][this.state.card_level]
+          color: card_colors[card.type][this.state.card_level],
+          description: card.description
         });
       } else {
         favDeck = [];
@@ -597,14 +600,22 @@ class Deck extends Component {
                         ))}
                       </div>
                     </div>
-                    <div>
+                    <div
+                      css={css`
+                        button {
+                        }
+                      `}
+                    >
                       <header>
                         <h3 className="lsp-big p-0 mt-8">Deck Preview</h3>
                       </header>
-                      <FavoriteDeck
-                        parent={this}
+                      <button
+                        css={styles.button}
                         onClick={() => this.displayDeck()}
-                      />
+                      >
+                        Open current deck
+                      </button>
+                      <FavoriteDeck parent={this} />
                     </div>
                   </nav>
                 </div>
