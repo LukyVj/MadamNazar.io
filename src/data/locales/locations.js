@@ -34,6 +34,7 @@ export default {
     riggsstation: "Riggs Station",
     wallacestation: "Wallace Station",
     emeraldstation: "Emerald Station",
-    benedictpoint: "Benedict Point"
+    benedictpoint: "Benedict Point",
+    lagras: "Lagras"
   }
 };

@@ -28,6 +28,17 @@ import world from "../data/maps/world";
 
 import { JSON_COLLECTOR_ITEMS_URL } from "../scripts/constants";
 
+const worldLabels = [
+  "cities",
+  "territories",
+  "poker",
+  "gunsmiths",
+  "barbers",
+  "post_offices",
+  "shops",
+  "fishing_shops"
+];
+
 const styles = {
   button: css`
     background: rgba(0, 0, 0, 0.78);
@@ -323,14 +334,7 @@ class SimpleMap extends React.Component {
           )}
           {this.state.markersOn && this.props.type === "complex"
             ? this.props.data.map(it =>
-                [
-                  "cities",
-                  "territories",
-                  "poker",
-                  "gunsmiths",
-                  "barbers",
-                  "post_offices"
-                ].map(type =>
+                worldLabels.map(type =>
                   it[type].map(item =>
                     item.bounds ? (
                       <Polygon
