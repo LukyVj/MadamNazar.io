@@ -323,40 +323,45 @@ class SimpleMap extends React.Component {
           )}
           {this.state.markersOn && this.props.type === "complex"
             ? this.props.data.map(it =>
-                ["cities", "territories", "poker", "gunsmith"].map(type =>
-                  it[type].map(item =>
-                    item.bounds ? (
-                      <Polygon
-                        positions={item.bounds}
-                        color={item.color ? item.color : "var(--Tabasco)"}
-                      />
-                    ) : (
-                      <Marker
-                        position={
-                          item.x && item.y
-                            ? [item.x, item.y]
-                            : [item.lat, item.lng]
-                        }
-                        key={item.name}
-                        icon={
-                          this.props.map === "hideouts"
-                            ? hideoutMarker
-                            : normalMarker
-                        }
-                      >
-                        <Tooltip direction="top" offset={[-0, -20]} opacity={1}>
-                          <span
-                            css={css`
-                              font-family: "RDRHapna-Regular";
-                            `}
+                ["cities", "territories", "poker", "gunsmiths", "barbers"].map(
+                  type =>
+                    it[type].map(item =>
+                      item.bounds ? (
+                        <Polygon
+                          positions={item.bounds}
+                          color={item.color ? item.color : "var(--Tabasco)"}
+                        />
+                      ) : (
+                        <Marker
+                          position={
+                            item.x && item.y
+                              ? [item.x, item.y]
+                              : [item.lat, item.lng]
+                          }
+                          key={item.name}
+                          icon={
+                            this.props.map === "hideouts"
+                              ? hideoutMarker
+                              : normalMarker
+                          }
+                        >
+                          <Tooltip
+                            direction="top"
+                            offset={[-0, -20]}
+                            opacity={1}
                           >
-                            {item.name}
-                          </span>
-                          <p>{item.comment}</p>
-                        </Tooltip>
-                      </Marker>
+                            <span
+                              css={css`
+                                font-family: "RDRHapna-Regular";
+                              `}
+                            >
+                              {item.name}
+                            </span>
+                            <p>{JSON.stringify(item.location)}</p>
+                          </Tooltip>
+                        </Marker>
+                      )
                     )
-                  )
                 )
               )
             : this.state.markersOn &&
