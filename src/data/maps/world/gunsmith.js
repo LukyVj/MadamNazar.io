@@ -1,4 +1,4 @@
-const weapons = [
+const gunsmith = [
   {
     name: "Gunsmith",
     location: "Tumbleweed",
@@ -22,7 +22,13 @@ const weapons = [
     location: "Saint Denis",
     lat: 52.853998384646516,
     lng: 35.87585449218751
+  },
+  {
+    name: "Gunsmith",
+    location: "Annesburg",
+    lat: 75.8149228358407,
+    lng: 40.85652351379395
   }
 ];
 
-export default weapons;
+export default gunsmith;
