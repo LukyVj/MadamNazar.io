@@ -9,7 +9,7 @@ import {
   Marker,
   Popup,
   Tooltip,
-  Rectangle,
+  Polygon,
   FeatureGroup,
   Circle
 } from "react-leaflet";
@@ -326,7 +326,10 @@ class SimpleMap extends React.Component {
                 ["cities", "regions"].map(type =>
                   it[type].map(item =>
                     item.bounds ? (
-                      <Rectangle bounds={item.bounds} color="var(--Tabasco)" />
+                      <Polygon
+                        positions={item.bounds}
+                        color={item.color ? item.color : "var(--Tabasco)"}
+                      />
                     ) : (
                       <Marker
                         position={
