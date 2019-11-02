@@ -1,15 +1,18 @@
 import cities from "./world/cities.js";
-import regions from "./world/regions.js";
+import territories from "./world/territories.js";
+
 import poker from "./world/poker.js";
 import gunsmith from "./world/gunsmith";
+import barber from "./world/barber";
 
 const world = [
   {
     cities,
-    regions,
+    territories,
 
     poker,
-    gunsmith
+    gunsmith,
+    barber
   }
 ];
 

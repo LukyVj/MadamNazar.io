@@ -323,7 +323,7 @@ class SimpleMap extends React.Component {
           )}
           {this.state.markersOn && this.props.type === "complex"
             ? this.props.data.map(it =>
-                ["cities", "regions", "poker", "gunsmith"].map(type =>
+                ["cities", "territories", "poker", "gunsmith"].map(type =>
                   it[type].map(item =>
                     item.bounds ? (
                       <Polygon
