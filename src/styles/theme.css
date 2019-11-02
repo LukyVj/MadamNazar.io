@@ -150,14 +150,14 @@ a:not([class*="color-"]) {
 }
 
 .leaflet-control-container {
-  position: relative;
-  z-index: 9999999999;
+  /* position: relative; */
+  /* z-index: 9999999999; */
 }
 .leaflet-draw.leaflet-control {
-  left: 0;
-  right: inherit;
-  position: fixed;
-  top: 50%;
+  /* left: 0; */
+  /* right: inherit; */
+  /* position: fixed; */
+  /* top: 50%; */
   width: 200px;
 }
 

@@ -194,6 +194,10 @@ class SimpleMap extends React.Component {
   fitBounds = () =>
     this.map && this.map.leafletElement.fitBounds([this.getBounds()]);
 
+  _handleDrawStop = (elem, layer, evt) => {
+    console.log(elem, layer, evt);
+  };
+
   componentDidMount() {
     this.handleZoomstart();
   }
@@ -290,20 +294,26 @@ class SimpleMap extends React.Component {
             this.map = ref;
           }}
         >
-          {/* {this.props.map === "simple" && (
+          {this.props.map === "simple" && (
             <FeatureGroup>
               <EditControl
-                position="topright"
+                position="bottomleft"
                 onEdited={this._onEditPath}
                 onCreated={this._onCreate}
                 onDeleted={this._onDeleted}
+                onDrawStop={e => {
+                  const type = e.layerType;
+                  const layer = e.layer;
+
+                  console.log("draw:created->");
+                  console.log(JSON.stringify(layer.toGeoJSON()));
+                }}
                 draw={{
                   rectangle: false
                 }}
               />
-              
             </FeatureGroup>
-          )} */}
+          )}
           {this.state.markersOn && this.props.type === "complex"
             ? this.props.data.map(it =>
                 ["cities", "regions"].map(type =>
