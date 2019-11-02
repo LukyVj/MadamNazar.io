@@ -542,7 +542,7 @@ class Deck extends Component {
   };
 
   componentDidMount() {
-    ReactGA.pageview("/about");
+    ReactGA.pageview("/deck");
     this.orderCards();
   }
 
