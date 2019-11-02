@@ -1,5 +1,4 @@
-const territories = [
-  {
+const territories = [{
     name: "Ambarino",
     color: "blue",
     bounds: [
@@ -298,6 +297,10 @@ const territories = [
     ]
   },
   {
+    name: "Lemoyne",
+    bounds: []
+  },
+  {
     name: "New Austin",
     color: "orange",
     bounds: [
@@ -344,6 +347,10 @@ const territories = [
         [7.541529290443372, -161.9034576416016]
       ]
     ]
+  },
+  {
+    name: "New hanover",
+    bounds: []
   },
   {
     name: "West Elizabeth",
