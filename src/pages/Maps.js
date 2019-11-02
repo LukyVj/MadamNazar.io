@@ -299,17 +299,24 @@ class SimpleMap extends React.Component {
               <EditControl
                 position="bottomleft"
                 onEdited={this._onEditPath}
-                onCreated={this._onCreate}
-                onDeleted={this._onDeleted}
-                onDrawStop={e => {
-                  const type = e.layerType;
-                  const layer = e.layer;
-
-                  console.log("draw:created->");
-                  console.log(JSON.stringify(layer.toGeoJSON()));
+                onCreated={e => {
+                  var layer = e.layer;
+                  console.log(layer.getLatLngs()[0]);
                 }}
+                onDeleted={this._onDeleted}
+                // onDrawStop={e => {
+                //   const type = e.layerType;
+                //   const layer = e.layer;
+
+                //   console.log("draw:created->", e);
+                //   // console.log(JSON.stringify(layer.toGeoJSON()));
+                // }}
                 draw={{
-                  rectangle: false
+                  rectangle: false,
+                  polyline: false,
+                  circle: false,
+                  marker: false,
+                  circlemarker: false
                 }}
               />
             </FeatureGroup>
