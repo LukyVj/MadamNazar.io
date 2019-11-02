@@ -163,7 +163,7 @@ const Card = props => {
     >
       <div className="pos-relative" css={styles.card_animation}>
         <button
-          className="add-to-deck pos-absolute m-16 bxs-default fw-bold"
+          className="add-to-deck pos-absolute m-16 bxs-default fw-bold d-none md:d-block"
           css={[
             styles.button,
             css`
@@ -193,7 +193,7 @@ const Card = props => {
           `}
         >
           <img
-            src={`${IMAGES_CDN}/ability_cards/${type}/${imageName(name)}.webp`}
+            src={`${IMAGES_CDN}/ability_cards/${type}/${imageName(name)}.png`}
             alt={`Card ${type}/${imageName}`}
             className="w-100p"
             css={css`
@@ -291,54 +291,59 @@ const Hits = ({ hits, parent }) => {
 };
 
 const RefinementList = ({ items, refine, createURL, parent }) => (
-  <div className="d-flex fxd-column">
+  <div className="d-flex fxd-row jc-around fxw-wrap md:fxw-nowrap md:fxd-column">
     {items.map(item => (
-      <span className="fx-12">
-        <button
-          key={item.label}
-          css={[
-            styles.button,
-            css`
-              padding: 0;
-            `
-          ]}
-          className="w-100p mr-8 mb-8 ov-hidden d-flex"
-          onClick={() => {
-            refine(item.label);
-            parent.setState({ card_type: item.label });
-          }}
-        >
-          {item.label !== "all" && (
-            <div
-              className="d-inline-block p-8 ta-center js-start w-50"
-              css={css`
-                background: ${card_colors[item.label][2]};
-              `}
-            >
-              <img
-                src={require(`../images/icon_${item.label}.png`)}
-                alt="dead_eye"
-                className="va-middle"
+      <span className="fx-12 xs:fx-6 md:fx-12">
+        <span className="mr-8 md:mr-0 d-block">
+          <button
+            key={item.label}
+            css={[
+              styles.button,
+              css`
+                padding: 0;
+              `
+            ]}
+            className="w-100p mr-8 mb-8 ov-hidden d-flex"
+            onClick={() => {
+              refine(item.label);
+              parent.setState({ card_type: item.label });
+            }}
+          >
+            {item.label !== "all" && (
+              <div
+                className="d-inline-block p-8 ta-center js-start w-50"
                 css={css`
-                  height: 24px;
+                  background: ${card_colors[item.label][2]};
                 `}
-              />
-            </div>
-          )}
-          <span className="p-8 ph-16 va-middle tt-capitalize">
-            {item.label.replace("_", " ")}
-          </span>
-          <span className="p-8 pl-0 va-middle fw-bold">{item.count}</span>
-        </button>
+              >
+                <img
+                  src={require(`../images/icon_${item.label}.png`)}
+                  alt="dead_eye"
+                  className="va-middle"
+                  css={css`
+                    height: 24px;
+                  `}
+                />
+              </div>
+            )}
+            <span className="p-8 ph-16 va-middle tt-capitalize">
+              {item.label.replace("_", " ")}
+            </span>
+            <span className="p-8 pl-0 va-middle fw-bold">{item.count}</span>
+          </button>
+        </span>
       </span>
     ))}
-    <CardClearRefinements parent={parent} />
+    <span className="fx-12">
+      <CardClearRefinements parent={parent} />
+    </span>
   </div>
 );
 
 const ClearRefinements = ({ items, refine, parent }) => (
   <button
     css={styles.button}
+    className="w-100p"
     onClick={() => {
       refine(items);
       parent.setState({ card_type: "all" });
@@ -349,7 +354,7 @@ const ClearRefinements = ({ items, refine, parent }) => (
 );
 
 const SearchBox = ({ currentRefinement, isSearchStalled, refine }) => (
-  <form noValidate action="" role="search" className="w-100p">
+  <form noValidate action="" role="search" className="w-100p mb-8">
     <input
       type="search"
       value={currentRefinement}
@@ -508,7 +513,7 @@ class Deck extends Component {
           name: card.name,
           image: `${IMAGES_CDN}/ability_cards/${card.type}/${imageName(
             card.name
-          )}.webp`,
+          )}.png`,
           color: card_colors[card.type][this.state.card_level],
           description: card.description
         });
@@ -521,7 +526,7 @@ class Deck extends Component {
           name: card.name,
           image: `${IMAGES_CDN}/ability_cards/${card.type}/${imageName(
             card.name
-          )}.webp`,
+          )}.png`,
           color: card_colors[card.type][this.state.card_level],
           description: card.description
         });
@@ -558,7 +563,7 @@ class Deck extends Component {
         )}
 
         <div>
-          <header className="ta-center">
+          <header className="ta-center pb-32">
             <h1>Red Dead Online Abilities Cards</h1>
             <p>
               Explore the different ability cards and learn more about what they
@@ -613,13 +618,13 @@ class Deck extends Component {
                         </div>
                       </div>
                     </div>
-                    <div className="pv-16 d-none md:d-block">
+                    <div className="pv-16">
                       <header>
                         <h3 className="lsp-big p-0 mt-8">Card type</h3>
                       </header>
                       <CardRefinementList attribute="type" parent={this} />
                     </div>
-                    <div className="pv-16 d-none md:d-block">
+                    <div className="pv-16">
                       <header>
                         <h3 className="lsp-big p-0 mt-8">Card level</h3>
                       </header>
@@ -646,7 +651,7 @@ class Deck extends Component {
                 </div>
               </div>
 
-              <div className="d-grid g-2 md:g-3 lg:g-4 ggap-8 pv-32 gcstart-2 gcend-7">
+              <div className="d-grid g-2 md:g-3 lg:g-4 ggap-8 pb-32 gcstart-2 gcend-7">
                 <CardHits parent={this} />
               </div>
             </div>

@@ -48,7 +48,7 @@ const SimpleMapNavigation = ({ parent }) => {
         width: 200px;
       `}
     >
-      <li className="fx-1">
+      <li className="fx-1 mb-8">
         <span
           className="d-flex fxd-row"
           css={css`
@@ -92,7 +92,7 @@ const SimpleMapNavigation = ({ parent }) => {
           </button>
         </span>
       </li>
-      <li className="fx-1">
+      <li className="fx-1 mb-8">
         <button
           onClick={() =>
             parent.setState({
@@ -105,7 +105,7 @@ const SimpleMapNavigation = ({ parent }) => {
           {parent.state.heatMapOn ? "remove heatmap" : "Add heatmap"}
         </button>
       </li>
-      <li className="fx-1">
+      <li className="fx-1 mb-8">
         <button
           onClick={() =>
             parent.setState({ markersOn: !parent.state.markersOn })
@@ -115,7 +115,7 @@ const SimpleMapNavigation = ({ parent }) => {
           {parent.state.markersOn ? "remove markers" : "Add markers"}
         </button>
       </li>
-      <li className="fx-1">
+      <li className="fx-1 mb-8">
         <button
           onClick={() =>
             parent.setState({
@@ -152,7 +152,8 @@ class SimpleMap extends React.Component {
       currentPos: null,
       heatMapOn: false,
       markersOn: true,
-      mapExpanded: false
+      mapExpanded: false,
+      openMobileControls: false
     };
     this.handleClick = this.handleClick.bind(this);
 
@@ -227,9 +228,37 @@ class SimpleMap extends React.Component {
               height: 100vh;
             `
         ]}
-        className="pos-relative"
+        className="pos-relative ov-hidden"
       >
-        <SimpleMapNavigation parent={this} />
+        <div className="pos-relative">
+          <button
+            css={[
+              styles.button,
+              css`
+                @media (min-width: 960px) {
+                  display: none;
+                }
+              `
+            ]}
+            onClick={() =>
+              this.setState({
+                openMobileControls: !this.state.openMobileControls
+              })
+            }
+          >
+            {!this.state.openMobileControls ? "open" : "close"} controls
+          </button>
+          <div
+            className="pos-relative"
+            css={css`
+              @media (max-width: 960px) {
+                right: ${this.state.openMobileControls ? "0" : "-200px"};
+              }
+            `}
+          >
+            <SimpleMapNavigation parent={this} />
+          </div>
+        </div>
         <Map
           center={[40, -60]}
           zoom={this.state.currentZoom}
