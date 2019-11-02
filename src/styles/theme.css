@@ -1,4 +1,5 @@
-:root {
+@import "https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.3/leaflet.draw.css":
+  root {
   --Twine: #c79f6f;
   --Armadillo: #36322a;
   --OldTown: rgb(82, 42, 10);
@@ -146,4 +147,20 @@ a:not([class*="color-"]) {
     box-shadow: 0 5px 15px 0 rgba(37, 44, 97, 0.15),
       0 2px 4px 0 rgba(93, 100, 148, 0.2);
   }
+}
+
+.leaflet-control-container {
+  position: relative;
+  z-index: 9999999999;
+}
+.leaflet-draw.leaflet-control {
+  left: 0;
+  right: inherit;
+  position: fixed;
+  top: 50%;
+  width: 200px;
+}
+
+.leaflet-draw.leaflet-control a {
+  width: 100% !important;
 }

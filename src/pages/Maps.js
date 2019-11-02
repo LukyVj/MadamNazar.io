@@ -3,7 +3,18 @@ import React, { Component } from "react";
 import ReactGA from "react-ga";
 import { jsx, css } from "@emotion/core";
 import leaflet from "leaflet";
-import { Map, TileLayer, Marker, Popup, Tooltip } from "react-leaflet";
+import {
+  Map,
+  TileLayer,
+  Marker,
+  Popup,
+  Tooltip,
+  Rectangle,
+  FeatureGroup,
+  Circle
+} from "react-leaflet";
+import { EditControl } from "react-leaflet-draw";
+
 import HeatmapLayer from "react-leaflet-heatmap-layer";
 
 import Infos from "../components/Infos";
@@ -13,6 +24,7 @@ import mapStyles from "../pages/CollectorMap.css";
 
 import hideouts from "../data/maps/gang-hideouts";
 import curiosities from "../data/maps/curiosities";
+import world from "../data/maps/world";
 
 import { JSON_COLLECTOR_ITEMS_URL } from "../scripts/constants";
 
@@ -267,10 +279,6 @@ class SimpleMap extends React.Component {
           noWrap={true}
           bounds={this.getBounds()}
           boundsOptions={{ padding: [1, 1] }}
-          // maxBounds={[
-          //   [-17.476432197195518, -140.44921875000003],
-          //   [71.91088787611528, 20.566406250000004]
-          // ]}
           boxZoom={true}
           zoomControl={false}
           gradient={gradient}
@@ -282,28 +290,78 @@ class SimpleMap extends React.Component {
             this.map = ref;
           }}
         >
-          {this.state.markersOn &&
-            this.props.data.map(it => (
-              <Marker
-                position={it.x && it.y ? [it.x, it.y] : [it.lat, it.lng]}
-                key={it.name}
-                icon={
-                  this.props.map === "hideouts" ? hideoutMarker : normalMarker
-                }
-              >
-                <Tooltip direction="top" offset={[-0, -20]} opacity={1}>
-                  <span
-                    css={css`
-                      font-family: "RDRHapna-Regular";
-                    `}
-                  >
-                    {it.name}
-                  </span>
-                  <p>{it.comment}</p>
-                </Tooltip>
-              </Marker>
-            ))}
-
+          {/* {this.props.map === "simple" && (
+            <FeatureGroup>
+              <EditControl
+                position="topright"
+                onEdited={this._onEditPath}
+                onCreated={this._onCreate}
+                onDeleted={this._onDeleted}
+                draw={{
+                  rectangle: false
+                }}
+              />
+              
+            </FeatureGroup>
+          )} */}
+          {this.state.markersOn && this.props.type === "complex"
+            ? this.props.data.map(it =>
+                ["cities", "regions"].map(type =>
+                  it[type].map(item =>
+                    item.bounds ? (
+                      <Rectangle bounds={item.bounds} color="var(--Tabasco)" />
+                    ) : (
+                      <Marker
+                        position={
+                          item.x && item.y
+                            ? [item.x, item.y]
+                            : [item.lat, item.lng]
+                        }
+                        key={item.name}
+                        icon={
+                          this.props.map === "hideouts"
+                            ? hideoutMarker
+                            : normalMarker
+                        }
+                      >
+                        <Tooltip direction="top" offset={[-0, -20]} opacity={1}>
+                          <span
+                            css={css`
+                              font-family: "RDRHapna-Regular";
+                            `}
+                          >
+                            {item.name}
+                          </span>
+                          <p>{item.comment}</p>
+                        </Tooltip>
+                      </Marker>
+                    )
+                  )
+                )
+              )
+            : this.state.markersOn &&
+              this.props.type !== "complex" &&
+              this.props.data.map(it => (
+                <Marker
+                  position={it.x && it.y ? [it.x, it.y] : [it.lat, it.lng]}
+                  key={it.name}
+                  icon={
+                    this.props.map === "hideouts" ? hideoutMarker : normalMarker
+                  }
+                >
+                  <Tooltip direction="top" offset={[-0, -20]} opacity={1}>
+                    <span
+                      css={css`
+                        font-family: "RDRHapna-Regular";
+                      `}
+                    >
+                      {it.name}
+                    </span>
+                    <p>{it.comment}</p>
+                  </Tooltip>
+                </Marker>
+              ))}
+          }
           {this.props.map === "simple" && this.state.currentPos && (
             <Marker position={this.state.currentPos} draggable={true}>
               <Popup position={this.state.currentPos}>
@@ -312,7 +370,6 @@ class SimpleMap extends React.Component {
               </Popup>
             </Marker>
           )}
-
           {this.state.heatMapOn && (
             <HeatmapLayer
               fitBoundsOnLoad
@@ -326,7 +383,6 @@ class SimpleMap extends React.Component {
               max={Number.parseFloat(this.state.max)}
             />
           )}
-
           <TileLayer
             attribution="© madamnazar.io"
             // url="http://jeanropke.github.io/RDR2CollectorsMap/assets/maps/detailed/{z}/{x}_{y}.jpg"
@@ -342,7 +398,7 @@ class SimpleMap extends React.Component {
 class Maps extends Component {
   constructor(props) {
     super(props);
-    this.state = { selectedMap: "collector", collectorUpdated: false };
+    this.state = { selectedMap: "simple", collectorUpdated: false };
   }
 
   componentDidMount() {
@@ -380,6 +436,7 @@ class Maps extends Component {
                 status: process.env.NODE_ENV === "development" ? 1 : 0
               },
               { id: "collector", name: "Collector's map", status: 1 },
+              { id: "world", name: "World Map", status: 1 },
               { id: "random", name: "Random collectibles", status: 0 },
               { id: "photo", name: "Photos spot", status: 0 },
               { id: "curiosities", name: "Curiosities", status: 0 },
@@ -422,25 +479,52 @@ class Maps extends Component {
           {this.state.selectedMap === "simple" && (
             <div className="w-100p top-200 left-0 right-0 m-auto z-4">
               <SimpleMap
-                data={this.state.collectorUpdated && this.state.collector}
+                data={hideouts}
                 parent={this}
                 map="simple"
+                type="simple"
               />
             </div>
           )}
           {this.state.selectedMap === "photo" && (
             <div className="w-100p top-200 left-0 right-0 m-auto z-4">
-              <SimpleMap data={hideouts} parent={this} map="photo" />
+              <SimpleMap
+                data={hideouts}
+                parent={this}
+                map="photo"
+                type="simple"
+              />
             </div>
           )}
           {this.state.selectedMap === "random" && (
             <div className="w-100p top-200 left-0 right-0 m-auto z-4">
-              <SimpleMap data={hideouts} parent={this} map="random" />
+              <SimpleMap
+                data={hideouts}
+                parent={this}
+                map="random"
+                type="simple"
+              />
             </div>
           )}
           {this.state.selectedMap === "curiosities" && (
             <div className="w-100p top-200 left-0 right-0 m-auto z-4">
-              <SimpleMap data={curiosities} parent={this} map="curiosities" />
+              <SimpleMap
+                data={curiosities}
+                parent={this}
+                map="curiosities"
+                type="simple"
+              />
+            </div>
+          )}
+
+          {this.state.selectedMap === "world" && (
+            <div className="w-100p top-200 left-0 right-0 m-auto z-4">
+              <SimpleMap
+                data={world}
+                parent={this}
+                map="world"
+                type="complex"
+              />
             </div>
           )}
           {this.state.selectedMap === "hideouts" && (
