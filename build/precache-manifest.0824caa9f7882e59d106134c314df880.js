@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "176bb46576501eb06a512b8b1694f793",
+    "revision": "dc26c14383c4bb50ca86b6f2396e0c8d",
     "url": "/index.html"
   },
   {
-    "revision": "ec1508190541187d466d",
+    "revision": "998601d5ef554dc765d3",
     "url": "/static/css/main.53e1d79f.chunk.css"
   },
   {
-    "revision": "d55bff62f69ec0305783",
-    "url": "/static/js/2.c9c32101.chunk.js"
+    "revision": "4b0fd0228e0b569676b0",
+    "url": "/static/js/2.3ef85021.chunk.js"
   },
   {
-    "revision": "ec1508190541187d466d",
-    "url": "/static/js/main.ebe7b081.chunk.js"
+    "revision": "998601d5ef554dc765d3",
+    "url": "/static/js/main.7f3e71f8.chunk.js"
   },
   {
     "revision": "90ef1414120681e7723f",
@@ -22,6 +22,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "68d1bcdc0d85b79ab5f9988905da79d0",
     "url": "/static/media/CARD_BACK.68d1bcdc.png"
+  },
+  {
+    "revision": "2ee939260f67dc6c25d38cf97884fe14",
+    "url": "/static/media/CARD_BACK_EYE.2ee93926.png"
   },
   {
     "revision": "b60b4517a18c866cb19522c6bb5117f9",
@@ -86,6 +90,10 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "95096071558f64d27f8c513e9bc3a40c",
     "url": "/static/media/rank_shield.95096071.png"
+  },
+  {
+    "revision": "54453d50ebd30b69e19a9d7adde21c43",
+    "url": "/static/media/rough_bg_input.54453d50.png"
   },
   {
     "revision": "fea53fb6e249670e879998eb9c2a4990",

@@ -206,9 +206,14 @@ class About extends Component {
             </a>
           </p>
         </Infos>
-        <Infos className="w-100p">
+        <Infos
+          className="maw-100p"
+          styles={css`
+            display: block;
+          `}
+        >
           <h2>They talk about us</h2>
-          <div className="d-grid g-4">
+          <div className="md:d-grid g-4 w-100p">
             <a href="https://www.gtabase.com/news/red-dead-redemption-2/red-dead-online-how-to-easily-reach-rank-20-in-each-role-thanks-to-the-community">
               <img
                 src={require("../images/gtabase_com_logo_red.png")}

@@ -31,7 +31,7 @@ class Ecosystem extends Component {
             top: 80px;
           `}
         >
-          <section className="d-grid g-2">
+          <section className="md:d-grid g-2">
             {resources.map(resource => (
               <div>
                 <div className="p-8 fx-12">
@@ -48,7 +48,7 @@ class Ecosystem extends Component {
                       {resource.type}
                     </h3>
                   </div>
-                  <div className="d-grid g-2 ggap-8">
+                  <div className="md:d-grid g-2 ggap-8">
                     {resource.content.map(item => (
                       <div
                         key={item.title}

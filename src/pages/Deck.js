@@ -214,7 +214,13 @@ const Card = props => {
             z-index: 10;
           `}
         >
-          {parent.state.card_level + 1}
+          {parent.state.card_level + 1 === 1
+            ? "I"
+            : parent.state.card_level + 1 === 2
+            ? "II"
+            : parent.state.card_level + 1 === 3
+            ? "III"
+            : null}
         </span>
 
         {unlock && (
@@ -343,7 +349,7 @@ const ClearRefinements = ({ items, refine, parent }) => (
 );
 
 const SearchBox = ({ currentRefinement, isSearchStalled, refine }) => (
-  <form noValidate action="" role="search" css={css``}>
+  <form noValidate action="" role="search" className="w-100p">
     <input
       type="search"
       value={currentRefinement}
@@ -373,19 +379,19 @@ const DeckPreviewer = ({ fav_deck, dead_eye, parent }) => {
       >
         x
       </button>
-      <div className="d-grid md:g-4 pv-32">
+      <div className="d-grid g-2 lg:g-4 pv-32 w-90p">
         {
           <div>
-            <div className="d-grid g-2">
+            <div className="lg:d-grid g-2">
               <div
                 css={css`
-                  background: ${dead_eye[0] ? dead_eye[0].color : "black"};
                   border-radius: 8px;
                 `}
               >
                 <img
                   css={css`
                     background: ${dead_eye[0] ? dead_eye[0].color : "black"};
+                    min-width: 140px;
                   `}
                   src={
                     dead_eye[0]
@@ -413,7 +419,7 @@ const DeckPreviewer = ({ fav_deck, dead_eye, parent }) => {
         }
         {fav_deck.map(card => (
           <div>
-            <div className="d-grid g-2">
+            <div className="lg:d-grid g-2">
               <div
                 css={css`
                   border-radius: 8px;
@@ -422,6 +428,7 @@ const DeckPreviewer = ({ fav_deck, dead_eye, parent }) => {
                 <img
                   css={css`
                     background: ${card ? card.color : "black"};
+                    min-width: 140px;
                   `}
                   src={
                     card
@@ -558,64 +565,82 @@ class Deck extends Component {
               do
             </p>
           </header>
-          <div
-            className="md:pos-fixed left-0 md:top-120 pv-48 ph-16"
-            css={css``}
-          ></div>
           <div className="pos-relative">
-            <div className="d-grid g-6">
+            <div className="md:d-grid g-6">
               <div className=" md:gcstart-1 md:gcend-2 ">
                 <div className="md:pos-sticky md:top-16">
-                  <nav
-                    className="d-flex fxd-column md:pr-16 ov-auto"
-                    css={css`
-                      width: 260px;
-                    `}
-                  >
+                  <nav className="d-flex fxd-column md:pr-16 ov-auto">
                     <div className="w-100p">
                       <CardSearchBox />
                     </div>
-                    <div className="pv-16">
-                      <header>
-                        <h3 className="lsp-big p-0 mt-8">Card type</h3>
-                      </header>
-                      <CardRefinementList attribute="type" parent={this} />
-                    </div>
-                    <div className="pv-16">
-                      <header>
-                        <h3 className="lsp-big p-0 mt-8">Card level</h3>
-                      </header>
-                      <div className="d-flex fxd-column">
-                        {[1, 2, 3].map(level => (
-                          <button
-                            key={level}
-                            css={styles.button}
-                            className="w-auto mr-8 mb-8"
-                            onClick={() =>
-                              this.setState({ card_level: level - 1 })
-                            }
-                          >
-                            Level {level}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
                     <div
+                      className="d-none md:d-block"
                       css={css`
                         button {
+                          transform: scale(0) translateY(-50%);
+                          position: absolute;
+                          top: 50%;
+                          left: 0;
+                          right: 0;
+                          z-index: 9999;
+                          margin: auto;
+                        }
+
+                        &:hover {
+                          .deck {
+                            filter: blur(3px);
+                            opacity: 0.9;
+                          }
+
+                          button {
+                            transform: scale(1) translateY(-50%);
+                          }
                         }
                       `}
                     >
                       <header>
                         <h3 className="lsp-big p-0 mt-8">Deck Preview</h3>
                       </header>
-                      <button
-                        css={styles.button}
-                        onClick={() => this.displayDeck()}
-                      >
-                        Open current deck
-                      </button>
-                      <FavoriteDeck parent={this} />
+                      <div className="pos-relative">
+                        <button
+                          css={styles.button}
+                          onClick={() => this.displayDeck()}
+                        >
+                          Open current deck
+                        </button>
+                        <div className="deck">
+                          <FavoriteDeck parent={this} />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="pv-16 d-none md:d-block">
+                      <header>
+                        <h3 className="lsp-big p-0 mt-8">Card type</h3>
+                      </header>
+                      <CardRefinementList attribute="type" parent={this} />
+                    </div>
+                    <div className="pv-16 d-none md:d-block">
+                      <header>
+                        <h3 className="lsp-big p-0 mt-8">Card level</h3>
+                      </header>
+                      <div className="d-flex fxd-row">
+                        {[0, 1, 2].map(level => (
+                          <button
+                            key={level}
+                            css={styles.button}
+                            className="w-auto mr-8 mb-8 fx-4"
+                            onClick={() => this.setState({ card_level: level })}
+                          >
+                            {level + 1 === 1
+                              ? "I"
+                              : level + 1 === 2
+                              ? "II"
+                              : level + 1 === 3
+                              ? "III"
+                              : null}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </nav>
                 </div>
