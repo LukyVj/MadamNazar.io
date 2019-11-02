@@ -1,5 +1,7 @@
+import poker from "./world/poker";
 const world = [
   {
+    poker: poker,
     cities: [
       {
         name: "Valentine",
