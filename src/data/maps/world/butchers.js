@@ -1,9 +1,9 @@
 import locations from "../../locales/locations";
 import labels from "../../locales/labels";
 
-const gunsmith = [
+const butchers = [
   {
-    name: labels.gunsmith,
+    name: labels.butcher,
     location: {
       name: locations.cities.tumbleweed,
       region: locations.regions.gaptoothridge,
@@ -12,11 +12,37 @@ const gunsmith = [
         code: locations.territories.newaustin[1]
       }
     },
-    lat: 24.995082240025944,
-    lng: -143.86742591857913
+    lat: 25.356785591376877,
+    lng: -143.85837078094485
   },
   {
-    name: labels.gunsmith,
+    name: labels.butcher,
+    location: {
+      name: locations.cities.strawberry,
+      region: locations.regions.bigvalley,
+      territory: {
+        name: locations.territories.westelizabeth[0],
+        code: locations.territories.westelizabeth[1]
+      }
+    },
+    lat: 63.09361266601283,
+    lng: -61.77067279815674
+  },
+  {
+    name: labels.butcher,
+    location: {
+      name: locations.cities.blackwater,
+      region: locations.regions.greatplains,
+      territory: {
+        name: locations.territories.westelizabeth[0],
+        code: locations.territories.westelizabeth[1]
+      }
+    },
+    lat: 53.033729684044744,
+    lng: -39.901614189147956
+  },
+  {
+    name: labels.butcher,
     location: {
       name: locations.cities.valentine,
       region: locations.regions.heartlands,
@@ -25,11 +51,11 @@ const gunsmith = [
         code: locations.territories.newhanover[1]
       }
     },
-    lat: 72.61959804455186,
-    lng: -29.585452079772953
+    lat: 72.51966243098407,
+    lng: -30.895571708679203
   },
   {
-    name: labels.gunsmith,
+    name: labels.butcher,
     location: {
       name: locations.cities.rhodes,
       region: locations.regions.scarlettmeadows,
@@ -38,11 +64,11 @@ const gunsmith = [
         code: locations.territories.lemoyne[1]
       }
     },
-    lat: 52.35172537604459,
-    lng: 5.404114723205567
+    lat: 52.97831246925311,
+    lng: 4.9147939682006845
   },
   {
-    name: labels.gunsmith,
+    name: labels.butcher,
     location: {
       name: locations.cities.saintdenis,
       region: locations.regions.bayounwa,
@@ -51,22 +77,9 @@ const gunsmith = [
         code: locations.territories.lemoyne[1]
       }
     },
-    lat: 52.853998384646516,
-    lng: 35.87585449218751
-  },
-  {
-    name: labels.gunsmith,
-    location: {
-      name: locations.cities.annesburg,
-      region: locations.regions.roanokeridge,
-      territory: {
-        name: locations.territories.newhanover[0],
-        code: locations.territories.newhanover[1]
-      }
-    },
-    lat: 75.8149228358407,
-    lng: 40.85652351379395
+    lat: 52.25441982219797,
+    lng: 38.085393905639656
   }
 ];
 
-export default gunsmith;
+export default butchers;

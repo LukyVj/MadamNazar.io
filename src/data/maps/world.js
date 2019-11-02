@@ -4,6 +4,7 @@ import territories from "./world/territories.js";
 import poker from "./world/poker.js";
 import gunsmiths from "./world/gunsmiths";
 import barbers from "./world/barbers";
+import post_offices from "./world/post-offices";
 
 const world = [
   {
@@ -12,7 +13,8 @@ const world = [
 
     poker,
     gunsmiths,
-    barbers
+    barbers,
+    post_offices
   }
 ];
 
