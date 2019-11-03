@@ -2,7 +2,7 @@ import locations from "../../locales/locations";
 
 const cities = [
   {
-    name: locations.cities.valentine.name,
+    name: locations.cities.valentine,
     lat: 72.51498244695172,
     lng: -29.483957290649414
   },

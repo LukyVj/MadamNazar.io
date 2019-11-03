@@ -28,6 +28,25 @@ import world from "../data/maps/world";
 
 import { JSON_COLLECTOR_ITEMS_URL } from "../scripts/constants";
 
+// console.log(world);
+// [
+//   "cities",
+//   "territories",
+//   "poker",
+//   "gunsmiths",
+//   "barbers",
+//   "post_offices",
+//   "shops",
+//   "fishing_shops",
+//   "doctors",
+//   "fences",
+//   "saloons",
+//   "photo_studios",
+//   "tailors",
+//   "fast_travel",
+//   "stables"
+// ].forEach(cat => console.log(JSON.stringify(world[0][`${cat}`])));
+
 const worldLabels = [
   "cities",
   "territories",
