@@ -6,5 +6,11 @@ export default {
   postoffice: "Post office",
   shop: "Shop",
   fishingshop: "Fishing Shop",
-  doctors: "Doctors"
+  doctor: "Doctor",
+  fence: "Fence",
+  saloon: "Saloon",
+  photostudio: "Photo Studio",
+  tailor: "Tailor",
+  fast_travel: "Fast Travel",
+  stable: "Stable"
 };

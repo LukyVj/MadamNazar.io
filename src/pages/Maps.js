@@ -36,7 +36,14 @@ const worldLabels = [
   "barbers",
   "post_offices",
   "shops",
-  "fishing_shops"
+  "fishing_shops",
+  "doctors",
+  "fences",
+  "saloons",
+  "photo_studios",
+  "tailors",
+  "fast_travel",
+  "stables"
 ];
 
 const styles = {
@@ -299,7 +306,6 @@ class SimpleMap extends React.Component {
           gradient={gradient}
           style={{ height: this.state.mapExpanded === false ? 700 : "100%" }}
           dragging={true}
-          detectRetina={true}
           onClick={this.handleClick}
           ref={ref => {
             this.map = ref;

@@ -5,7 +5,7 @@ const fishing_shops = [
     name: labels.fishingshop,
     location: {
       name: locations.pois.lagras,
-      region: locations.regions.bayounwa,
+      region: locations.regions.bluewatermarsh,
       territory: {
         name: locations.territories.lemoyne[0],
         code: locations.territories.lemoyne[1]

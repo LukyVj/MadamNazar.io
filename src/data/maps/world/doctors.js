@@ -3,7 +3,7 @@ import labels from "../../locales/labels";
 
 const doctors = [
   {
-    name: labels.doctors,
+    name: labels.doctor,
     location: {
       name: locations.cities.valentine,
       region: locations.regions.heartlands,
@@ -16,7 +16,7 @@ const doctors = [
     lng: -29.76256370544434
   },
   {
-    name: labels.doctors,
+    name: labels.doctor,
     location: {
       name: locations.cities.saintdenis,
       region: locations.regions.bayounwa,

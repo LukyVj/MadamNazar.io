@@ -66,8 +66,8 @@ const hideouts = [
   },
   {
     name: "sea of coronado",
-    lat: 13.06651931838565,
-    lng: -161.740754823013
+    lat: 12.569726977240354,
+    lng: -159.99784469604495
   },
   {
     name: "solomon's folly",
