@@ -22,11 +22,12 @@ import Infos from "../components/Infos";
 import CollectorMap from "../pages/CollectorMap";
 import mapStyles from "../pages/CollectorMap.css";
 
-import hideouts from "../data/maps/gang-hideouts";
+import hideouts from "../data/maps/world/hideouts";
 import curiosities from "../data/maps/curiosities";
 import world from "../data/maps/world";
 
 import { JSON_COLLECTOR_ITEMS_URL } from "../scripts/constants";
+import WorldMap from "../components/WordlMap.js/WorldMap";
 
 // console.log(world);
 // [
@@ -62,7 +63,8 @@ const worldLabels = [
   "photo_studios",
   "tailors",
   "fast_travel",
-  "stables"
+  "stables",
+  "hideouts"
 ];
 
 const styles = {
@@ -375,8 +377,17 @@ class SimpleMap extends React.Component {
                         }
                         key={item.name}
                         icon={
-                          this.props.map === "hideouts"
-                            ? hideoutMarker
+                          type !== "cities" && type !== "regions"
+                            ? leaflet.icon({
+                                iconUrl: require(`../images/map-icons/pin-${type.replace(
+                                  "_",
+                                  "-"
+                                )}.png`),
+                                ...markerOptions,
+                                iconAnchor: [10, 41],
+                                iconSize: [25, 40]
+                                // shadowUrl: require("../images/danger-shadow.png")
+                              })
                             : normalMarker
                         }
                       >
@@ -388,7 +399,15 @@ class SimpleMap extends React.Component {
                           >
                             {item.name}
                           </span>
-                          <pre>{JSON.stringify(item.location)}</pre>
+                          {item.location && (
+                            <span>
+                              <p>{item.location.name}</p>
+                              <p>{item.location.region}</p>
+                              <p>{item.location.territory.name}</p>
+                              <p>{item.location.territory.code}</p>
+                            </span>
+                          )}
+                          {/* <pre>{JSON.stringify(item.location)}</pre> */}
                         </Tooltip>
                       </Marker>
                     )
@@ -454,7 +473,7 @@ class SimpleMap extends React.Component {
 class Maps extends Component {
   constructor(props) {
     super(props);
-    this.state = { selectedMap: "simple", collectorUpdated: false };
+    this.state = { selectedMap: "world", collectorUpdated: false };
   }
 
   componentDidMount() {
@@ -495,8 +514,7 @@ class Maps extends Component {
               { id: "world", name: "World Map", status: 1 },
               { id: "random", name: "Random collectibles", status: 0 },
               { id: "photo", name: "Photos spot", status: 0 },
-              { id: "curiosities", name: "Curiosities", status: 0 },
-              { id: "hideouts", name: "Gang hideouts", status: 1 }
+              { id: "curiosities", name: "Curiosities", status: 0 }
             ].map(map => (
               <li
                 className="d-inline-block pr-8"
@@ -575,12 +593,7 @@ class Maps extends Component {
 
           {this.state.selectedMap === "world" && (
             <div className="w-100p top-200 left-0 right-0 m-auto z-4">
-              <SimpleMap
-                data={world}
-                parent={this}
-                map="world"
-                type="complex"
-              />
+              <WorldMap />
             </div>
           )}
           {this.state.selectedMap === "hideouts" && (

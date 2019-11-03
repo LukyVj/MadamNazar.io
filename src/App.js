@@ -18,6 +18,7 @@ import Navigation from "./components/Navigation/Navigation";
 import Footer from "./components/Footer/Footer";
 import PatreonModal from "./components/PatreonModal/PatreonModal";
 import Frame from "./components/Frame/Frame";
+import NetworkInfo from "./components/NetworkInfo";
 import { SupportBanner } from "./components/SupportBanner";
 
 import { docCookies } from "./scripts/cookies";
@@ -27,8 +28,7 @@ import styles from "./styles/globalStyles.css";
 
 //// Define apis
 import mockData from "./data/mock";
-const devApi = "https://madam-nazar-location-api-2.herokuapp.com/today";
-const prodApi = "https://madam-nazar-location-api.herokuapp.com/today";
+import { DEV_API, PROD_API, MOCK_API } from "./scripts/constants";
 
 const dateEvent = new Date();
 const dateOptions = {
@@ -39,40 +39,7 @@ const dateOptions = {
 };
 const todayDate = dateEvent.toDateString("us-EN", dateOptions);
 
-const apiDefined = isOnline === true ? `hello ${devApi}` : "./data/mock.js";
 ////
-
-const NetworkInfo = () => (
-  <>
-    <div
-      className="p-8 ta-center bxs-default"
-      css={css`
-        background: ${isOnline ? "rgba(120, 200, 120)" : "rgba(255, 100, 100)"};
-        color: white;
-        position: fixed;
-        z-index: 999999999;
-        bottom: 0;
-        width: 300px;
-        right: 0;
-        bottom: 0;
-        color: white;
-        z-index: 999999999999999999999999;
-        border-radius: 14px;
-        margin: 16px;
-        font-size: 14px;
-        text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.8);
-      `}
-    >
-      <p className="p-0 mv-8">
-        Running locally, {isOnline === true ? "with" : "without"} an internet
-        access{" "}
-      </p>
-      <p className="p-0 mv-8">
-        Data fecthed from <a href={apiDefined}>{apiDefined}</a>
-      </p>
-    </div>
-  </>
-);
 
 const URLHandler = props => {
   let history = useHistory();
@@ -99,7 +66,7 @@ class App extends Component {
   }
 
   fetchData = () => {
-    const url = this.state.env === "development" ? devApi : prodApi;
+    const url = this.state.env === "development" ? DEV_API : PROD_API;
 
     fetch(url, {
       method: "GET",
@@ -163,7 +130,7 @@ class App extends Component {
             dataFor: mockData.current_location.dataFor,
             cycle: mockData.cycle,
             fetched: true,
-            apiUrl: isOnline === true ? `hello ${devApi}` : "./data/mock.js"
+            apiUrl: isOnline === true ? DEV_API : MOCK_API
           })
         : this.fetchData();
     }
@@ -189,25 +156,39 @@ class App extends Component {
           />
           <Navigation parent={this} navOpen={this.state.navOpen} />
 
-          <section id="frame" className="pv-32" css={styles.wrapper}>
-            <Switch>
-              <Route path="/resources">
+          <Switch>
+            <Route path="/resources">
+              <section id="frame" className="pv-32" css={styles.wrapper}>
                 <Resources />
-              </Route>
-              <Route path="/map">
+              </section>
+            </Route>
+            <Route path="/map">
+              <section id="frame" className="pv-32" css={styles.wrapper}>
                 <CollectorMap parent={this} />
-              </Route>
-              <Route path="/maps">
+              </section>
+            </Route>
+            <Route path="/maps">
+              <section
+                id="frame"
+                className="pv-32"
+                css={styles.fullWidthWrapper}
+              >
                 <Maps parent={this} />
-              </Route>
-              <Route path="/deck">
+              </section>
+            </Route>
+            <Route path="/deck">
+              <section id="frame" className="pv-32" css={styles.wrapper}>
                 <Deck parent={this} />
-              </Route>
-              <Route path="/about">
+              </section>
+            </Route>
+            <Route path="/about">
+              <section id="frame" className="pv-32" css={styles.wrapper}>
                 <About />
-              </Route>
+              </section>
+            </Route>
 
-              <Route path="/tweet">
+            <Route path="/tweet">
+              <section id="frame" className="pv-32" css={styles.wrapper}>
                 {dataExists && (
                   <Tweet
                     parent={this}
@@ -229,8 +210,10 @@ class App extends Component {
                     loaded={true}
                   />
                 )}
-              </Route>
-              <Route path="/">
+              </section>
+            </Route>
+            <Route path="/">
+              <section id="frame" className="pv-32" css={styles.wrapper}>
                 {dataExists ? (
                   <Finder
                     parent={this}
@@ -242,9 +225,10 @@ class App extends Component {
                     <img src={require("./images/hat.png")} alt="loading" />
                   </span>
                 )}
-              </Route>
-            </Switch>
-          </section>
+              </section>
+            </Route>
+          </Switch>
+
           <Footer parent={this} />
         </div>
       </Router>

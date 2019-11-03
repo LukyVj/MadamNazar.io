@@ -17,6 +17,11 @@ export default {
     min-height: 50vh;
     margin: auto;
   `,
+  fullWidthWrapper: css`
+    width: 90%;
+    min-height: 50vh;
+    margin: auto;
+  `,
   modal: css`
     padding: 0;
     margin: 0;

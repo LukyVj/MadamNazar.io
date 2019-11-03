@@ -15,6 +15,7 @@ import photo_studios from "./world/photo_studios";
 import tailors from "./world/tailors";
 import fast_travel from "./world/fast_travel";
 import stables from "./world/stables";
+import hideouts from "./world/hideouts";
 
 const world = [
   {
@@ -36,7 +37,8 @@ const world = [
     photo_studios,
     tailors,
     fast_travel,
-    stables
+    stables,
+    hideouts
   }
 ];
 

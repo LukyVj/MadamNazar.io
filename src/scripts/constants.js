@@ -4,6 +4,10 @@ export const TWITTER_NAME = "@MadamNazarIO";
 export const PATREON_URL = "https://patreon.com/lukyvj";
 export const DISCORD_URL = "https://discord.gg/yXFq4E6";
 
+export const DEV_API = "https://madam-nazar-location-api-2.herokuapp.com/today";
+export const PROD_API = "https://madam-nazar-location-api.herokuapp.com/today";
+export const MOCK_API = "./data/mock.js";
+
 export const COLLECTOR_MAP_URL = "https://jeanropke.github.io/poggers/?v=99";
 
 // CLOUDINARY
