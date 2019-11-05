@@ -225,7 +225,7 @@ class SimpleMap extends React.Component {
     console.log(this.state);
   }
 
-  handleZoomstart = map => {
+  handleZoomstart (map) {
     this.map && this.setState({ currentZoom: this.map.leafletElement._zoom });
   };
 
