@@ -170,7 +170,7 @@ class About extends Component {
             >
               Lee Martin
             </a>{" "}
-            for his top notch work on the css effect to "Recreate the Red Dead
+            for his top notch work on the css effect to: "Recreate the Red Dead
             Redemption 2 Tintype Loading Screen Effect in CSS".
           </p>
 
