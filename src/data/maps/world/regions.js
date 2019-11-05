@@ -1,14 +1,3 @@
-const regions = [{
-      name: "",
-      territory: "Ambarino",
-
-    ]
-  },
-  {
-    name: "Tumbleweed",
-    ter
-      ]
-    ]
-  }];
+const regions = [];
 
 export default regions;

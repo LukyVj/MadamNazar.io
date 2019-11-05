@@ -350,7 +350,6 @@ class SimpleMap extends React.Component {
                 //   // console.log(JSON.stringify(layer.toGeoJSON()));
                 // }}
                 draw={{
-                  rectangle: false,
                   polyline: false,
                   circle: false,
                   marker: false,
@@ -402,9 +401,18 @@ class SimpleMap extends React.Component {
                           {item.location && (
                             <span>
                               <p>{item.location.name}</p>
-                              <p>{item.location.region}</p>
-                              <p>{item.location.territory.name}</p>
-                              <p>{item.location.territory.code}</p>
+                              <p>
+                                {item.location.region !== "TDF" &&
+                                  item.location.region}
+                              </p>
+                              <p>
+                                {item.location.territory.name !== "TDF" &&
+                                  item.location.territory.name}
+                              </p>
+                              <p>
+                                {item.location.territory.code !== "TDF" &&
+                                  item.location.territory.code}
+                              </p>
                             </span>
                           )}
                           {/* <pre>{JSON.stringify(item.location)}</pre> */}
@@ -482,10 +490,10 @@ class Maps extends Component {
     });
     ReactGA.pageview("/maps");
 
-    fetch(JSON_COLLECTOR_ITEMS_URL)
-      .then(response => response.json())
-      .then(data => this.setState({ collector: data, collectorUpdated: true }))
-      .then(() => console.log(this.state));
+    // fetch(JSON_COLLECTOR_ITEMS_URL)
+    //   .then(response => response.json())
+    //   .then(data => this.setState({ collector: data, collectorUpdated: true }))
+    //   .then(() => console.log(this.state));
   }
 
   render() {
@@ -499,7 +507,7 @@ class Maps extends Component {
         />
         <script src="https://raw.githubusercontent.com/pa7/heatmap.js/develop/plugins/leaflet-heatmap/leaflet-heatmap.js" />
 
-        <div className="pos-relative">
+        <div className="pos-relative ph-16">
           <div>
             <p>Discover a few interactive maps to help you in your journey</p>
           </div>
@@ -510,8 +518,8 @@ class Maps extends Component {
                 name: "Default",
                 status: process.env.NODE_ENV === "development" ? 1 : 0
               },
-              { id: "collector", name: "Collector's map", status: 1 },
               { id: "world", name: "World Map", status: 1 },
+              { id: "collector", name: "Collector's map", status: 1 },
               { id: "random", name: "Random collectibles", status: 0 },
               { id: "photo", name: "Photos spot", status: 0 },
               { id: "curiosities", name: "Curiosities", status: 0 }

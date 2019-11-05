@@ -2,7 +2,7 @@ import locations from "../../locales/locations";
 import labels from "../../locales/labels";
 const barbers = [
   {
-    name: labels.barbers,
+    name: labels.barber,
     location: {
       name: locations.cities.blackwater,
       region: locations.regions.greatplains,
@@ -15,7 +15,7 @@ const barbers = [
     lng: -41.28404617309571
   },
   {
-    name: labels.barbers,
+    name: labels.barber,
     location: {
       name: locations.cities.valentine,
       region: locations.regions.heartlands,
@@ -28,7 +28,7 @@ const barbers = [
     lng: -41.28404617309571
   },
   {
-    name: labels.barbers,
+    name: labels.barber,
     location: {
       name: locations.cities.saintdenis,
       region: locations.regions.bayounwa,

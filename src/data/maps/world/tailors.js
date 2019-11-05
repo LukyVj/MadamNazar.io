@@ -3,7 +3,7 @@ import labels from "../../locales/labels";
 
 const tailors = [
   {
-    name: labels.tailors,
+    name: labels.tailor,
     location: {
       name: locations.cities.saintdenis,
       region: locations.regions.bayounwa,
@@ -16,7 +16,7 @@ const tailors = [
     lng: 32.395248413085945
   },
   {
-    name: labels.tailors,
+    name: labels.tailor,
     location: {
       name: locations.cities.blackwater,
       region: locations.regions.greatplains,

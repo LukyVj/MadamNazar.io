@@ -14,6 +14,7 @@ const Infos = ({ children, styles, className }) => (
         border-style: solid;
         border-width: 4px;
         background: rgba(255, 255, 255, 0.3);
+
         color: var(--Armadillo);
       `,
       styles

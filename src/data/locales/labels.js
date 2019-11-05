@@ -12,5 +12,6 @@ export default {
   photostudio: "Photo Studio",
   tailor: "Tailor",
   fast_travel: "Fast Travel",
-  stable: "Stable"
+  stable: "Stable",
+  hideout: "Hideout"
 };

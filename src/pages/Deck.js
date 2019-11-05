@@ -124,7 +124,16 @@ const FavoriteDeck = props => {
 };
 
 const Card = props => {
-  const { name, description, type, unlock, parent, display, onClick } = props;
+  const {
+    name,
+    description,
+    type,
+    unlock,
+    parent,
+    display,
+    onClick,
+    index
+  } = props;
 
   return (
     <div
@@ -161,7 +170,15 @@ const Card = props => {
         `
       ]}
     >
-      <div className="pos-relative" css={styles.card_animation}>
+      <div
+        className="pos-relative"
+        css={[
+          styles.card_animation,
+          css`
+            animation-delay: ${(100 + 150 * index) * 0.5}ms;
+          `
+        ]}
+      >
         <button
           className="add-to-deck pos-absolute m-16 bxs-default fw-bold d-none md:d-block"
           css={[
@@ -193,7 +210,10 @@ const Card = props => {
           `}
         >
           <img
-            src={`${IMAGES_CDN}/ability_cards/${type}/${imageName(name)}.png`}
+            src={`${IMAGES_CDN.replace(
+              "upload/",
+              "upload/c_scale,q_50,w_280/"
+            )}/ability_cards/${type}/${imageName(name)}.png`}
             alt={`Card ${type}/${imageName}`}
             className="w-100p"
             css={css`
@@ -277,7 +297,7 @@ const Card = props => {
 };
 
 const Hits = ({ hits, parent }) => {
-  return hits.map(hit => (
+  return hits.map((hit, id) => (
     <Card
       name={hit.name}
       description={hit.description}
@@ -286,6 +306,7 @@ const Hits = ({ hits, parent }) => {
       parent={parent}
       display={parent.cardDisplay(hit.type)}
       onClick={() => parent.handleClick(hit)}
+      index={id}
     />
   ));
 };

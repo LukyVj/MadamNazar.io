@@ -1,8 +1,44 @@
 import ReactGA from "react-ga";
+export const showcase = [
+  {
+    title: "GTABase - Red Dead Redemption 2",
+    description:
+      "By the maker of GTABase, you'll find tons of guides and articles about Red Dead Redemption 2 Online",
+    author: {
+      name: "GTABase",
+      url: "https://www.gtabase.com"
+    },
+    url: "https://www.gtabase.com/red-dead-redemption-2/online/",
+    onclick: () => {
+      ReactGA.event({
+        category: "click.resources.banner",
+        action: "Click https://www.gtabase.com/red-dead-redemption-2/online/"
+      });
+    },
+    bakground: ["#171717", "#c00000"]
+  }
+];
 export const resources = [
   {
     type: "websites",
     content: [
+      {
+        title: "GTABase - Red Dead Redemption 2",
+        description:
+          "By the maker of GTABase, you'll find tons of guides and articles about Red Dead Redemption 2 Online",
+        author: {
+          name: "GTABase",
+          url: "https://www.gtabase.com"
+        },
+        url: "https://www.gtabase.com/red-dead-redemption-2/online/",
+        onclick: () => {
+          ReactGA.event({
+            category: "click.resources.banner",
+            action:
+              "Click https://www.gtabase.com/red-dead-redemption-2/online/"
+          });
+        }
+      },
       {
         title: "RDR2 Collector Map",
         description:

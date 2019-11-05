@@ -109,7 +109,7 @@ class App extends Component {
     docCookies.setItem("removed-markers-daily", "true");
 
     if (!docCookies.getItem("patreon-ad")) {
-      docCookies.setItem("patreon-ad", "true", maxAgeToGMT(150));
+      docCookies.setItem("patreon-ad", "true", maxAgeToGMT(999));
     }
 
     docCookies.getItem("patreon-ad") === "true"

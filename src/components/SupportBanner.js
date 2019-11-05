@@ -68,7 +68,7 @@ export const SupportBanner = ({ parent }) => (
               showPatreonAd: false,
               showPatreonAbout: false
             });
-            docCookies.setItem("patreon-ad", "false", maxAgeToGMT(150));
+            docCookies.setItem("patreon-ad", "false", maxAgeToGMT(999));
           }}
         >
           <img

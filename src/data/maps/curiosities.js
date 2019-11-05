@@ -16,6 +16,7 @@ const curiosities = [
   },
   {
     name: "dead whale",
+    online: 1,
     lat: 62.553687747924606,
     lng: -83.51411819458009
   },

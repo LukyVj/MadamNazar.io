@@ -18,7 +18,8 @@ export default {
     margin: auto;
   `,
   fullWidthWrapper: css`
-    width: 90%;
+    width: 100%;
+    max-width: 1600px;
     min-height: 50vh;
     margin: auto;
   `,
@@ -121,27 +122,23 @@ export default {
       background: var(--Tabasco);
     }
   `,
+
   active: css`
     background: var(--Tabasco);
   `,
   card_animation_wrapper: css`
     position: relative;
-    -webkit-transform: scale(1);
     transform: scale(1);
-    -webkit-animation-fill-mode: backwards;
     animation-fill-mode: backwards;
-    -webkit-transition: none;
     transition: none;
-    -webkit-transform-origin: center;
     transform-origin: center;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    -webkit-perspective: 1000;
     perspective: 1000;
     border-radius: 8px;
+    /* animation: cardContainersAnim 0.4s ease forwards; */
+    transform-style: preserve-3d;
   `,
   card_animation: css`
     transform-origin: center !important;
-    animation: cardDetailsAnim 0.4s ease;
+    animation: cardDetailsAnim 0.4s ease forwards;
   `
 };
