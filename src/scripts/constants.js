@@ -21,3 +21,5 @@ export const JSON_WEEKLY_URL =
   "https://rawcdn.githack.com/jeanropke/RDR2CollectorsMap/a3dee17a11e1bb67ccb2fe14b07fddb580ec3b35/data/weekly.json";
 export const JSON_GAME_ITEMS_URL =
   "https://rawcdn.githack.com/jeanropke/RDOMap/784fdd83f14d31321c04dfb23cc13725c17357d7/data/items.json";
+
+// s
