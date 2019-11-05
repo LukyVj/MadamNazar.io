@@ -171,7 +171,7 @@ class About extends Component {
               Lee Martin
             </a>{" "}
             for his top notch work on the css effect to "Recreate the Red Dead
-            Redemption 2 Tintype Loading Screen Effect in CSS"
+            Redemption 2 Tintype Loading Screen Effect in CSS".
           </p>
 
           <h2>Contributors:</h2>
