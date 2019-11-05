@@ -22,4 +22,3 @@ export const JSON_WEEKLY_URL =
 export const JSON_GAME_ITEMS_URL =
   "https://rawcdn.githack.com/jeanropke/RDOMap/784fdd83f14d31321c04dfb23cc13725c17357d7/data/items.json";
 
-// s
