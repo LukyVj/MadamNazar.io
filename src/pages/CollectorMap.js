@@ -105,7 +105,7 @@ class CollectorMap extends Component {
               });
             }}
           >
-            @JeanRopke
+            @JeanRopke.
           </a>
         </h4>
       </>
