@@ -83,7 +83,7 @@ class CollectorMap extends Component {
             {this.state.expandMap === false ? "Expand Map" : "Reduce Map"}
           </button>
 
-          <object
+          <Iframe
             data={`${COLLECTOR_MAP_URL}`}
             title="Jean Ropke RDR2 Collector Map"
             height={this.state.expandMap === false ? 700 : "100%"}
