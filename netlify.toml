@@ -1,8 +1,4 @@
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
   from = "/test"
   to = "/?page=maps"
   status = 200
