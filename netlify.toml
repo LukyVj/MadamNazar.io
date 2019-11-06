@@ -4,8 +4,13 @@
   status = 200
 
 # Branch specific settings
-[context.master.processing]
-  skip_processing = false
-[context.master.processing.css]
+[build.processing.css]
   bundle = true
-  minify = true
+  minify = false
+[build.processing.js]
+  bundle = true
+  minify = false
+[build.processing.html]
+  pretty_urls = true
+[build.processing.images]
+  compress = true
