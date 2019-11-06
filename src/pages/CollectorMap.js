@@ -84,7 +84,7 @@ class CollectorMap extends Component {
           </button>
 
           <Iframe
-            url={`${COLLECTOR_MAP_URL}`}
+            url={`http://localhost:8000/`}
             title="Jean Ropke RDR2 Collector Map"
             height={this.state.expandMap === false ? 700 : "100%"}
             frameBorder="border: 4px solid var(--Armadillo);"
