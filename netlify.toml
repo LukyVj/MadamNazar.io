@@ -3,6 +3,10 @@
   to = "/index.html"
   status = 200
 
+  from = "/test"
+  to = "/?page=maps"
+  status = 200
+
 # Branch specific settings
 [build.processing.css]
   bundle = true
