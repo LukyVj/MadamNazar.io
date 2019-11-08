@@ -7,6 +7,7 @@
     "algoliasearch": "^3.35.1",
     "emotion": "^10.0.17",
     "eslint-utils": "^1.4.1",
+    "gatsby": "^2.17.10",
     "heatmap.js": "^2.0.5",
     "leaflet": "^1.5.1",
     "leaflet-draw": "^1.0.4",
@@ -34,7 +35,7 @@
     "beta": "sh ./scripts/beta.sh",
     "backup": "sh ./scripts/backup.sh",
     "deploy": "yarn beta && sh ./scripts/deploy.sh && yarn backup",
-    "lint": "./node_modules/.bin/eslint src"
+    "lint": "eslint src"
   },
   "eslintConfig": {
     "extends": "react-app"
