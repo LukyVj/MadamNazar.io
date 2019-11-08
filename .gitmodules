@@ -1,3 +1,6 @@
 [submodule "public/poggers"]
 	path = public/poggers
 	url = https://github.com/jeanropke/poggers
+[submodule "poggers"]
+	path = poggers
+	url = https://github.com/jeanropke/poggers
