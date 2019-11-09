@@ -34,7 +34,7 @@
     "beta": "sh ./scripts/beta.sh",
     "backup": "sh ./scripts/backup.sh",
     "deploy": "yarn beta && sh ./scripts/deploy.sh && yarn backup",
-    "lint": "./node_modules/.bin/eslint src"
+    "lint": "eslint src"
   },
   "eslintConfig": {
     "extends": "react-app"

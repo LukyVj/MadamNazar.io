@@ -11,3 +11,7 @@ The "problem" is that this NPC is on a 24h constant rotation, meaning that every
 
 This tool aims to detect the NPC's position as soon as possible, and display the information on a website. 
 
+## Thanks to
+
+@JeanRopke for [jeanropke/RDR2CollectorsMap](https://github.com/jeanropke/RDR2CollectorsMap)
+

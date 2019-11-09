@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Red Dead Redemption ~ Google Map</title>
+    <script>
+        var skinUrl = '.';
+    </script>
+    <link href="./assets/images/favicon.png" rel="icon">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script type="text/javascript" src="./assets/js/googlemaps/googlemaps.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <script type="text/javascript" src="./assets/js/googlemaps/default.js"></script>
+    <script type="text/javascript" src="./assets/js/googlemaps/maplabel.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+        $( function() {
+            $( "#offsetX" ).slider({
+                min: -250,
+                max: 250,
+                step: 0.001,
+                change: function(event, ui)
+                {
+                    offsetX = $(this).slider("value");
+                    addMarkers();
+                }
+            });
+            $( "#offsetY" ).slider({
+                min: -500,
+                max: 500,
+                step: 0.001,
+                change: function(event, ui)
+                {
+                    offsetY = $(this).slider("value");
+                    addMarkers();
+
+                }
+            });
+        } );
+    </script>
+    <style>
+        body {
+            margin: 0;
+        }
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+        .debug {
+            background-color: rgba(219, 26, 33, .5);
+            color: #eee;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 30px;
+            font-size: 18px;
+            line-height: 1.6;
+            padding-left: 10px;
+            display: none;
+            z-index: 10;
+        }
+    </style>
+</head>
+
+<body>
+<div style="position: absolute; background: rgba(255, 255, 255, .4); width: 200px; height: 75px; z-index: 9999; margin: 0; padding: 15px">
+    <div id="offsetX" style="margin-bottom: 15px;"></div>
+    <div id="offsetY"></div>
+</div>
+
+<div id="map" style="background: #a39c93;">
+
+</div>
+<div class="debug"></div>
+</body>
+
+</html>

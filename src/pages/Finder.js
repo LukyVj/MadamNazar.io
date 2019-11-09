@@ -220,6 +220,8 @@ class Finder extends Component {
     setTimeout(() => {
       this.setState({ loadEvenMore: true });
     }, 10000);
+
+    console.log(this.props)
   }
 
   render() {
