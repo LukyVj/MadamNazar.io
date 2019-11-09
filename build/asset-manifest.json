@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/static/css/main.ecdb297e.chunk.css",
-    "main.js": "/static/js/main.a70d2e24.chunk.js",
-    "main.js.map": "/static/js/main.a70d2e24.chunk.js.map",
+    "main.js": "/static/js/main.bca596b7.chunk.js",
+    "main.js.map": "/static/js/main.bca596b7.chunk.js.map",
     "runtime~main.js": "/static/js/runtime~main.c82138e8.js",
     "runtime~main.js.map": "/static/js/runtime~main.c82138e8.js.map",
     "static/js/2.482f17cb.chunk.js": "/static/js/2.482f17cb.chunk.js",
     "static/js/2.482f17cb.chunk.js.map": "/static/js/2.482f17cb.chunk.js.map",
     "index.html": "/index.html",
-    "precache-manifest.2d7cdca9b99ba2e9cc87bd48cbbecc80.js": "/precache-manifest.2d7cdca9b99ba2e9cc87bd48cbbecc80.js",
+    "precache-manifest.9509a6b68af10dd0540b3d52ce78329d.js": "/precache-manifest.9509a6b68af10dd0540b3d52ce78329d.js",
     "service-worker.js": "/service-worker.js",
     "static/css/main.ecdb297e.chunk.css.map": "/static/css/main.ecdb297e.chunk.css.map",
     "static/media/CARD_BACK.png": "/static/media/CARD_BACK.68d1bcdc.png",

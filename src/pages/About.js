@@ -135,6 +135,9 @@ class About extends Component {
             </a>{" "}
             on Twitch.
           </p>
+          
+          <h3>Going further</h3>
+          <p>You can use my Epic Games creator code: <b>LUKYVJ</b></p>
         </Infos>
         <Infos>
           <h2>Thanks:</h2>
