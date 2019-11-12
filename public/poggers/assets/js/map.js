@@ -13,15 +13,21 @@ Map.init = function() {
     boundsTiles = L.latLngBounds(southWestTiles, northEastTiles);
 
   var mapLayers = [];
-  mapLayers["Default"] = L.tileLayer(
+  mapLayers[
+    "Default"
+  ] = L.tileLayer(
     "https://s.rsg.sc/sc/images/games/RDR2/map/game/{z}/{x}/{y}.jpg",
     { noWrap: true, bounds: boundsTiles }
   );
-  mapLayers["Detailed"] = L.tileLayer(
+  mapLayers[
+    "Detailed"
+  ] = L.tileLayer(
     "https://jeanropke.github.io/RDR2CollectorsMap/assets/maps/detailed/{z}/{x}_{y}.jpg",
     { noWrap: true, bounds: boundsTiles }
   );
-  mapLayers["Dark"] = L.tileLayer(
+  mapLayers[
+    "Dark"
+  ] = L.tileLayer(
     "https://jeanropke.github.io/RDR2CollectorsMap/assets/maps/darkmode/{z}/{x}_{y}.jpg",
     { noWrap: true, bounds: boundsTiles }
   );
@@ -213,18 +219,32 @@ Map.addMarkerOnMap = function(value) {
           ctx.closePath();
         }
       }
-    }) 
+    })
   });
+
+  function videoEmbedLink(url) {
+    console.log(url);
+    let newUrl;
+    newUrl = url.split("?v=")[1].replace("&t=", "?start=");
+    newUrl = `https://youtube.com/embed/${newUrl.substring(
+      0,
+      newUrl.length - 1
+    )}`;
+    return newUrl;
+  }
 
   tempMarker
     .bindPopup(
-      `<div style="text-align:center"><h1> ${languageData[value.text + ".name"]} - ${
-        languageData["menu.day"]
-      } ${value.day}</h1>
+      `<div style="text-align:center"><h1> ${
+        languageData[value.text + ".name"]
+      } - ${languageData["menu.day"]} ${value.day}</h1>
       <p>${Map.getToolIcon(value.tool)} ${
         languageData[value.text + "_" + value.day + ".desc"]
       } </p>
-      ${value.gtaSeriesVideoYTLink && `<a href="${value.gtaSeriesVideoYTLink}" title="link to video" style="padding: 8px 0;display:block;width:100%">Video</a> `}
+      ${value.gtaSeriesVideoYTLink &&
+        `<a href="${videoEmbedLink(
+          value.gtaSeriesVideoYTLink
+        )}" title="link to video" target="_blank" style="padding: 8px 0;display:block;width:100%">Video</a> `}
       <p class="remove-button" data-item="${value.text}">${
         languageData["map.remove_add"]
       }</p></div>`
@@ -420,9 +440,7 @@ Map.addMadamNazar = function() {
     );
 
     marker.bindPopup(
-      `<h1>${
-        languageData["madam_nazar.name"]
-      } - ${nazarCurrentDate}</h1><p>  </p>`
+      `<h1>${languageData["madam_nazar.name"]} - ${nazarCurrentDate}</h1><p>  </p>`
     );
     markersLayer.addLayer(marker);
   }
