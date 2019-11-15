@@ -19,7 +19,7 @@ class Tweet extends Component {
         this.props.location.region.precise
       )} in ${capitalize(
         this.props.location.region.name
-      )}, Find me on https://madamnazar.io #RedDeadRedemption2 #rdr2 #madamnazar #RDOnline #FrontierPursuits via @finderNazar`
+      )}, Find me on https://madamnazar.io #RedDeadRedemption2 #rdr2 #madamnazar #RDOnline #FrontierPursuits via @MadamNazarIO`
     };
     this.textInput = React.createRef();
   }
