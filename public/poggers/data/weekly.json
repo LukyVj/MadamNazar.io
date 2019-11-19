@@ -1,0 +1,68 @@
+{
+    "saint_dennis_set": [
+        {
+            "item": "bottle_cognac_bottle"
+        },
+        {
+            "item": "earring_beauchene_ruby"
+        },
+        {
+            "item": "ring_beaulieux_diamond"
+        }
+    ],
+    "cheater_set": [
+        {
+            "item": "wands_queen"
+        },
+        {
+            "item": "cups_king"
+        },
+        {
+            "item": "pentacles_ace"
+        }
+    ],
+    "witch_set": [
+        {
+            "item": "egg_vulture"
+        },
+        {
+            "item": "flower_cardinal"
+        },
+        {
+            "item": "arrowhead_splintered"
+        }
+    ],
+    "fortune_teller_set": [
+        {
+            "item": "cups_ace"
+        },
+        {
+            "item": "wands_ace"
+        },
+        {
+            "item": "bottle_absinthe"
+        }
+    ],
+    "herbalist_set": [
+        {
+            "item": "flower_blood_flower_1"
+        },
+        {
+            "item": "flower_chocolate_daisy"
+        },
+        {
+            "item": "flower_creek_plum"
+        }
+    ],
+    "bowmans_set": [
+        {
+            "item": "arrowhead_flint"
+        },
+        {
+            "item": "arrowhead_raw"
+        },
+        {
+            "item": "arrowhead_agate"
+        }
+    ]
+}

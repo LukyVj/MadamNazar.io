@@ -1,6 +1,9 @@
 /**
  * Created by Jean on 2019-10-09.
+ * Udpated by LukyVj on 2019-11-19.
  */
+
+var weeklySetDefined = "bowmans_set";
 
 var Map = {
   minZoom: 2,
@@ -130,9 +133,9 @@ Map.addMarkers = function() {
 
 Map.loadWeeklySet = function() {
   $.getJSON(
-    `https://jeanropke.github.io/RDR2CollectorsMap/data/weekly.json?nocache=${nocache}`
+    `data/weekly.json?nocache=${nocache}`
   ).done(function(data) {
-    weeklySetData = data[weeklySet];
+    weeklySetData = data[weeklySetDefined];
     Map.loadFastTravels();
   });
 };
@@ -223,7 +226,6 @@ Map.addMarkerOnMap = function(value) {
   });
 
   function videoEmbedLink(url) {
-    console.log(url);
     let newUrl;
     newUrl = url.split("?v=")[1].replace("&t=", "?start=");
     newUrl = `https://youtube.com/embed/${newUrl.substring(
