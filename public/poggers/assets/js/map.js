@@ -132,6 +132,7 @@ Map.loadWeeklySet = function() {
   $.getJSON(
     `https://jeanropke.github.io/RDR2CollectorsMap/data/weekly.json?nocache=${nocache}`
   ).done(function(data) {
+    console.log(data)
     weeklySetData = data[weeklySet];
     Map.loadFastTravels();
   });

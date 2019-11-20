@@ -37,7 +37,7 @@ var nazarCurrentDate;
 
 var fastTravelData;
 
-var weeklySet = 'herbalist_set';
+var weeklySet = 'bowmans_set';
 var weeklySetData = [];
 var date;
 var nocache = 32;
