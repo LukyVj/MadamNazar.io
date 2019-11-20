@@ -6,7 +6,8 @@ import {
   WEBSITE_NAME,
   PATREON_URL,
   TWITTER_URL,
-  TWITTER_NAME
+  TWITTER_NAME,
+  DISCORD_URL
 } from "../../scripts/constants";
 import { docCookies } from "../../scripts/cookies";
 import { maxAgeToGMT } from "../../scripts/helpers";
@@ -116,6 +117,8 @@ const PatreonModal = ({ parent }) => (
       API up and running. If you feel like it, consider making a donation, even
       small ones can help a lot!
     </p>
+
+    <p>Feel free to <a href={DISCORD_URL}>join our Discord server</a> to find some good pals to play with</p>
 
     <p>
       Also, following our{" "}
