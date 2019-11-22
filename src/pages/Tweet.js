@@ -44,6 +44,7 @@ class Tweet extends Component {
         <h2 className="ta-center mt-48">
           Help your Twitter followers to find Madam Nazar
         </h2>
+
         <h3>
           <span className="label">1</span> Edit your tweet:
         </h3>
@@ -105,24 +106,7 @@ class Tweet extends Component {
                 }}
               />
             </div>
-            <div className="p-8 cursor-pointer" css={styles.mapBox}>
-              <img
-                src={this.props.imageNegative}
-                alt="Negative view"
-                className="w-100p"
-                onClick={() => {
-                  this.setState({
-                    initial_tweet: `${this.cleanTweetForImageSelection(
-                      this.textInput.current.value
-                    )} 🗺➡ ${this.props.imageNegative}`
-                  });
-                  ReactGA.event({
-                    category: "click.tweet.image",
-                    action: "Click second image for tweet"
-                  });
-                }}
-              />
-            </div>
+            
             <div className="p-8 cursor-pointer" css={styles.mapBox}>
               <img
                 src={this.props.imageTilt}
