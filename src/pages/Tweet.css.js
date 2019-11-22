@@ -38,6 +38,7 @@ export default {
 
     &:hover {
       background: var(--Tabasco);
+      color:white;
     }
   `,
   tweet: css`

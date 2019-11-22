@@ -199,10 +199,7 @@ class App extends Component {
                       this.state.data &&
                       this.state.data.location.image.normal.full
                     }
-                    imageNegative={
-                      this.state.data &&
-                      this.state.data.location.image.negative.full
-                    }
+                    
                     imageTilt={
                       this.state.data &&
                       this.state.data.location.image.tilt_shift.full
