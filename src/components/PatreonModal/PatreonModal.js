@@ -61,6 +61,8 @@ const styles = {
 };
 
 class PatreonModal extends Component {
+  rootNode = document.getElementById('root');
+
   handleModalClose = () => {
     const { onClose } = this.props;
     onClose();
@@ -71,19 +73,14 @@ class PatreonModal extends Component {
   };
 
   componentDidMount() {
-    // scroll lock on main content
-    const rootNode = document.getElementById('root');
-    rootNode.style.overflow = 'hidden';
+    this.rootNode.style.overflow = 'hidden'; // scroll lock on main content
   }
 
   componentWillUnmount() {
-    // scroll release on main content
-    const rootNode = document.getElementById('root');
-    rootNode.style.overflow = 'auto';
+    this.rootNode.style.overflow = 'auto'; // scroll release on main content
   }
 
   render() {
-    const { onClose } = this.props;
     return (
       <div
         css={styles.overlay}
