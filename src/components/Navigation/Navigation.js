@@ -71,7 +71,7 @@ const Navigation = props => {
               className="pv-8 md:pv-0 md:pl-8 md:pr-8 md:mr-24 pos-relative md:d-flex ai-center jc-center md:w-auto"
               css={[
                 index !== navigation.length - 1 &&
-                css`
+                  css`
                     &:after {
                       content: "";
                       display: block;
@@ -83,21 +83,21 @@ const Navigation = props => {
                       top: 50%;
                       right: -16px;
                       transform: translateY(-50%);
-
+  
                       @media (max-width: 960px) {
                         display: none;
                       }
                     }
                   `,
                 window.location.pathname === item.url &&
-                css`
+                  css`
                     color: red;
                   `,
-                css`
-                  @media (max-width: 960px) {
-                    font-size: 32px;
-                  }
-                `
+                  css`
+                    @media (max-width: 960px) {
+                      font-size: 32px;
+                    }
+                  `
               ]}
             >
               {item.appLink === true ? (
