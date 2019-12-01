@@ -4,6 +4,7 @@ import { css, jsx } from "@emotion/core";
 import { navigation } from "../../data/navigation";
 import styles from "../../styles/globalStyles.css";
 import { NavLink } from "react-router-dom";
+
 const Navigation = props => {
   const { parent, navOpen } = props;
 
@@ -66,11 +67,11 @@ const Navigation = props => {
         >
           {navigation.map((item, index) => (
             <li
-              key={item.link}
+              key={item.url}
               className="pv-8 md:pv-0 md:pl-8 md:pr-8 md:mr-24 pos-relative md:d-flex ai-center jc-center md:w-auto"
               css={[
                 index !== navigation.length - 1 &&
-                  css`
+                css`
                     &:after {
                       content: "";
                       display: block;
@@ -89,7 +90,7 @@ const Navigation = props => {
                     }
                   `,
                 window.location.pathname === item.url &&
-                  css`
+                css`
                     color: red;
                   `,
                 css`
