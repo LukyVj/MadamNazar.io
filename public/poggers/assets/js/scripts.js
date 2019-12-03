@@ -37,10 +37,10 @@ var nazarCurrentDate;
 
 var fastTravelData;
 
-var weeklySet = 'foundation_set';
+var weeklySet = "gamblers_choice_set";
 var weeklySetData = [];
 var date;
-var nocache = 33;
+var nocache = 34;
 
 var wikiLanguage = [];
 
