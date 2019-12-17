@@ -16,9 +16,10 @@ import Resources from "./pages/Resources";
 
 import Navigation from "./components/Navigation/Navigation";
 import Footer from "./components/Footer/Footer";
-import PatreonModal from "./components/PatreonModal/PatreonModal";
+
 import Frame from "./components/Frame/Frame";
 import NetworkInfo from "./components/NetworkInfo";
+import PatreonModal from "./components/PatreonModal";
 import { SupportBanner } from "./components/SupportBanner";
 
 import { docCookies } from "./scripts/cookies";
@@ -108,6 +109,7 @@ class App extends Component {
       true,
       maxAgeToGMT(999)
     );
+
     this.setState({
       showPatreonAd: false,
       showPatreonModal: false
@@ -240,9 +242,7 @@ class App extends Component {
           )}
 
           {this.state.showPatreonModal && (
-            <PatreonModal
-              onClose={this.handlePatreonAdClose}
-            />
+            <PatreonModal onClose={this.handlePatreonAdClose} />
           )}
         </div>
       </Router>

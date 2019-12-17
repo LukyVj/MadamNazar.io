@@ -1,17 +1,18 @@
 /** @jsx jsx */
-import React, { Component } from "react";
+import React from "react";
 import { css, jsx } from "@emotion/core";
 import sheet from "../../images/sheet.png";
 
-class RDAppear extends Component {
-  render() {
-    const styles = {
-      root: css`
+const RDAppear = (props) => {
+  const { image, onClick, width, height } = props;
+
+  const styles = {
+    root: css`
         animation: blur 5s forwards;
         position: relative;
         overflow: hidden;
-        height: ${this.props.height - 8}px;
-        width: ${this.props.width - 8}px;
+        height: ${height - 8}px;
+        width: ${width - 8}px;
         display: flex;
         align-items: center;
         border: 2px solid var(--Armadillo);
@@ -38,14 +39,14 @@ class RDAppear extends Component {
         }
 
         & > div {
-          height: ${this.props.height - 8}px;
+          height: ${height - 8}px;
           position: absolute;
-          width: ${this.props.width - 8}px;
+          width: ${width - 8}px;
         }
 
         .normal,
         .invert {
-          background-image: url(${this.props.image});
+          background-image: url(${image});
         }
 
         .normal {
@@ -85,15 +86,24 @@ class RDAppear extends Component {
             mask-position: 100% 0;
           }
         }
-      `
-    };
-    return (
-      <div css={styles.root} {...this.props}>
-        <div className="normal" css={this.props.childrenStyle}></div>
-        <div className="invert" css={this.props.childrenStyle}></div>
-      </div>
-    );
-  }
-}
+      `,
+    child: css`
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
+      transform: rotate(-0.3deg);
+      filter: sepia(1) saturate(0.65);
+      
+      @media (max-width: 960px) {
+        width: 100% !important;
+      }
+    `
+  };
+
+  return (
+    <div css={styles.root} onClick={onClick}>
+      <div className="normal" css={styles.child} />
+      <div className="invert" css={styles.child} />
+    </div>
+  )
+};
 
 export default RDAppear;
