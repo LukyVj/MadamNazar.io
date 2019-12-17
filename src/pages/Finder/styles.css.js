@@ -1,5 +1,5 @@
 import { css } from "@emotion/core";
-import sheet from "../images/sheet.png";
+import sheet from "../../images/sheet.png";
 export default {
   posterGrid: css``,
   posterWrapper: css`
