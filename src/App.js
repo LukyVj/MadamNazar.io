@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /** @jsx jsx */
 import React, { Component } from "react";
-import ReactGA from "react-ga";
+import * as ReactGA from "react-ga";
 import { useHistory } from "react-router-dom";
 import { css, jsx } from "@emotion/core";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
@@ -29,20 +29,14 @@ import styles from "./styles/globalStyles.css";
 //// Define apis
 import mockData from "./data/mock";
 import { DEV_API, PROD_API, MOCK_API } from "./scripts/constants";
-
-const dateEvent = new Date();
-const dateOptions = {
-  weekday: "long",
-  year: "numeric",
-  month: "long",
-  day: "numeric"
-};
-const todayDate = dateEvent.toDateString("us-EN", dateOptions);
-
 ////
 
+const currentEnv = process.env.NODE_ENV;
+const patreonAdHidden = docCookies.getItem("patreon-ad-hidden") || false;
+const todayDate = new Date().toDateString();
+
 const URLHandler = props => {
-  let history = useHistory();
+  const history = useHistory();
   const url = new URL(window.location.href);
   if (url.searchParams.get("page")) {
     props.parent.setState({ reqUrl: url.searchParams.get("page") });
@@ -56,17 +50,19 @@ class App extends Component {
     super(props);
 
     this.state = {
-      env: process.env.NODE_ENV,
+      currentPage: window.location.pathname === "/"
+        ? "/home"
+        : window.location.pathname,
+      cycle: getCycleDay(todayDate),
       navOpen: false,
       readableDate: todayDate,
-      cycle: getCycleDay(todayDate),
-      currentPage:
-        window.location.pathname === "/" ? "/home" : window.location.pathname
+      showPatreonAd: !patreonAdHidden,
+      showPatreonModal: false
     };
   }
 
   fetchData = () => {
-    const url = this.state.env === "development" ? DEV_API : PROD_API;
+    const url = currentEnv === "development" ? DEV_API : PROD_API;
 
     fetch(url, {
       method: "GET",
@@ -82,18 +78,40 @@ class App extends Component {
     })
       .then(response => response.json())
       .then(json => {
-        const data = json.data;
+        const {
+          date, current_location = {}, cycle
+        } = json.data;
+
         this.setState({
-          today: data.date,
-          data: data.current_location.data,
-          dataFor: data.current_location.dataFor,
-          cycle: data.cycle,
+          today: date,
+          data: current_location.data,
+          dataFor: current_location.dataFor,
+          cycle,
           fetched: true
         });
       })
-      .catch(function(err) {
+      .catch(err => {
         console.log("error", err);
       });
+  };
+
+  handlePatreonAdOpen = () => {
+    this.setState({
+      showPatreonAd: false,
+      showPatreonModal: true
+    });
+  };
+
+  handlePatreonAdClose = () => {
+    docCookies.setItem(
+      "patreon-ad-hidden",
+      true,
+      maxAgeToGMT(999)
+    );
+    this.setState({
+      showPatreonAd: false,
+      showPatreonModal: false
+    });
   };
 
   componentDidMount() {
@@ -108,17 +126,7 @@ class App extends Component {
     docCookies.setItem("removed-markers-daily", "true");
     docCookies.setItem("removed-markers-daily", "true");
 
-    if (!docCookies.getItem("patreon-ad")) {
-      docCookies.setItem("patreon-ad", "true", maxAgeToGMT(999));
-    }
-
-    docCookies.getItem("patreon-ad") === "true"
-      ? this.setState({ showPatreonAd: true })
-      : docCookies.getItem("patreon-ad") === "false"
-      ? this.setState({ showPatreonAd: false })
-      : this.setState({ updated: true });
-
-    if (this.state.env === "production") {
+    if (currentEnv === "production") {
       ReactGA.initialize("UA-148400737-1");
       ReactGA.pageview(this.state.currentPage);
       this.fetchData();
@@ -143,12 +151,6 @@ class App extends Component {
       <Router>
         <URLHandler parent={this} />
         <div className="App" css={styles.root}>
-          {process.env.NODE_ENV === "development" && <NetworkInfo />}
-          {this.state.showPatreonAd === true && <SupportBanner parent={this} />}
-          {this.state.showPatreonAbout === true && (
-            <PatreonModal parent={this} />
-          )}
-
           <Frame
             day={this.state.readableDate}
             cycle={this.state.cycle}
@@ -192,14 +194,14 @@ class App extends Component {
                 {dataExists && (
                   <Tweet
                     parent={this}
-                    env={this.state.env}
+                    env={currentEnv}
                     dataFor={this.state.dataFor}
                     location={this.state.data && this.state.data.location}
                     imageNormal={
                       this.state.data &&
                       this.state.data.location.image.normal.full
                     }
-                    
+
                     imageTilt={
                       this.state.data &&
                       this.state.data.location.image.tilt_shift.full
@@ -214,7 +216,7 @@ class App extends Component {
                 {dataExists ? (
                   <Finder
                     parent={this}
-                    env={this.state.env}
+                    env={currentEnv}
                     data={this.state.data}
                   />
                 ) : (
@@ -227,6 +229,21 @@ class App extends Component {
           </Switch>
 
           <Footer parent={this} />
+
+          {currentEnv === "development" && <NetworkInfo />}
+
+          {this.state.showPatreonAd && (
+            <SupportBanner
+              onClose={this.handlePatreonAdClose}
+              onOpen={this.handlePatreonAdOpen}
+            />
+          )}
+
+          {this.state.showPatreonModal && (
+            <PatreonModal
+              onClose={this.handlePatreonAdClose}
+            />
+          )}
         </div>
       </Router>
     );
