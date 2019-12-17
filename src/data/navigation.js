@@ -1,5 +1,5 @@
-import ReactGA from "react-ga";
-import { TWITTER_URL, DISCORD_URL } from "../scripts/constants";
+import * as ReactGA from "react-ga";
+import { DISCORD_URL } from "../scripts/constants";
 
 export const navigation = [
   {

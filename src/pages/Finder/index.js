@@ -2,10 +2,10 @@
 import React, { Component } from "react";
 import { css, jsx } from "@emotion/core";
 import ReactGA from "react-ga";
-import RDAppear from "../components/RDAppear/RDAppear";
-import Map from "../components/Map/Map";
-import styles from "./Finder.css";
-import bgMainSml from "../images/bgMainSml.jpg";
+import RDAppear from "../../components/RDAppear/RDAppear";
+import Map from "../../components/Map/Map";
+import styles from "./styles.css";
+import bgMainSml from "../../images/bgMainSml.jpg";
 
 const capitalize = string => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -57,15 +57,13 @@ const InfoBox = props => {
         >
           Close window
         </button>
-        <div className="w-100p h-100p "></div>
+        <div className="w-100p h-100p " />
       </div>
 
       <div css={styles.posterWrapper} className="pv-32">
         <div css={[styles.posterGrid, styles.posterLayout]}>
           <section
-            css={css`
-              text-align: center;
-            `}
+            css={css`text-align: center;`}
           >
             <div>
               <div>
@@ -83,7 +81,7 @@ const InfoBox = props => {
               </div>
               <div>
                 <p>
-                  In the {capitalize(props.cardinals.split(" ")[0])} 
+                  In the {capitalize(props.cardinals.split(" ")[0])}
                   {capitalize(props.cardinals.split(" ")[1])} side of the map.
                   nearby{" "}
                   {props.nearby.map((poi, id) => (
@@ -101,7 +99,7 @@ const InfoBox = props => {
                         {capitalize(poi)}
                       </b>
                       {id !== props.nearby.length - 1 &&
-                        (id !== props.nearby.length - 2 && ", ")}
+                      (id !== props.nearby.length - 2 && ", ")}
                     </>
                   ))}
                   .
@@ -113,9 +111,7 @@ const InfoBox = props => {
             <div>
               <div
                 className="cursor-pointer d-grid md:g-2"
-                css={css`
-                  padding: 8px;
-                `}
+                css={css`padding: 8px;`}
               >
                 <RDAppear
                   image={props.media["tilt_shift"].full}
@@ -125,7 +121,12 @@ const InfoBox = props => {
                     props.parent.setState({
                       modal: true,
                       modalImage: props.media.normal.full,
-                      modalImageDarkMode: props.media.negative.full
+                      /*
+                        modalImageDarkMode prop causes crash at this moment
+                        Seems to be it's not used in child component
+                        Commented it out for future use
+                      */
+                      // modalImageDarkMode: props.media.negative.full
                     });
                     ReactGA.event({
                       category: "click.finder.modal",
@@ -151,7 +152,12 @@ const InfoBox = props => {
                     props.parent.setState({
                       modal: true,
                       modalImage: props.media.normal.zoom,
-                      modalImageDarkMode: props.media.negative.zoom
+                      /*
+                        modalImageDarkMode prop causes crash at this moment
+                        Seems to be it's not used in child component
+                        Commented it out for future use
+                       */
+                      // modalImageDarkMode: props.media.negative.zoom
                     });
                     ReactGA.event({
                       category: "click.finder.modal",
@@ -226,18 +232,16 @@ class Finder extends Component {
 
   render() {
     return (
-      <div>
-        <InfoBox
-          id={this.props.data._id}
-          media={this.props.data.location.image}
-          region={this.props.data.location.region.name}
-          region_precise={this.props.data.location.region.precise}
-          nearby={this.props.data.location["near_by"]}
-          cardinals={this.props.data.location.cardinals.full}
-          isNewlocation={this.props.dataFor}
-          parent={this}
-        />
-      </div>
+      <InfoBox
+        id={this.props.data._id}
+        media={this.props.data.location.image}
+        region={this.props.data.location.region.name}
+        region_precise={this.props.data.location.region.precise}
+        nearby={this.props.data.location["near_by"]}
+        cardinals={this.props.data.location.cardinals.full}
+        isNewlocation={this.props.dataFor}
+        parent={this}
+      />
     );
   }
 }
