@@ -6,8 +6,6 @@ import RDAppear from "../../components/RDAppear/RDAppear";
 import Map from "../../components/Map/Map";
 import Modal from "../../components/Modal";
 import styles from "./styles.css";
-// todo: make different background types in modal
-// import bgMainSml from "../../images/bgMainSml.jpg";
 
 const capitalize = string => {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -16,7 +14,11 @@ const capitalize = string => {
 const ExpandModal = (props) => {
   const { modalImage, onClose } = props;
   return (
-    <Modal onClose={onClose}>
+    <Modal
+      onClose={onClose}
+      withBackgroundImage
+      withContentPadding={false}
+    >
       <img
         alt="Expanded map"
         css={css`

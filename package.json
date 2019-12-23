@@ -12,6 +12,7 @@
     "leaflet-draw": "^1.0.4",
     "local-storage": "^2.0.0",
     "localstoragedb": "^2.3.2",
+    "prop-types": "^15.7.2",
     "raw.js": "^0.6.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
@@ -24,7 +25,7 @@
     "react-leaflet-heatmap-layer": "^2.0.0",
     "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.1.1"
+    "react-scripts": "^3.3.0"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -1,55 +1,19 @@
 /** @jsx jsx */
 import React, { Component } from "react";
+import * as T from "prop-types";
 import { css, jsx } from "@emotion/core";
 import frame from "../../images/frame.png";
+import bgMainSml from "../../images/bgMainSml.jpg";
 
-const styles = {
-  overlay: css`
-    z-index: 999;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.5);
-  `,
-  modal: css`
-    box-sizing: border-box;
-    width: 100%;
-    max-width: 600px;
-    max-height: 95%;
-    overflow-y: auto;
-    background-color: white;
-    border-image-repeat: all;
-    border-image-slice: 14;
-    border-image-outset: 3px;
-    border-image-source: url(${frame});
-    border-style: solid;
-    border-width: 6px;
-    box-shadow: 0 2px 1px rgba(0, 0, 0, 0.09), 0 4px 2px rgba(0, 0, 0, 0.09),
-      0 8px 4px rgba(0, 0, 0, 0.09), 0 16px 8px rgba(0, 0, 0, 0.09),
-      0 32px 16px rgba(0, 0, 0, 0.09), 0 0 500px rgba(0, 0, 0, 0.3);
-  `,
-  button: css`
-    background: rgba(0, 0, 0, 0.78);
-    color: var(--EcruWhite);
-    font-size: 18px;
-    padding: 10px 20px;
-    border-radius: 100px;
-    text-decoration: none;
-    margin-right: 16px;
-    cursor: pointer;
-    display: block;
-    margin: auto;
-    text-align: center;
-
-    &:hover {
-      background: var(--Tabasco);
-    }
-  `
+const propTypes = {
+  children: T.element.isRequired,
+  onClose: T.func.isRequired,
+  withBackgroundImage: T.bool, // if true adds "old paper" texture background
+  withContentPadding: T.bool
+};
+const defaultProps = {
+  withBackgroundImage: false,
+  withContentPadding: true
 };
 
 class Modal extends Component {
@@ -64,7 +28,77 @@ class Modal extends Component {
   }
 
   render() {
-    const { children, onClose } = this.props;
+    const {
+      children,
+      onClose,
+      withBackgroundImage,
+      withContentPadding
+    } = this.props;
+
+    const styles = {
+      overlay: css`
+        z-index: 999;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0, 0, 0, 0.5);
+      `,
+      modal: css`
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 600px;
+        max-height: 95%;
+        overflow-y: auto;
+        background-color: white;
+        background-image: ${
+        withBackgroundImage
+          ? `url(${bgMainSml});`
+          : 'none;'
+        }
+        border-image-repeat: all;
+        border-image-slice: 14;
+        border-image-outset: 3px;
+        border-image-source: url(${frame});
+        border-style: solid;
+        border-width: 6px;
+        border-radius: 6px;
+        box-shadow: 0 2px 1px rgba(0, 0, 0, 0.09), 0 4px 2px rgba(0, 0, 0, 0.09),
+          0 8px 4px rgba(0, 0, 0, 0.09), 0 16px 8px rgba(0, 0, 0, 0.09),
+          0 32px 16px rgba(0, 0, 0, 0.09), 0 0 500px rgba(0, 0, 0, 0.3);
+      `,
+      modalContent: css`
+        padding: ${withContentPadding ? '24px' : '0'}
+      `,
+      button: css`
+        display: block;
+        margin-top: ${withContentPadding ? '0' : '24px'};
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 24px;
+        padding: 10px 20px;
+        border-radius: 100px;
+        background-color: rgba(0, 0, 0, 0.78);
+        cursor: pointer;
+        font-size: 18px;
+        text-align: center;
+        text-decoration: none;
+        color: var(--EcruWhite);
+    
+        &:hover {
+          background-color: var(--Tabasco);
+        }
+      `,
+      buttonImg: css`
+        width: 18px;
+        margin-left: 8px;
+        vertical-align: middle;
+      `
+    };
 
     return (
       <div
@@ -72,11 +106,12 @@ class Modal extends Component {
         onClick={onClose}
       >
         <div
-          className="p-24 bxs-default bdr-6"
-          css={[styles.modal, styles.border]}
+          css={styles.modal}
           onClick={e => e.stopPropagation()}
         >
-          { children }
+          <div css={styles.modalContent}>
+            { children }
+          </div>
           <button
             css={styles.button}
             onClick={onClose}
@@ -84,8 +119,7 @@ class Modal extends Component {
             Close
             <img
               src={require("../../images/cancel-icon.svg")}
-              css={css`width: 18px;`}
-              className="va-middle ml-8"
+              css={styles.buttonImg}
               alt="close icon"
             />
           </button>
@@ -94,5 +128,8 @@ class Modal extends Component {
     )
   }
 }
+
+Modal.propTypes = propTypes;
+Modal.defaultProps = defaultProps;
 
 export default Modal;
