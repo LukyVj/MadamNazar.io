@@ -8,7 +8,7 @@ export const DEV_API = "https://madam-nazar-location-api-2.herokuapp.com/today";
 export const PROD_API = "https://madam-nazar-location-api.herokuapp.com/today";
 export const MOCK_API = "./data/mock.js";
 
-export const COLLECTOR_MAP_URL = "/poggers/";
+export const COLLECTOR_MAP_URL = "/collectorMap/";
 
 // CLOUDINARY
 export const IMAGES_CDN =
@@ -16,7 +16,7 @@ export const IMAGES_CDN =
 
 // DATA FILES ( thanks @jeanRopke )
 export const JSON_COLLECTOR_ITEMS_URL =
-  "https://rawcdn.githack.com/jeanropke/RDR2CollectorsMap/a3dee17a11e1bb67ccb2fe14b07fddb580ec3b35/data/items.json";
+         "https://rawcdn.githack.com/jeanropke/RDR2CollectorsMap/8d860b3a055549014faf29d0dcbbc84a9b9727e4/data/items.json";
 export const JSON_WEEKLY_URL =
   "https://rawcdn.githack.com/jeanropke/RDR2CollectorsMap/a3dee17a11e1bb67ccb2fe14b07fddb580ec3b35/data/weekly.json";
 export const JSON_GAME_ITEMS_URL =
