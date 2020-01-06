@@ -1,0 +1,599 @@
+@font-face {
+    font-family: Hapna;
+    src: url(../fonts/hapna.woff2) format("woff2"), url(../fonts/hapna.woff) format("woff"), url(../fonts/hapna.ttf) format("truetype");
+    font-style: normal;
+    font-weight: 400;
+    text-rendering: optimizeLegibility
+}
+
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+    width: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #eee;
+}
+
+body {
+    margin: 0;
+    font-size: 16px;
+    font-family: Hapna, serif;
+}
+
+h1 {
+    font-size: 14px
+}
+
+h2 {
+    margin: 0 0 5px;
+    text-align: center;
+}
+
+h3 {
+    text-align: center;
+    font-size: 24px;
+    margin: 0;
+}
+
+h4 {
+    text-align: center;
+    font-size: 20px;
+    margin: 15px 0 0 0;
+}
+
+p {
+    margin: 0!important;
+}
+
+#main-header {
+    display: flex;
+    margin: 0 10px 10px 10px;
+}
+
+#main-header::after {
+    clear: both;
+}
+
+#main-header-center {
+    flex-grow: 1;
+    height: 75px;
+    background-image: url(../../assets/images/header_bg_center.png);
+    background-repeat: repeat-x;
+    background-size: auto 75px;
+    padding: 6px 0;
+}
+
+#main-header-left, #main-header-right {
+    user-select: none;
+    height: 75px;
+}
+
+#sub-header {
+    font-size: 14px;
+    color: #cacaca;
+}
+
+.header {
+    display: -webkit-box;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    flex-direction: row;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    position: relative;
+    margin: 12px 0;
+}
+
+.header-title {
+    -webkit-box-flex: 0;
+    flex: 0 1 auto;
+    line-height: normal;
+    margin: 0 12px;
+    text-align: center;
+}
+
+.header-border {
+    -webkit-box-flex: 1;
+    flex: 1 0 auto;
+    min-width: 40px;
+    position: relative;
+}
+
+.header-border:after {
+    background-image: url(../../assets/images/header_border_divider.png);
+    background-repeat: repeat-x;
+    background-size: auto 3px;
+    top: 18px;
+    content: " ";
+    height: 3px;
+    position: absolute;
+    width: 100%;
+    left: 0;
+}
+
+.map-alert {
+    background: darkred;
+    color: #fff;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    z-index: 9999;
+    padding: 10px;
+    text-align: center;
+    display: none;
+}
+
+.map-alert .close-button {
+    position: absolute;
+    top: 0;
+    right: 15px;
+    font-size: 27px;
+    border: none;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+}
+
+#map {
+    background: #d2b790;
+    width: 100%;
+    width: 100vw;
+    height: 100%;
+    height: 100vh;
+    font-family: Hapna, serif;
+    font-size: 13px;
+}
+
+#map h1 {
+    font-size: 15px;
+    text-align: center;
+}
+
+.tool-type {
+    vertical-align: bottom;
+    padding-right: 5px;
+}
+
+#countdown, #item-counter, #time-in-game {
+    font-size: 16px;
+    line-height: 1.7;
+    user-select: none;
+    margin: auto auto auto 2px;
+}
+
+.timer-container, .clock-container {
+    position: fixed;
+    z-index: 9998;
+    background: #111;
+    border: 1px solid #888;
+    color: #eee;
+    left: 40px;
+    top: 5px;
+    width: 95px;
+    height: 30px;
+    transition: all 200ms ease-out;
+    padding-left: 8px;
+    display: inline-flex;
+    cursor: pointer;
+}
+
+.display-in-front {
+    z-index: 9999;
+}
+
+#am-pm-time {
+    margin: auto 12px auto auto;
+    font-size: 16px;
+    line-height: 1.7;
+    user-select: none;
+}
+
+#day-cycle {
+    width: 16px;
+    height: 16px;
+    margin: auto 4px auto auto;
+}
+
+.counter-container {
+    position: fixed;
+    z-index: 9999;
+    background: #111;
+    border: 1px solid #888;
+    color: #eee;
+    left: 125px;
+    top: 5px;
+    width: 80px;
+    height: 30px;
+    transition: all 200ms ease-out;
+    display: none;
+}
+
+.white-line-divider {
+    margin: 15px 0 2px 0;
+    height: 10px;
+    background-image: url(../../assets/images/header_border_divider.png);
+    background-repeat: repeat-x;
+    background-size: auto 3px;
+}
+
+.remove-button {
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
+    user-select: none;
+    margin-top: 8px;
+}
+
+.marker-popup-links {
+    text-align: center;
+    margin: 6px 0 !important;
+}
+
+.marker-popup-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+}
+
+.marker-popup-buttons small {
+    font-size: 15px;
+    line-height: 33px;
+}
+
+.hide-show-container, .custom-routes-container {
+    display: flex;
+    justify-content: space-around;
+    border-top: 1px solid #B0B0B0;
+    border-bottom: 1px solid #B0B0B0;
+    padding: 10px 0;
+    margin: 15px 0;
+}
+
+.hide-show-container a, .custom-routes-container a {
+    color: #eee;
+    text-decoration: none;
+}
+
+.hide-show-container a:hover, .custom-routes-container a:hover {
+    text-decoration: underline;
+}
+
+.search-container, .settings-container, .routes-container {
+    padding: 0 10px;
+    margin: 5px 0;
+}
+
+.input-search {
+    background-color: #383838;
+    border: none;
+    padding: 5px;
+    color: #f0f0f0;
+    font-size: 14px;
+    width: 100%;
+    border-radius: 3px;
+}
+
+.input-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+}
+
+.input-container-noflex {
+    margin: 5px 0;
+    text-align: center;
+}
+
+.wide-select-menu {
+    width: 150px;
+}
+
+.narrow-select-menu {
+    width: 75px;
+}
+
+.btn-default {
+    background-color: #383838;
+    width: 32%;
+    font-weight: 500;
+    color: #fff;
+}
+
+.btn-special {
+    background-color: #747474;
+}
+
+.input-day {
+    background: #383838;
+    border: none;
+    padding: 5px 10px;
+    color: #f0f0f0;
+    font-size: 14px;
+    height: 100%;
+    border-radius: 3px;
+}
+
+.input-day:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.issues-container a {
+    display: block;
+    color: #eee;
+    text-align: center;
+}
+
+.donate-container {
+    display: block;
+    color: #eee;
+    text-align: center;
+}
+
+.menu-toggle {
+    width: 30px;
+    height: 30px;
+    background: #111;
+    border: 1px solid #888;
+    position: fixed;
+    z-index: 1000;
+    left: 5px;
+    top: 5px;
+    color: #eee;
+    text-align: center;
+    line-height: 1.85;
+    user-select: none;
+    cursor: pointer;
+}
+
+.side-menu {
+    width: 100%;
+    background: #000 url('https://s.rsg.sc/sc/images/games/RDR2/bg.jpg');
+    box-shadow: 1px 0 2px 0 rgba(85, 85, 85, 0.85);
+    position: fixed;
+    top: -1800px;
+    left: 0;
+    overflow: auto;
+    height: 100%;
+    height: 100vh;
+    color: #eee;
+    z-index: 999;
+    padding-top: 10px;
+    scrollbar-width: thin;
+}
+
+.menu-opened {
+    top: 0;
+}
+
+.side-menu, .menu-toggle {
+    transition: all 200ms ease-out;
+}
+
+.side-menu .menu-option {
+    display: flex;
+    align-items: start;
+    padding: 0 5px;
+    user-select: none;
+    cursor: pointer;
+    line-height: 36px;
+}
+
+.side-menu .menu-option:hover, .side-menu .menu-hidden .collectible-wrapper:hover {
+    background-image: url(../images/menu_hover.png);
+    background-size: 100% 37px;
+    background-repeat: no-repeat;
+}
+
+.side-menu .disabled {
+    opacity: .5;
+    text-decoration: line-through;
+}
+
+.side-menu .weekly-item {
+    color: greenyellow;
+}
+
+.side-menu .not-found {
+    color: #f95050 !important;
+}
+
+.side-menu .menu-option .icon {
+    width: 35px;
+    margin-top: 6px;
+    margin-bottom: -3px;
+}
+
+.side-menu .open-submenu {
+    width: 25px;
+    height: 25px;
+    background: url(../images/arrow.png);
+    margin: auto 0;
+}
+
+.side-menu .menu-hidden {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 200ms ease-out;
+}
+
+.side-menu .menu-hidden.opened {
+    max-height: 2000px;
+    transition: max-height 400ms ease-out;
+}
+
+.side-menu .menu-hidden .collection-value {
+    text-align: center;
+    border-top: 1px white solid;
+    border-bottom: 1px white solid;
+    padding: 5px 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+.side-menu .menu-hidden .collection-value a {
+    color: #fff;
+}
+
+.side-menu .menu-hidden .collection-sell {
+    cursor: pointer;
+    user-select: none;
+}
+
+.side-menu .menu-hidden .collectible-wrapper {
+    padding: 5px 20px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.side-menu .menu-hidden .collectible-icon {
+    float: left;
+    height: 30px;
+    margin-right: 10px;
+}
+
+.side-menu .menu-hidden .collectible {
+    padding: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+}
+
+.lat-lng-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 220px;
+    margin: 0 calc(50% - 100px) 20px;
+    z-index: 990;
+    color: #fff;
+    background-color: #333333;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    padding: 14px 8px;
+    border-radius: 3px;
+    display: none;
+}
+
+.lat-lng-container #lat-lng-container-close-button {
+    position: absolute;
+    top: 0;
+    right: 4px;
+    font-size: 16px;
+    border: none;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+}
+
+.help-button {
+    user-select: none;
+    font-size: 14px;
+}
+
+.help-button a {
+    color: #eee;
+}
+
+a.wiki-page {
+    color: #fff;
+    text-decoration: none;
+}
+a.wiki-page:hover {
+    color: #fff;
+}
+a.wiki-page:visited {
+    color: #fff;
+    text-decoration: none;
+}
+
+.help-popup {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, .2);
+    z-index: 9999;
+    padding: 5%;
+    color: #eee;
+    display: none;
+}
+
+.help-container {
+    height: 100%;
+    padding: 25px;
+    background: #000 url('https://s.rsg.sc/sc/images/games/RDR2/bg.jpg');
+    border: 1px solid #eee;
+    box-shadow: 0 0 10px 0 black;
+}
+
+.help-close {
+    width: 15px;
+    height: 15px;
+    position: relative;
+    right: calc(-100% + 20px);
+    top: 20px;
+    text-align: center;
+    user-select: none;
+    cursor: pointer;
+}
+
+.help-scroll {
+    overflow-y: auto;
+    height: 100%;
+    padding: 10px;
+}
+
+.menu-option.clickable input {
+    margin: auto 10px auto auto;
+    max-width: 50px;
+    min-width: 40px;
+    height: 30px;
+    padding: 0 0 0 8px;
+}
+
+#debug-marker-lat, #debug-marker-lng {
+    width: calc(50% - 4px);
+}
+
+/* Fix buttons showing on top of sidebar on mobile menu */
+
+.leaflet-top, .leaflet-bottom {
+    z-index: 998;
+}
+
+.leaflet-popup-content {
+    font-size: 14px;
+    margin: 8px;
+    display: inline-grid;
+}
+
+@media (max-width: 1024px) {
+    .timer-menu-opened {
+        display: none;
+    }
+    .counter-menu-opened {
+        display: none;
+    }
+}
+
+@media (min-width: 1025px) {
+    .side-menu {
+        width: 380px;
+        left: -380px;
+        top: 0;
+    }
+    .menu-opened {
+        left: 0;
+    }
+    .timer-menu-opened {
+        left: 385px;
+    }
+    .counter-menu-opened {
+        left: 410px;
+    }
+}
