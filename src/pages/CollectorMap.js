@@ -31,23 +31,6 @@ class CollectorMap extends Component {
           >
             @JeanRopke
           </a>{" "}
-          <br />
-          <span role="img" aria-label="information icon">
-            ℹ️
-          </span>{" "}
-          If the map is not loading, please visit{" "}
-          <a
-            href={COLLECTOR_MAP_URL}
-            onClick={() => {
-              ReactGA.event({
-                category: "click.map.link",
-                action: "🛑 Click on map resolver"
-              });
-            }}
-          >
-            this link
-          </a>{" "}
-          and come back
         </Infos>
         <div
           className="pos-relative"
@@ -84,7 +67,7 @@ class CollectorMap extends Component {
           </button>
 
           <Iframe
-            url={`/poggers/`}
+            url={COLLECTOR_MAP_URL}
             title="Jean Ropke RDR2 Collector Map"
             height={this.state.expandMap === false ? 700 : "100%"}
             frameBorder="border: 4px solid var(--Armadillo);"
