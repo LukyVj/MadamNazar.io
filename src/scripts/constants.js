@@ -8,7 +8,7 @@ export const DEV_API = "https://madam-nazar-location-api-2.herokuapp.com/today";
 export const PROD_API = "https://madam-nazar-location-api.herokuapp.com/today";
 export const MOCK_API = "./data/mock.js";
 
-export const COLLECTOR_MAP_URL = "/collectorMap/";
+export const COLLECTOR_MAP_URL = "/CollectorsMap/";
 
 // CLOUDINARY
 export const IMAGES_CDN =
