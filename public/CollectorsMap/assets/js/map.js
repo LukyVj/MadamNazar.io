@@ -75,7 +75,7 @@ var MapBase = {
   },
 
   loadOverlays: function () {
-    $.getJSON('https://jeanropke.github.io/RDR2CollectorsMap/data/overlays.json?nocache=' + nocache)
+    $.getJSON('data/overlays.json?nocache=' + nocache)
       .done(function (data) {
         MapBase.overlays = data;
         MapBase.setOverlays();
@@ -111,7 +111,7 @@ var MapBase = {
   },
 
   loadMarkers: function () {
-    $.getJSON('https://jeanropke.github.io/RDR2CollectorsMap/data/items.json?nocache=' + nocache)
+    $.getJSON('data/items.json?nocache=' + nocache)
       .done(function (data) {
         MapBase.setMarkers(data);
       });
@@ -444,7 +444,7 @@ MapBase.getToolIcon = function (type) {
 };
 
 MapBase.loadFastTravels = function () {
-  $.getJSON('https://jeanropke.github.io/RDR2CollectorsMap/data/fasttravels.json?nocache=' + nocache)
+  $.getJSON('data/fasttravels.json?nocache=' + nocache)
     .done(function (data) {
       fastTravelData = data;
     });
@@ -554,7 +554,7 @@ var MadamNazar = {
         MadamNazar.currentLocation = nazar.nazar_id - 1;
         MadamNazar.currentDate = nazar.date;
       }).always(function () {
-        $.getJSON('https://jeanropke.github.io/RDR2CollectorsMap/data/nazar.json?nocache=' + nocache)
+        $.getJSON('data/nazar.json?nocache=' + nocache)
           .done(function (data) {
             MadamNazar.possibleLocations = data;
             MadamNazar.addMadamNazar(false);
