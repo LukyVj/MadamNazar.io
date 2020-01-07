@@ -1,7 +1,7 @@
 var Encounters = {
   markers: [],
   load: function(){
-    $.getJSON('data/encounters.json?nocache='+nocache)
+    $.getJSON('https://jeanropke.github.io/RDR2CollectorsMap/data/encounters.json?nocache='+nocache)
         .done(function (data) {
             Encounters.set(data);
     });
