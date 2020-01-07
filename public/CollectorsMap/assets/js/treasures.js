@@ -3,7 +3,7 @@ var Treasures = {
   data: [],
   markers: [],
   load: function () {
-    $.getJSON('https://jeanropke.github.io/RDR2CollectorsMap/data/treasures.json?nocache=' + nocache)
+    $.getJSON('data/treasures.json?nocache=' + nocache)
       .done(function (data) {
         Treasures.data = data;
         Treasures.set();
