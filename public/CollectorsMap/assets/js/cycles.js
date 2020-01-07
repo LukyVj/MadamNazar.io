@@ -1,7 +1,7 @@
 var Cycles = {
     data: [],
     load: function () {
-        $.getJSON('data/cycles.json?nocache=' + nocache)
+        $.getJSON('https://jeanropke.github.io/RDR2CollectorsMap/data/cycles.json?nocache=' + nocache)
             .done(function (_data) {
                 Cycles.data = _data;
                 Cycles.setCycles();
