@@ -22,7 +22,7 @@ import NetworkInfo from "./components/NetworkInfo";
 import { SupportBanner } from "./components/SupportBanner";
 
 import { docCookies } from "./scripts/cookies";
-import { isOnline, getCycleDay, maxAgeToGMT } from "./scripts/helpers";
+import { isOnline, maxAgeToGMT } from "./scripts/helpers";
 
 import styles from "./styles/globalStyles.css";
 
@@ -45,15 +45,14 @@ const URLHandler = props => {
   return null;
 };
 
+
 class App extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      currentPage: window.location.pathname === "/"
-        ? "/home"
-        : window.location.pathname,
-      cycle: getCycleDay(todayDate),
+      currentPage:
+        window.location.pathname === "/" ? "/home" : window.location.pathname,
       navOpen: false,
       readableDate: todayDate,
       showPatreonAd: !patreonAdHidden,
@@ -78,15 +77,13 @@ class App extends Component {
     })
       .then(response => response.json())
       .then(json => {
-        const {
-          date, current_location = {}, cycle
-        } = json.data;
+        const { date, current_location = {} } = json.data;
+
 
         this.setState({
           today: date,
           data: current_location.data,
           dataFor: current_location.dataFor,
-          cycle,
           fetched: true
         });
       })
@@ -103,15 +100,19 @@ class App extends Component {
   };
 
   handlePatreonAdClose = () => {
-    docCookies.setItem(
-      "patreon-ad-hidden",
-      true,
-      maxAgeToGMT(999)
-    );
+    docCookies.setItem("patreon-ad-hidden", true, maxAgeToGMT(999));
     this.setState({
       showPatreonAd: false,
       showPatreonModal: false
     });
+  };
+
+  getNewCycle = () => {
+    fetch("https://jeanropke.github.io/RDR2CollectorsMap/data/cycles.json?nocache=999999")
+      .then(response => response.json())
+      .then(json => {
+        this.setState({newCycle: json.current})
+      });
   };
 
   componentDidMount() {
@@ -125,6 +126,7 @@ class App extends Component {
     docCookies.setItem("removed-items", "a;b");
     docCookies.setItem("removed-markers-daily", "true");
     docCookies.setItem("removed-markers-daily", "true");
+    this.getNewCycle();
 
     if (currentEnv === "production") {
       ReactGA.initialize("UA-148400737-1");
@@ -146,14 +148,14 @@ class App extends Component {
 
   render() {
     const dataExists = this.state.data && this.state.data.location;
-
+    console.log(this.state)
     return (
       <Router>
         <URLHandler parent={this} />
         <div className="App" css={styles.root}>
           <Frame
             day={this.state.readableDate}
-            cycle={this.state.cycle}
+            cycle={this.state.newCycle !== undefined && this.state.newCycle}
             offsetTop={this.state.showPatreonAd}
           />
           <Navigation parent={this} navOpen={this.state.navOpen} />
@@ -201,7 +203,6 @@ class App extends Component {
                       this.state.data &&
                       this.state.data.location.image.normal.full
                     }
-
                     imageTilt={
                       this.state.data &&
                       this.state.data.location.image.tilt_shift.full
@@ -240,9 +241,7 @@ class App extends Component {
           )}
 
           {this.state.showPatreonModal && (
-            <PatreonModal
-              onClose={this.handlePatreonAdClose}
-            />
+            <PatreonModal onClose={this.handlePatreonAdClose} />
           )}
         </div>
       </Router>

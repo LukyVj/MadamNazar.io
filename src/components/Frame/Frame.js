@@ -13,13 +13,23 @@ class Frame extends Component {
       loaded: false
     };
   }
-  componentDidMount() {
-    this.setState({ loaded: true });
-    this.props.cycle !== undefined &&
-      this.setState({
-        cycle: this.props.cycle,
-        day: formatDateTweet(new Date(Date.parse(this.props.day)))
+
+  getNewCycle = () => {
+    fetch(
+      "https://jeanropke.github.io/RDR2CollectorsMap/data/cycles.json?nocache=999999"
+    )
+      .then(response => response.json())
+      .then(json => {
+        this.setState({ cycle: json.current });
       });
+  };
+
+  componentDidMount() {
+    this.getNewCycle();
+    this.setState({ loaded: true });
+    this.setState({
+      day: formatDateTweet(new Date(Date.parse(this.props.day)))
+    });
   }
 
   render() {
