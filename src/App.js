@@ -45,6 +45,32 @@ const URLHandler = props => {
   return null;
 };
 
+const bannerStyles = {
+  root: css`
+      background: url("${require("./images/bg-cowboys.jpg")}") repeat center top / 600px;
+      width: 100%;
+      height:auto;
+      left: 0;
+      padding: 1em 0;
+      position:fixed;
+      bottom:0;
+      color: white;
+      z-index: 999;
+      border-color: #2e2e2e;
+      text-shadow: 1px 1px 0 black;
+      z-index: 999999999999999999999999;
+
+      a {
+        color: white;
+      } 
+
+      @media (max-width: 960px) {
+        margin: 0 auto;
+        right: 0;
+      }
+    `
+};
+
 
 class App extends Component {
   constructor(props) {
@@ -56,7 +82,8 @@ class App extends Component {
       navOpen: false,
       readableDate: todayDate,
       showPatreonAd: !patreonAdHidden,
-      showPatreonModal: false
+      showPatreonModal: false,
+      extraSupport: 1,
     };
   }
 
@@ -159,6 +186,24 @@ class App extends Component {
             offsetTop={this.state.showPatreonAd}
           />
           <Navigation parent={this} navOpen={this.state.navOpen} />
+
+          {this.state.extraSupport === 1 && (
+            <div className="ta-center" css={bannerStyles.root}>
+              You love MadamNazar.io and consider supporting us? We need your help!  Please check
+              our{" "}
+              <a href="https://support-madamnazario.surge.sh/">support page!</a>
+              <button className="app-none bgc-transparent bdw-0 cursor-pointer" onClick={() => this.setState({ extraSupport: 0 })}>
+                <img
+                  src={require("./images/cancel-icon.svg")}
+                  css={css`
+                    width: 18px;
+                  `}
+                  className="va-middle ml-8"
+                  alt="close icon"
+                />
+              </button>
+            </div>
+          )}
 
           <Switch>
             <Route path="/resources">
