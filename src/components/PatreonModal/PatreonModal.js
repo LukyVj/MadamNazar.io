@@ -138,11 +138,11 @@ class PatreonModal extends Component {
               onClick={() => {
                 ReactGA.event({
                   category: "click.patreon.modal.link",
-                  action: "Click on Patreon URL"
+                  action: "Click on Support URL"
                 });
               }}
             >
-              Patreon
+              Several plateforms
             </a>
             . It will help us to maintain the webite (domain and such) and to keep the
             API up and running. If you feel like it, consider making a donation, even

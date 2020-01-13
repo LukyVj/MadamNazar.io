@@ -10,7 +10,7 @@ const bannerStyles = {
       width: 100%;
       max-height: 100px;
       left: 0;
-      bottom: 0;
+      bottom: 60px;
       color: white;
       z-index: 999;
       border-color: #2e2e2e;
