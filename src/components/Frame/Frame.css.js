@@ -65,5 +65,44 @@ export default {
         font-size: 1.45em;
       }
     }
+
+    h4 {
+      line-height:46px;
+    }
+  `,
+  cyclesPopup: css`
+    position: absolute;
+    z-index: 9999999999999999;
+    width: 280px;
+    padding: 0.5em;
+    right: 0;
+    top: 46px;
+    font-family: Arial;
+    font-size: 16px;
+    background-color: #c79f6f;
+    box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.02),
+      0 6.7px 5.3px rgba(0, 0, 0, 0.028), 0 12.5px 10px rgba(0, 0, 0, 0.035),
+      0 22.3px 17.9px rgba(0, 0, 0, 0.042), 0 41.8px 33.4px rgba(0, 0, 0, 0.05),
+      0 100px 80px rgba(0, 0, 0, 0.07);
+    border-radius: 4px;
+    z-index: 10000000000;
+    border-color: #2e2e2e;
+    border-image-repeat: all;
+    border-image-slice: 14;
+    border-image-outset: 1px;
+    border-image-source: url(${frame});
+    border-style: solid;
+    line-height:normal;
+    cursor: auto;
+
+    .cycle-item {
+      background: url(${blueBg});
+    }
+
+    img {
+      background-color: #c79f6f;
+      padding: 4px;
+      border-radius: 100px;
+    }
   `
 };

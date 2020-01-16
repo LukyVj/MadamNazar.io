@@ -12,7 +12,7 @@ export const COLLECTOR_MAP_URL = "/CollectorsMap/";
 
 // CLOUDINARY
 export const IMAGES_CDN =
-  "https://res.cloudinary.com/hckp6e9ap/image/upload/v1572616700/website";
+  "https://madamnazar.github.io/images/";
 
 // DATA FILES ( thanks @jeanRopke )
 export const JSON_COLLECTOR_ITEMS_URL =

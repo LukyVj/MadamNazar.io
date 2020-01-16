@@ -114,13 +114,13 @@ const InfoBox = props => {
                 css={css`padding: 8px;`}
               >
                 <RDAppear
-                  image={props.media["tilt_shift"].full}
+                  image={props.media}
                   width={props.parent.state.frameWidth / 2}
                   height={480}
                   onClick={() => {
                     props.parent.setState({
                       modal: true,
-                      modalImage: props.media.normal.full,
+                      modalImage: props.media,
                       /*
                         modalImageDarkMode prop causes crash at this moment
                         Seems to be it's not used in child component
@@ -145,13 +145,13 @@ const InfoBox = props => {
                 />
 
                 <RDAppear
-                  image={props.media["tilt_shift"].zoom}
+                  image={props.media}
                   width={props.parent.state.frameWidth / 2}
                   height={480}
                   onClick={() => {
                     props.parent.setState({
                       modal: true,
-                      modalImage: props.media.normal.zoom,
+                      modalImage: props.media,
                       /*
                         modalImageDarkMode prop causes crash at this moment
                         Seems to be it's not used in child component
@@ -166,7 +166,7 @@ const InfoBox = props => {
                   }}
                   childrenStyle={css`
                     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
-                    transform: rotate(-0.3deg);
+                    transform: rotate(-0.3deg) scale(2);
                     filter: sepia(1) saturate(0.65);
 
                     @media (max-width: 960px) {

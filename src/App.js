@@ -134,14 +134,7 @@ class App extends Component {
     });
   };
 
-  getNewCycle = () => {
-    fetch("https://jeanropke.github.io/RDR2CollectorsMap/data/cycles.json?nocache=999999")
-      .then(response => response.json())
-      .then(json => {
-        this.setState({newCycle: json.current})
-      });
-  };
-
+  
   componentDidMount() {
     // Hello safari ////////////////////////////
     ////////////////////////////////////////////
@@ -153,7 +146,6 @@ class App extends Component {
     docCookies.setItem("removed-items", "a;b");
     docCookies.setItem("removed-markers-daily", "true");
     docCookies.setItem("removed-markers-daily", "true");
-    this.getNewCycle();
 
     if (currentEnv === "production") {
       ReactGA.initialize("UA-148400737-1");
@@ -175,7 +167,6 @@ class App extends Component {
 
   render() {
     const dataExists = this.state.data && this.state.data.location;
-    console.log(this.state)
     return (
       <Router>
         <URLHandler parent={this} />
@@ -183,6 +174,7 @@ class App extends Component {
           <Frame
             day={this.state.readableDate}
             cycle={this.state.newCycle !== undefined && this.state.newCycle}
+            cycleItems={this.state.itemsCycle !== undefined && this.state.cycleItems}
             offsetTop={this.state.showPatreonAd}
           />
           <Navigation parent={this} navOpen={this.state.navOpen} />
@@ -246,11 +238,7 @@ class App extends Component {
                     location={this.state.data && this.state.data.location}
                     imageNormal={
                       this.state.data &&
-                      this.state.data.location.image.normal.full
-                    }
-                    imageTilt={
-                      this.state.data &&
-                      this.state.data.location.image.tilt_shift.full
+                      this.state.data.location.image
                     }
                     loaded={true}
                   />

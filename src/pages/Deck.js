@@ -213,7 +213,7 @@ const Card = props => {
             src={`${IMAGES_CDN.replace(
               "upload/",
               "upload/c_scale,q_50,w_280/"
-            )}/ability_cards/${type}/${imageName(name)}.png`}
+            )}/deck/${type}/${imageName(name)}.png`}
             alt={`Card ${type}/${imageName}`}
             className="w-100p"
             css={css`
