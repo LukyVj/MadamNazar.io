@@ -11,7 +11,7 @@ class Frame extends Component {
       cycle: 0,
       day: 0,
       loaded: false,
-      showCycles: false
+      showCycles: true
     };
   }
 
@@ -92,7 +92,7 @@ class Frame extends Component {
             </p>
           </div>
           <h4
-            className="m-0 p-0 ta-right pos-relative"
+            className="m-0 p-0 ta-right pos-relative d-block cursor-pointer"
             onMouseOver={() => {
               this.setState({ showCycles: true });
             }}
@@ -108,7 +108,7 @@ class Frame extends Component {
           >
             {" "}
             Cycle{" "}
-            <span aria-labelledby="image" className="d-inline-block w-30">
+            <span aria-labelledby="image" className="md:d-inline-block d-none w-30">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"

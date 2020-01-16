@@ -65,12 +65,17 @@ export default {
         font-size: 1.45em;
       }
     }
+
+    h4 {
+      line-height:46px;
+    }
   `,
   cyclesPopup: css`
     position: absolute;
+    z-index: 9999999999999999;
     width: 280px;
     padding: 0.5em;
-    left: 0;
+    right: 0;
     top: 46px;
     font-family: Arial;
     font-size: 16px;
@@ -87,6 +92,8 @@ export default {
     border-image-outset: 1px;
     border-image-source: url(${frame});
     border-style: solid;
+    line-height:normal;
+    cursor: auto;
 
     .cycle-item {
       background: url(${blueBg});
