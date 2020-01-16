@@ -11,7 +11,7 @@ class Frame extends Component {
       cycle: 0,
       day: 0,
       loaded: false,
-      showCycles: true
+      showCycles: false
     };
   }
 
