@@ -10,9 +10,17 @@ class Frame extends Component {
     this.state = {
       cycle: 0,
       day: 0,
-      loaded: false
+      loaded: false,
+      showCycles: false
     };
   }
+
+  groupBy = key => array =>
+    array.reduce((objectsByKeyValue, obj) => {
+      const value = obj[key];
+      objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
+      return objectsByKeyValue;
+    }, {});
 
   getNewCycle = () => {
     fetch(
@@ -20,7 +28,12 @@ class Frame extends Component {
     )
       .then(response => response.json())
       .then(json => {
-        this.setState({ cycle: json.current });
+        [json.cycles].map(data =>
+          this.setState({
+            itemsCycle: data[json.current],
+            ready: true
+          })
+        );
       });
   };
 
@@ -31,8 +44,24 @@ class Frame extends Component {
       day: formatDateTweet(new Date(Date.parse(this.props.day)))
     });
   }
-
+  componentDidUpdate() {
+    // this.state.ready && console.log(this.state.itemsCycle);
+  }
   render() {
+    const collectiblesPerCycle = this.state.itemsCycle
+      ? Object.entries(this.state.itemsCycle).reduce(
+          (acc, [collectible, cycle]) => {
+            if (acc[cycle] === undefined) {
+              acc[cycle] = [collectible];
+            } else {
+              acc[cycle].push(collectible);
+            }
+            return acc;
+          },
+          []
+        )
+      : [];
+
     return (
       <div css={[styles.root]} className="p-16">
         <div className="maw-1200 m-auto d-flex ai-center jc-between md:jc-center fxw-wrap md:fxw-nowrap">
@@ -63,7 +92,13 @@ class Frame extends Component {
             </p>
           </div>
           <h4
-            className="m-0 p-0 ta-right"
+            className="m-0 p-0 ta-right pos-relative"
+            onMouseOver={() => {
+              this.setState({ showCycles: true });
+            }}
+            onMouseOut={() => {
+              this.setState({ showCycles: false });
+            }}
             css={css`
               order: 1;
               @media (max-width: 960px) {
@@ -72,7 +107,57 @@ class Frame extends Component {
             `}
           >
             {" "}
-            Cycle {this.state.cycle}
+            Cycle{" "}
+            <span aria-labelledby="image" className="d-inline-block w-30">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="feather feather-eye"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </span>
+            <div className={this.state.showCycles ? "d-block" : "d-none"}>
+              <div
+                className={`d-grid g-2 ggap-8 ta-center ${
+                  this.state.showCycles ? "d-block" : "d-none"
+                }`}
+                css={styles.cyclesPopup}
+              >
+                {this.state.ready &&
+                  collectiblesPerCycle.map((bucket, cycle) =>
+                    bucket ? (
+                      <div className="p-8 bdr-6 cycle-item d-flex fxd-column">
+                        <ul
+                          className={`lis-none d-grid g-${
+                            bucket.length > 1 ? "2" : "1"
+                          } m-0 p-0 fx-12 ai-center jc-center`}
+                        >
+                          {bucket.map(collectible => (
+                            <li className="p-4">
+                              <img
+                                alt=""
+                                src={require(`../../images/icons/${collectible.replace(
+                                  "_",
+                                  "-"
+                                )}.png`)}
+                                className={`h-30 w-30 obf-contain obp-center ${collectible}`}
+                              />
+                            </li>
+                          ))}
+                        </ul>
+                        <footer className="p-8 jc-end">CYCLE {cycle}</footer>
+                      </div>
+                    ) : null
+                  )}
+              </div>
+            </div>
           </h4>
         </div>
       </div>
