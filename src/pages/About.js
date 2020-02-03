@@ -180,7 +180,7 @@ class About extends Component {
           <h2>Contributors:</h2>
           <p>Special thanks to all these amazing contributors</p>
           <ul>
-            {["@Noha69980668", "SethStar16T"].map(contributor => (
+            {["@Noha69980668", "SethStar16T", "Haroenv"].map(contributor => (
               <li key={contributor}>
                 <a
                   href={`https://twitter.com/${contributor}`}
