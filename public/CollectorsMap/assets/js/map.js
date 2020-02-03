@@ -199,7 +199,7 @@ var MapBase = {
   },
 
   loadWeeklySet: function () {
-    $.getJSON('https://jeanropke.github.io/RDR2CollectorsMap/data/weekly.json?nocache=' + nocache)
+    $.getJSON('data/weekly.json?nocache=' + nocache)
       .done(function (data) {
         weeklySetData = data;
       });
