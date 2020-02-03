@@ -106,25 +106,6 @@ class Tweet extends Component {
                 }}
               />
             </div>
-            
-            <div className="p-8 cursor-pointer" css={styles.mapBox}>
-              <img
-                src={this.props.imageTilt}
-                alt="Tilt shifted view"
-                className="w-100p"
-                onClick={() => {
-                  this.setState({
-                    initial_tweet: `${this.cleanTweetForImageSelection(
-                      this.textInput.current.value
-                    )} 🗺➡ ${this.props.imageTilt}`
-                  });
-                  ReactGA.event({
-                    category: "click.tweet.image",
-                    action: "Click third image for tweet"
-                  });
-                }}
-              />
-            </div>
           </div>
           <div className="ta-center">
             <h3>
