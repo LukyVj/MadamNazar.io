@@ -14,7 +14,7 @@
 	{"key": "fasttravel.annesburg.name", 	"value": "Annesburg"},
 	{"key": "fasttravel.saint_denis.name", 	"value": "Saint Denis"},
 	{"key": "fasttravel.lagras.name", 		"value": "Lagras"},	
-	{"key": "madam_nazar.name", 			"value": "Madam Nazar"},	
+	{"key": "menu.madam_nazar", 			"value": "Madam Nazar"},	
 
 	{"key": "bards_crossing_treasure", 			"value": "Cruce del Bardo"},
 	{"key": "benedict_treasure", 				"value": "Benedict Point"},
@@ -815,10 +815,7 @@
 	
 	{"key": "dog_encounter.name","value":"Evento de encuentro de perro"},
 	{"key": "dog_encounter.desc","value":"Es un encuentro aleatorio. Un punto blanco en el minimapa indicará el encuentro."},
-	
-	{"key": "fame_seeker.name","value":"Evento de buscafama"},
-	{"key": "fame_seeker.desc","value":"Es un encuentro aleatorio. Un punto blanco en el minimapa indicará el encuentro."},
-	
+
 	{"key": "wounded_animal.name","value":"Evento de animal herido"},
 	{"key": "wounded_animal.desc","value":"Es un encuentro aleatorio. Un punto blanco en el minimapa indicará el encuentro."}
 ]
