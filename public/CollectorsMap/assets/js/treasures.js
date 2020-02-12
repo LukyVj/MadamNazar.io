@@ -8,16 +8,20 @@ var Treasures = {
         Treasures.data = data;
         Treasures.set();
       });
-    console.log('treasures loaded');
+    console.info('%c[Treasures] Loaded!', 'color: #bada55; background: #242424');
   },
   set: function () {
-    var treasureIcon = L.icon({
-      iconUrl: './assets/images/icons/treasure_beige.png',
+    var shadow = Settings.isShadowsEnabled ? '<img class="shadow" src="./assets/images/markers-shadow.png" alt="Shadow">' : '';
+    var treasureIcon = L.divIcon({
       iconSize: [35, 45],
       iconAnchor: [17, 42],
-      popupAnchor: [1, -32],
+      popupAnchor: [0, -28],
       shadowAnchor: [10, 12],
-      shadowUrl: './assets/images/markers-shadow.png'
+      html: `
+        <img class="icon" src="./assets/images/icons/treasure.png" alt="Icon">
+        <img class="background" src="./assets/images/icons/marker_beige.png" alt="Background">
+        ${shadow}
+      `
     });
     var crossIcon = L.icon({
       iconUrl: './assets/images/icons/cross.png',
@@ -44,7 +48,7 @@ var Treasures = {
       });
 
 
-      marker.bindPopup(`<h1> ${Language.get(value.text)}</h1><button type="button" class="btn btn-info remove-button" onclick="MapBase.removeItemFromMap('${value.text}', '${value.text}')" data-item="${marker.text}">${Language.get("map.remove_add")}</button>`);
+      marker.bindPopup(`<h1>${Language.get(value.text)}</h1><button type="button" class="btn btn-info remove-button" onclick="MapBase.removeItemFromMap('${value.text}', '${value.text}')" data-item="${marker.text}">${Language.get("map.remove_add")}</button>`, { minWidth: 300 });
 
       Treasures.markers.push({ treasure: value.text, marker: marker, circle: circle, treasuresCross: treasuresCross });
     });
@@ -72,9 +76,9 @@ var Treasures = {
     Menu.refreshTreasures();
   },
   save: function () {
-    $.cookie('treasures-enabled', Treasures.enabledTreasures.join(';'), { expires: 999 })
+    $.cookie('treasures-enabled', Treasures.enabledTreasures.join(';'), { expires: 999 });
   },
-  showHideAll: function(isToHide) {
+  showHideAll: function (isToHide) {
     if (isToHide) {
       Treasures.enabledTreasures = [];
     } else {
@@ -83,5 +87,4 @@ var Treasures = {
     Treasures.addToMap();
     Treasures.save();
   }
-
-}
+};

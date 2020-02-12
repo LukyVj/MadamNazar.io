@@ -11,9 +11,17 @@ class Frame extends Component {
       cycle: 0,
       day: 0,
       loaded: false,
-      showCycles: false,
+      showCycles: false
     };
   }
+
+  cleanDate = date => {
+    var dd = String(date.getDate()).padStart(2, "0");
+    var mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
+    var yyyy = date.getFullYear();
+
+    return mm + "/" + dd + "/" + yyyy;
+  };
 
   groupBy = key => array =>
     array.reduce((objectsByKeyValue, obj) => {
@@ -23,17 +31,25 @@ class Frame extends Component {
     }, {});
 
   getNewCycle = () => {
+    const utcDate = new Date();
     fetch(
-      "https://jeanropke.github.io/RDR2CollectorsMap/data/cycles.json?nocache=999999"
+      "https://jeanropke.github.io/RDR2CollectorsMap/data/cycles.json?nocache=1999999"
     )
       .then(response => response.json())
       .then(json => {
-        [json.cycles].map(data =>
-          this.setState({
-            itemsCycle: data[json.current],
-            ready: true
-          })
-        );
+        [...json].filter(data => {
+          console.log(
+            this.cleanDate(new Date(data.date)),
+            this.cleanDate(utcDate)
+          );
+          if (this.cleanDate(new Date(data.date)) === this.cleanDate(utcDate)) {
+            this.setState({
+              itemsCycle: data,
+              ready: true
+            });
+          }
+          console.log("s", this.state);
+        });
       });
   };
 
@@ -43,6 +59,8 @@ class Frame extends Component {
     this.setState({
       day: formatDateTweet(new Date(Date.parse(this.props.day)))
     });
+
+    console.log("s", this.state);
   }
   componentDidUpdate() {
     // this.state.ready && console.log(this.state.itemsCycle);
@@ -108,7 +126,10 @@ class Frame extends Component {
           >
             {" "}
             Cycle{" "}
-            <span aria-labelledby="image" className="md:d-inline-block d-none w-30">
+            <span
+              aria-labelledby="image"
+              className="md:d-inline-block d-none w-30"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -140,16 +161,47 @@ class Frame extends Component {
                           } m-0 p-0 fx-12 ai-center jc-center`}
                         >
                           {bucket.map(collectible => (
-                            <li className="p-4">
-                              <img
-                                alt=""
-                                src={require(`../../images/icons/${collectible.replace(
-                                  "_",
-                                  "-"
-                                )}.png`)}
-                                className={`h-30 w-30 obf-contain obp-center ${collectible}`}
-                              />
-                            </li>
+                            <span>
+                              {collectible === "lost_jewelry" ? (
+                                [
+                                  "bracelet",
+                                  "earrings",
+                                  "necklaces",
+                                  "ring"
+                                ].map(jewel => (
+                                  <li className="p-4 d-inline-block">
+                                    <img
+                                      alt=""
+                                      src={require(`../../images/icons/lost-${jewel}.png`)}
+                                      className={`h-30 w-30 obf-contain obp-center ${jewel}`}
+                                    />
+                                  </li>
+                                ))
+                              ) : collectible === "tarot_cards" ? (
+                                ["cups", "pentacles", "swords", "wands"].map(
+                                  jewel => (
+                                    <li className="p-4 d-inline-block">
+                                      <img
+                                        alt=""
+                                        src={require(`../../images/icons/card-${jewel}.png`)}
+                                        className={`h-30 w-30 obf-contain obp-center ${jewel}`}
+                                      />
+                                    </li>
+                                  )
+                                )
+                              ) : (
+                                <li className="p-4 d-inline-block">
+                                  <img
+                                    alt=""
+                                    src={require(`../../images/icons/${collectible.replace(
+                                      "_",
+                                      "-"
+                                    )}.png`)}
+                                    className={`h-30 w-30 obf-contain obp-center ${collectible}`}
+                                  />
+                                </li>
+                              )}
+                            </span>
                           ))}
                         </ul>
                         <footer className="p-8 jc-end">CYCLE {cycle}</footer>

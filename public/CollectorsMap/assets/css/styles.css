@@ -6,16 +6,25 @@
     text-rendering: optimizeLegibility
 }
 
+@font-face {
+    font-family: RDRLino;
+    src: url(../fonts/RDRLino-Regular.woff2) format("woff2"), url(../fonts/RDRLino-Regular.woff) format("woff"), url(../fonts/RDRLino-Regular.ttf) format("truetype");
+    font-style: normal;
+    font-weight: 400;
+    text-rendering: optimizeLegibility
+}
+
 *, *:before, *:after {
     box-sizing: border-box;
 }
 
 ::-webkit-scrollbar {
-    width: 3px;
+    width: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #eee;
+    background: #aaa;
+    border-radius: 3px;
 }
 
 body {
@@ -49,9 +58,23 @@ p {
     margin: 0!important;
 }
 
+input, textarea, select, .btn {
+    outline: none;
+}
+
+.cycle-table {
+    color: white;
+    background: black;
+}
+
+.cycle-table td, .cycle-table th {
+    padding: 2px;
+    border: 1px solid black;
+}
+
 #main-header {
     display: flex;
-    margin: 0 10px 10px 10px;
+    margin: 10px;
 }
 
 #main-header::after {
@@ -65,6 +88,11 @@ p {
     background-repeat: repeat-x;
     background-size: auto 75px;
     padding: 6px 0;
+}
+
+#main-header-center>span {
+    font-family: RDRLino, serif;
+    font-weight: normal;
 }
 
 #main-header-left, #main-header-right {
@@ -116,19 +144,41 @@ p {
     left: 0;
 }
 
+.menu-divider {
+    height: 3px;
+    border: none;
+    background-image: url(../../assets/images/header_border_white.png);
+    background-repeat: repeat-x;
+    background-size: auto 3px;
+    margin: 6px auto;
+    opacity: 0.15;
+}
+
 .map-alert {
     background: darkred;
     color: #fff;
     width: 100%;
     position: absolute;
     top: 0;
-    z-index: 9999;
+    z-index: 1010;
     padding: 10px;
     text-align: center;
-    display: none;
 }
 
-.map-alert .close-button {
+.map-cycle-alert {
+    background: #000;
+    color: #fff;
+    width: 50%;
+    left: 25%;
+    right: 25%;
+    position: absolute;
+    bottom: 20px;
+    z-index: 1020;
+    padding: 10px;
+    text-align: center;
+}
+
+.map-alert .close-button, .map-cycle-alert .close-button {
     position: absolute;
     top: 0;
     right: 15px;
@@ -140,6 +190,7 @@ p {
 }
 
 #map {
+    z-index: 900;
     background: #d2b790;
     width: 100%;
     width: 100vw;
@@ -155,53 +206,41 @@ p {
 }
 
 .tool-type {
-    vertical-align: bottom;
-    padding-right: 5px;
+    margin-right: 5px;
 }
 
 #countdown, #item-counter, #time-in-game {
     font-size: 16px;
-    line-height: 1.7;
     user-select: none;
-    margin: auto auto auto 2px;
+    margin: 0;
+}
+
+.day-cycle {
+    width: 16px;
+    height: 16px;
+    margin: auto 0 auto 8px;
 }
 
 .timer-container, .clock-container {
     position: fixed;
-    z-index: 9998;
+    z-index: 1010;
     background: #111;
     border: 1px solid #888;
     color: #eee;
     left: 40px;
     top: 5px;
-    width: 95px;
+    min-width: 95px;
     height: 30px;
     transition: all 200ms ease-out;
-    padding-left: 8px;
+    padding: 0 8px;
     display: inline-flex;
     cursor: pointer;
-}
-
-.display-in-front {
-    z-index: 9999;
-}
-
-#am-pm-time {
-    margin: auto 12px auto auto;
-    font-size: 16px;
-    line-height: 1.7;
-    user-select: none;
-}
-
-#day-cycle {
-    width: 16px;
-    height: 16px;
-    margin: auto 4px auto auto;
+    line-height: 28px;
 }
 
 .counter-container {
     position: fixed;
-    z-index: 9999;
+    z-index: 1010;
     background: #111;
     border: 1px solid #888;
     color: #eee;
@@ -221,7 +260,7 @@ p {
     background-size: auto 3px;
 }
 
-.remove-button {
+.save-button, .remove-button {
     text-align: center;
     font-size: 14px;
     cursor: pointer;
@@ -245,7 +284,39 @@ p {
     line-height: 33px;
 }
 
-.hide-show-container, .custom-routes-container {
+.marker-popup-pin-input-name, .marker-popup-pin-input-desc {
+    border: none;
+    width: 100%;
+}
+
+.marker-popup-pin-input-name {
+    text-align: center;
+}
+
+.marker-popup-pin-input-desc {
+    resize: none;
+}
+
+.marker-popup-pin-input-divider {
+    margin: 2px 0;
+    border: none;
+    border-top: solid 1px #B0B0B0;
+}
+
+.marker-popup-pin-label {
+    margin-bottom: 2px;
+}
+
+.marker-popup-pin-input-icon {
+    background: #eee;
+    border: none;
+    padding: 5px 10px;
+    font-size: 14px;
+    height: 100%;
+    border-radius: 3px;
+}
+
+.links-container {
     display: flex;
     justify-content: space-around;
     border-top: 1px solid #B0B0B0;
@@ -254,16 +325,12 @@ p {
     margin: 15px 0;
 }
 
-.hide-show-container a, .custom-routes-container a {
+.links-container a {
     color: #eee;
     text-decoration: none;
 }
 
-.hide-show-container a:hover, .custom-routes-container a:hover {
-    text-decoration: underline;
-}
-
-.search-container, .settings-container, .routes-container {
+.settings-container {
     padding: 0 10px;
     margin: 5px 0;
 }
@@ -278,58 +345,72 @@ p {
     border-radius: 3px;
 }
 
+.input-file {
+    background-image: url(../images/menu_hover.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    border: none;
+    padding: 6px 16px;
+    color: #f0f0f0;
+    font-size: 14px;
+    border-radius: 3px;
+}
+
 .input-container {
+    user-select: none;
     display: flex;
     justify-content: space-between;
     margin: 5px 0;
 }
 
 .input-container-noflex {
+    user-select: none;
     margin: 5px 0;
     text-align: center;
 }
 
+.input-container-noflex .btn {
+    margin: 6px 0;
+}
+
 .wide-select-menu {
+    min-width: 150px;
     width: 150px;
 }
 
 .narrow-select-menu {
+    min-width: 75px;
     width: 75px;
 }
 
 .btn-default {
     background-color: #383838;
-    width: 32%;
+    min-width: 40%;
     font-weight: 500;
     color: #fff;
-}
-
-.btn-special {
-    background-color: #747474;
+    border: 1px solid #999;
 }
 
 .input-day {
     background: #383838;
     border: none;
-    padding: 5px 10px;
+    padding: 4px 10px;
     color: #f0f0f0;
-    font-size: 14px;
+    font-size: 13px;
     height: 100%;
     border-radius: 3px;
+    margin-left: 6px;
+}
+
+.input-container-noflex .input-day {
+    margin-left: 0;
 }
 
 .input-day:disabled {
-    opacity: 0.5;
     cursor: not-allowed;
 }
 
 .issues-container a {
-    display: block;
-    color: #eee;
-    text-align: center;
-}
-
-.donate-container {
     display: block;
     color: #eee;
     text-align: center;
@@ -353,7 +434,7 @@ p {
 
 .side-menu {
     width: 100%;
-    background: #000 url('https://s.rsg.sc/sc/images/games/RDR2/bg.jpg');
+    background: #000 url(../images/bg.jpg);
     box-shadow: 1px 0 2px 0 rgba(85, 85, 85, 0.85);
     position: fixed;
     top: -1800px;
@@ -362,8 +443,7 @@ p {
     height: 100%;
     height: 100vh;
     color: #eee;
-    z-index: 999;
-    padding-top: 10px;
+    z-index: 1000;
     scrollbar-width: thin;
 }
 
@@ -386,7 +466,7 @@ p {
 
 .side-menu .menu-option:hover, .side-menu .menu-hidden .collectible-wrapper:hover {
     background-image: url(../images/menu_hover.png);
-    background-size: 100% 37px;
+    background-size: 100% 100%;
     background-repeat: no-repeat;
 }
 
@@ -410,21 +490,25 @@ p {
 }
 
 .side-menu .open-submenu {
-    width: 25px;
-    height: 25px;
-    background: url(../images/arrow.png);
+    min-width: 38px;
+    height: 38px;
+    background: url(../images/arrow.png) center no-repeat;
     margin: auto 0;
 }
 
-.side-menu .menu-hidden {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 200ms ease-out;
+.open-submenu.rotate {
+    transform: rotate(180deg);
 }
 
-.side-menu .menu-hidden.opened {
+.side-menu .menu-hidden, #debug-container {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 250ms ease-out;
+}
+
+.side-menu .menu-hidden.opened, #debug-container.opened {
     max-height: 2000px;
-    transition: max-height 400ms ease-out;
+    transition: max-height 400ms linear;
 }
 
 .side-menu .menu-hidden .collection-value {
@@ -440,28 +524,51 @@ p {
     color: #fff;
 }
 
-.side-menu .menu-hidden .collection-sell {
+.side-menu .menu-hidden .collection-sell, .collection-reset {
     cursor: pointer;
     user-select: none;
 }
 
 .side-menu .menu-hidden .collectible-wrapper {
-    padding: 5px 20px;
+    padding: 6px 12px;
     cursor: pointer;
     user-select: none;
 }
 
 .side-menu .menu-hidden .collectible-icon {
     float: left;
-    height: 30px;
+    height: 28px;
     margin-right: 10px;
 }
 
-.side-menu .menu-hidden .collectible {
-    padding: 5px 0;
+.side-menu .menu-hidden .collectible-icon.random-encounter {
+    width: 32px;
+    height: auto;
+    margin-top: 1px;
+    margin-right: 6px;
+    margin-bottom: -3px;
+}
+
+.side-menu .menu-hidden .collectible-text {
     display: flex;
     justify-content: space-between;
     font-size: 15px;
+}
+
+.side-menu .menu-hidden .collectible, .input-container label, .menu-option span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.side-menu .menu-hidden .collectible, .input-container label {
+    line-height: 24px;
+}
+
+.same-cycle-warning-menu {
+    margin-left: 4px;
+    height: 20px;
+    width: auto;
 }
 
 .lat-lng-container {
@@ -470,7 +577,7 @@ p {
     left: 0;
     width: 220px;
     margin: 0 calc(50% - 100px) 20px;
-    z-index: 990;
+    z-index: 910;
     color: #fff;
     background-color: #333333;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
@@ -504,12 +611,24 @@ a.wiki-page {
     color: #fff;
     text-decoration: none;
 }
+
 a.wiki-page:hover {
     color: #fff;
 }
+
 a.wiki-page:visited {
     color: #fff;
     text-decoration: none;
+}
+
+.highlight-items {
+    filter: drop-shadow(0 0 .5rem #cc0000) drop-shadow(0 0 .4rem #cc0000);
+}
+
+.highlight-important-items-menu {
+    text-decoration: underline;
+    text-decoration-color: #cc0000;
+    text-decoration-thickness: 2px;
 }
 
 .help-popup {
@@ -517,7 +636,7 @@ a.wiki-page:visited {
     width: 100%;
     height: 100vh;
     background: rgba(0, 0, 0, .2);
-    z-index: 9999;
+    z-index: 1010;
     padding: 5%;
     color: #eee;
     display: none;
@@ -526,7 +645,7 @@ a.wiki-page:visited {
 .help-container {
     height: 100%;
     padding: 25px;
-    background: #000 url('https://s.rsg.sc/sc/images/games/RDR2/bg.jpg');
+    background: #000 url(../images/bg.jpg);
     border: 1px solid #eee;
     box-shadow: 0 0 10px 0 black;
 }
@@ -556,20 +675,270 @@ a.wiki-page:visited {
     padding: 0 0 0 8px;
 }
 
+.explain-text {
+    margin-bottom: 12px !important;
+    font-size: 14px;
+}
+
+.no-margin-top {
+    margin-top: 0 !important;
+}
+
 #debug-marker-lat, #debug-marker-lng {
     width: calc(50% - 4px);
+}
+
+.counter {
+    line-height: 12px;
+    white-space: nowrap;
+    margin-left: 6px;
+    padding: 3px 0;
+}
+
+.counter-number {
+    margin: 0 6px;
+    min-width: 12px;
+    display: inline-block;
+    text-align: center;
+}
+
+.counter-button {
+    display: inline-block;
+    padding: 3px;
+    height: 20px;
+    width: 20px;
+    text-align: center;
+    background-color: #333;
+    color: #eee !important;
+    border-radius: 50%;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.cycle-changer {
+    user-select: none;
+    display: flex;
+    justify-content: center;
+}
+
+span.cycle-data {
+    text-align: center;
+}
+
+div>span.cycle-data {
+    min-width: 100px;
+    margin: 0 20px;
+}
+
+#change-cycle-backward {
+    transform: rotate(180deg) translate(0, -4px);
+}
+
+#cycle-changer-container {
+    margin: 10px 0;
+}
+
+.marker-content-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.marker-warning-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    border: 1px solid #f2cf20;
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.marker-warning-wrapper .warning-icon {
+    margin-right: 5px;
+}
+
+/* Custom checkbox styling */
+
+.input-checkbox-wrapper {
+    display: inline-block;
+    min-width: 28px;
+    height: 28px;
+    margin-left: 6px;
+}
+
+.input-checkbox-wrapper .input-checkbox {
+    display: none;
+}
+
+.input-checkbox-wrapper .input-checkbox-label {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-image: url(../images/selection_boxes.png);
+    background-position: left center;
+    background-size: auto 100%;
+    background-repeat: no-repeat;
+    cursor: pointer !important;
+}
+
+.input-checkbox-wrapper .input-checkbox:checked+.input-checkbox-label {
+    background-position: right center;
+}
+
+.input-checkbox-wrapper .input-checkbox:disabled+.input-checkbox-label {
+    cursor: not-allowed !important;
+}
+
+/* Custom action button styling */
+
+.input-container.clickable, .input-container.clickable label {
+    cursor: pointer !important;
+}
+
+.input-container.clickable.disabled, .input-container.clickable.disabled label {
+    cursor: not-allowed !important;
+}
+
+.input-action {
+    display: inline-block;
+    min-width: 28px;
+    height: 28px;
+    background-image: url(../images/action_indicator.png);
+    background-size: auto 100%;
+    background-repeat: no-repeat;
+    margin-left: 6px;
+}
+
+.input-action.external {
+    background-image: url(../images/action_indicator_external.png) !important;
+}
+
+.input-action-copy {
+    width: 30px;
+    background-image: url(../images/action_indicator_copy.png);
+    background-size: auto 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-left: 6px;
+    cursor: pointer;
+}
+
+a.no-style {
+    color: #fff;
+    text-decoration: none;
+}
+
+a.no-style:hover {
+    color: #fff;
+}
+
+a.no-style:visited {
+    color: #fff;
+    text-decoration: none;
+}
+
+.leaflet-control-attribution {
+    background: white;
+    color: #333;
+}
+
+.leaflet-dark-mode .leaflet-control-attribution {
+    background: #333;
+    color: white;
+}
+
+.leaflet-dark-mode .leaflet-control-attribution a {
+    color: white !important;
+}
+
+.text-danger {
+    color: #f95050 !important
+}
+
+.turn-off {
+    display: none !important;
+}
+
+/* Bootstrap modal styling */
+
+.modal-content {
+    background: url(../images/modal_bg_long.png);
+    background-size: 100% 100% !important;
+    background-repeat: no-repeat !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.modal-sm .modal-content {
+    background: url(../images/modal_bg.png);
+    background-repeat: no-repeat !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.modal-header, .modal-body, .modal-footer {
+    padding-left: 40px;
+    padding-right: 40px;
+    text-align: center;
+    border: none;
+}
+
+.modal-header, .modal-body {
+    color: #fff;
+}
+
+.modal-header {
+    padding-top: 40px;
+}
+
+.modal-body {
+    padding-top: 0;
+}
+
+.modal-footer {
+    padding-bottom: 60px;
+}
+
+@media (min-width: 768px) {
+    .modal {
+        text-align: center;
+        padding: 0!important;
+    }
+    .modal:before {
+        content: '';
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
+        margin-right: -4px;
+        /* Adjusts for spacing */
+    }
+    .modal-dialog {
+        display: inline-block;
+        text-align: left;
+        vertical-align: middle;
+    }
+    .modal-sm {
+        width: 450px;
+    }
 }
 
 /* Fix buttons showing on top of sidebar on mobile menu */
 
 .leaflet-top, .leaflet-bottom {
-    z-index: 998;
+    z-index: 910;
 }
 
 .leaflet-popup-content {
     font-size: 14px;
     margin: 8px;
     display: inline-grid;
+}
+
+.leaflet-popup-content ::-webkit-scrollbar-thumb {
+    background: #000 !important;
 }
 
 @media (max-width: 1024px) {
@@ -596,4 +965,119 @@ a.wiki-page:visited {
     .counter-menu-opened {
         left: 410px;
     }
+}
+
+/* Tutorial styling */
+
+#help-container {
+    position: relative;
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    min-height: 100px;
+    background-image: url(../../assets/images/help_text_bg.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    padding: 15px 25px;
+}
+
+/* Pathfinder styling */
+
+.pathfinder-control {
+    padding: 5px;
+    background: #fff
+}
+
+.pathfinder-btn {
+    display: inline-block;
+    padding: 0 10px;
+    height: 30px;
+    line-height: 30px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #000;
+}
+
+.pathfinder-btn:disabled {
+    color: #789;
+}
+
+.pathfinder-btn-before {
+    padding: 0;
+    width: 30px;
+    text-align: center;
+}
+
+.pathfinder-btn-after {
+    padding: 0;
+    width: 30px;
+    text-align: center;
+}
+
+.pathfinder-btn>small {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+    top: -0.5em;
+    left: 0.1em;
+    font-family: 'Courier New', Courier, monospace;
+    text-transform: uppercase;
+}
+
+/* Leaflet Marker styling */
+
+.leaflet-div-icon {
+    width: 36px;
+    height: 45px;
+    background-color: transparent;
+    border: none;
+}
+
+.leaflet-div-icon .overlay, .leaflet-div-icon .icon, .leaflet-div-icon .background, .leaflet-div-icon .shadow {
+    position: absolute;
+    text-align: center;
+}
+
+.leaflet-div-icon .overlay {
+    z-index: 4;
+    width: 100%;
+    height: auto;
+}
+
+.leaflet-div-icon .icon {
+    z-index: 3;
+    width: 100%;
+    height: auto;
+    padding-top: 6px;
+}
+
+.leaflet-div-icon .background {
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+}
+
+.leaflet-div-icon .shadow {
+    z-index: 1;
+    bottom: -2px;
+    left: 9px;
+}
+
+/* Donate form */
+
+.donate-form {
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    background-image: url(../images/menu_donate.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    padding: 10px;
+}
+
+.donate-form .input-day {
+    margin: auto 0 auto auto;
 }
