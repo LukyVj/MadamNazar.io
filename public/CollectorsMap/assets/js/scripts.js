@@ -123,6 +123,11 @@ function init() {
     $.cookie('marker-opacity', '1', { expires: 999 });
   }
 
+  if (typeof $.cookie('marker-size') === 'undefined') {
+    Settings.markerSize = 1;
+    $.cookie('marker-size', '1', { expires: 999 });
+  }
+
   if (typeof $.cookie('overlay-opacity') === 'undefined') {
     Settings.overlayOpacity = 0.5;
     $.cookie('overlay-opacity', '0.5', { expires: 999 });
@@ -146,6 +151,7 @@ function init() {
   $('#tools').val(Settings.toolType);
   $('#language').val(Settings.language);
   $('#marker-opacity').val(Settings.markerOpacity);
+  $('#marker-size').val(Settings.markerSize);
   $('#overlay-opacity').val(Settings.overlayOpacity);
 
   $('#reset-markers').prop("checked", Settings.resetMarkersDaily);
@@ -169,12 +175,18 @@ function init() {
   }
 
   if (Settings.displayClockHideTimer) {
-    $('.clock-container').removeClass('turn-off');
-    $('.timer-container').addClass('turn-off');
+    $('.clock-container').removeClass('hidden');
+    $('.timer-container').addClass('hidden');
   }
   else {
-    $('.clock-container').addClass('turn-off');
-    $('.timer-container').removeClass('turn-off');
+    $('.clock-container').addClass('hidden');
+    $('.timer-container').removeClass('hidden');
+  }
+
+  if (Settings.isDebugEnabled) {
+    $('#cycle-changer-container').removeClass('hidden');
+  } else {
+    $('#cycle-changer-container').addClass('hidden');
   }
 
   Pins.addToMap();
@@ -293,7 +305,7 @@ setInterval(function () {
 
 // toggle timer and clock after click the container
 $('.timer-container, .clock-container').on('click', function () {
-  $('.timer-container, .clock-container').toggleClass('turn-off');
+  $('.timer-container, .clock-container').toggleClass('hidden');
   Settings.displayClockHideTimer = !Settings.displayClockHideTimer;
   $.cookie('clock-or-timer', Settings.displayClockHideTimer, { expires: 999 });
 });
@@ -305,7 +317,6 @@ $('.timer-container, .clock-container').on('click', function () {
 //Toggle debug container
 $("#toggle-debug").on("click", function () {
   $("#debug-container").toggleClass('opened');
-  $('div#cycle-changer-container').toggleClass('turn-off');
 });
 
 //Show all markers on map
@@ -328,9 +339,13 @@ $('#enable-debug').on("change", function () {
   if ($("#enable-debug").prop('checked')) {
     Settings.isDebugEnabled = true;
     $.cookie('debug', '1', { expires: 999 });
+
+    $('#cycle-changer-container').removeClass('hidden');
   } else {
     Settings.isDebugEnabled = false;
     $.removeCookie('debug');
+
+    $('#cycle-changer-container').addClass('hidden');
   }
 });
 
@@ -465,6 +480,15 @@ $("#overlay-opacity").on("change", function () {
   Settings.overlayOpacity = parsed ? parsed : 0.5;
   $.cookie('overlay-opacity', Settings.overlayOpacity, { expires: 999 });
   MapBase.setOverlays(parsed);
+});
+
+//Change & save marker size
+$("#marker-size").on("change", function () {
+  var parsed = parseFloat($("#marker-size").val());
+  Settings.markerSize = parsed ? parsed : 1;
+  $.cookie('marker-size', Settings.markerSize, { expires: 999 });
+  MapBase.addMarkers();
+  Treasures.set();
 });
 
 //Disable & enable collection category
@@ -816,6 +840,13 @@ $('#generate-route-ignore-collected').on("change", function () {
   Routes.generatePath();
 });
 
+$('#generate-route-important-only').on("change", function () {
+  Routes.importantOnly = $("#generate-route-important-only").prop('checked');
+  $.cookie('generator-path-important-only', Routes.importantOnly ? '1' : '0', { expires: 999 });
+
+  Routes.generatePath();
+});
+
 $('#generate-route-auto-update').on("change", function () {
   Routes.autoUpdatePath = $("#generate-route-auto-update").prop('checked');
   $.cookie('generator-path-auto-update', Routes.autoUpdatePath ? '1' : '0', { expires: 999 });
@@ -938,11 +969,15 @@ $('#generate-route-railroad-weight').on("change", function () {
 /**
  * Tutorial logic
  */
+var defaultHelpTimeout;
 $('[data-help]').hover(function (e) {
   var attr = $(this).attr('data-help');
+  clearTimeout(defaultHelpTimeout);
   $('#help-container p').attr('data-text', `help.${attr}`).text(Language.get(`help.${attr}`));
 }, function () {
-  $('#help-container p').attr('data-text', `help.default`).text(Language.get(`help.default`));
+  defaultHelpTimeout = setTimeout(function () {
+    $('#help-container p').attr('data-text', `help.default`).text(Language.get(`help.default`));
+  }, 100);
 });
 
 $('#show-help').on("change", function () {
