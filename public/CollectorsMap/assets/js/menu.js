@@ -25,7 +25,11 @@ var Menu = {
 };
 
 Menu.refreshMenu = function () {
+  if (weeklySetData.current == null)
+    return;
+
   $('.menu-hidden[data-type]').children('.collectible-wrapper').remove();
+
   var weeklyItems = weeklySetData.sets[weeklySetData.current];
   var anyUnavailableCategories = [];
 
@@ -140,7 +144,9 @@ Menu.refreshMenu = function () {
       }
     });
 
+    var defaultHelpTimeout;
     collectibleElement.hover(function (e) {
+      clearTimeout(defaultHelpTimeout);
       var language = Language.get(`help.${$(this).data('help')}`);
 
       if (language.indexOf('{collection}') !== -1) {
@@ -149,7 +155,9 @@ Menu.refreshMenu = function () {
 
       $('#help-container p').text(language);
     }, function () {
-      $('#help-container p').text(Language.get(`help.default`));
+      defaultHelpTimeout = setTimeout(function () {
+        $('#help-container p').text(Language.get(`help.default`));
+      }, 100);
     });
 
     $(`.menu-hidden[data-type=${marker.category}]`).append(collectibleElement.append(collectibleImage).append(collectibleTextWrapperElement.append(collectibleTextElement).append(collectibleCountElement)));
@@ -236,12 +244,6 @@ Menu.refreshItemsCounter = function () {
     .replace('{max}', _markers.length));
 };
 
-// Auto fill debug markers inputs, when "show coordinates on click" is enabled
-Menu.liveUpdateDebugMarkersInputs = function (lat, lng) {
-  $('#debug-marker-lat').val(lat);
-  $('#debug-marker-lng').val(lng);
-};
-
 // Remove highlight from all important items
 $('#clear_highlights').on('click', function () {
   var tempArray = MapBase.itemsMarkedAsImportant;
@@ -251,21 +253,5 @@ $('#clear_highlights').on('click', function () {
 });
 
 // change cycles from menu (if debug options are enabled)
-$('#change-cycle-backward').on('click', function () {
-  Cycles.offset--
-  if (Cycles.offset < -Settings.cyclesOffsetMaxBackward) {
-    Cycles.offset = -Settings.cyclesOffsetMaxBackward;
-    return;
-  }
-  Inventory.save();
-  Cycles.load();
-});
-$('#change-cycle-forward').on('click', function () {
-  Cycles.offset++
-  if (Cycles.offset > Settings.cyclesOffsetMaxForward) {
-    Cycles.offset = Settings.cyclesOffsetMaxForward;
-    return;
-  }
-  Inventory.save();
-  Cycles.load();
-});
+$('#cycle-prev').on('click', Cycles.nextCycle);
+$('#cycle-next').on('click', Cycles.prevCycle);
