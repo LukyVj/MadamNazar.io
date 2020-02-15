@@ -71,7 +71,6 @@ const bannerStyles = {
     `
 };
 
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -83,7 +82,7 @@ class App extends Component {
       readableDate: todayDate,
       showPatreonAd: !patreonAdHidden,
       showPatreonModal: false,
-      extraSupport: 1,
+      extraSupport: 1
     };
   }
 
@@ -105,7 +104,6 @@ class App extends Component {
       .then(response => response.json())
       .then(json => {
         const { date, current_location = {} } = json.data;
-
 
         this.setState({
           today: date,
@@ -134,7 +132,6 @@ class App extends Component {
     });
   };
 
-  
   componentDidMount() {
     // Hello safari ////////////////////////////
     ////////////////////////////////////////////
@@ -174,17 +171,22 @@ class App extends Component {
           <Frame
             day={this.state.readableDate}
             cycle={this.state.newCycle !== undefined && this.state.newCycle}
-            cycleItems={this.state.itemsCycle !== undefined && this.state.cycleItems}
+            cycleItems={
+              this.state.itemsCycle !== undefined && this.state.cycleItems
+            }
             offsetTop={this.state.showPatreonAd}
           />
           <Navigation parent={this} navOpen={this.state.navOpen} />
 
           {this.state.extraSupport === 1 && (
             <div className="ta-center" css={bannerStyles.root}>
-              You love MadamNazar.io and consider supporting us? We need your help!  Please check
-              our{" "}
+              You love MadamNazar.io and consider supporting us? We need your
+              help! Please check our{" "}
               <a href="https://support-madamnazario.surge.sh/">support page!</a>
-              <button className="app-none bgc-transparent bdw-0 cursor-pointer" onClick={() => this.setState({ extraSupport: 0 })}>
+              <button
+                className="app-none bgc-transparent bdw-0 cursor-pointer"
+                onClick={() => this.setState({ extraSupport: 0 })}
+              >
                 <img
                   src={require("./images/cancel-icon.svg")}
                   css={css`
@@ -199,37 +201,33 @@ class App extends Component {
 
           <Switch>
             <Route path="/resources">
-              <section id="frame" className="pv-32" css={styles.wrapper}>
+              <section className="pv-32" css={styles.wrapper}>
                 <Resources />
               </section>
             </Route>
             <Route path="/map">
-              <section id="frame" className="pv-32" css={styles.wrapper}>
+              <section className="pv-32" css={styles.wrapper}>
                 <CollectorMap parent={this} />
               </section>
             </Route>
             <Route path="/maps">
-              <section
-                id="frame"
-                className="pv-32"
-                css={styles.fullWidthWrapper}
-              >
+              <section className="pv-32" css={styles.fullWidthWrapper}>
                 <Maps parent={this} />
               </section>
             </Route>
             <Route path="/deck">
-              <section id="frame" className="pv-32" css={styles.wrapper}>
+              <section className="pv-32" css={styles.wrapper}>
                 <Deck parent={this} />
               </section>
             </Route>
             <Route path="/about">
-              <section id="frame" className="pv-32" css={styles.wrapper}>
+              <section className="pv-32" css={styles.wrapper}>
                 <About />
               </section>
             </Route>
 
             <Route path="/tweet">
-              <section id="frame" className="pv-32" css={styles.wrapper}>
+              <section className="pv-32" css={styles.wrapper}>
                 {dataExists && (
                   <Tweet
                     parent={this}
@@ -237,8 +235,7 @@ class App extends Component {
                     dataFor={this.state.dataFor}
                     location={this.state.data && this.state.data.location}
                     imageNormal={
-                      this.state.data &&
-                      this.state.data.location.image
+                      this.state.data && this.state.data.location.image
                     }
                     loaded={true}
                   />

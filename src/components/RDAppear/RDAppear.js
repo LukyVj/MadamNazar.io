@@ -88,7 +88,7 @@ class RDAppear extends Component {
       `
     };
     return (
-      <div css={styles.root} {...this.props}>
+      <div css={styles.root}>
         <div className="normal" css={this.props.childrenStyle}></div>
         <div className="invert" css={this.props.childrenStyle}></div>
       </div>

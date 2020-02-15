@@ -63,7 +63,9 @@ const InfoBox = props => {
       <div css={styles.posterWrapper} className="pv-32">
         <div css={[styles.posterGrid, styles.posterLayout]}>
           <section
-            css={css`text-align: center;`}
+            css={css`
+              text-align: center;
+            `}
           >
             <div>
               <div>
@@ -85,11 +87,10 @@ const InfoBox = props => {
                   {capitalize(props.cardinals.split(" ")[1])} side of the map.
                   nearby{" "}
                   {props.nearby.map((poi, id) => (
-                    <>
+                    <span key={id}>
                       {id === props.nearby.length - 1 && " & "}
 
                       <b
-                        key={id}
                         css={css`
                           border-bottom: 2px solid var(--Tabasco);
                           display: inline-block;
@@ -99,8 +100,9 @@ const InfoBox = props => {
                         {capitalize(poi)}
                       </b>
                       {id !== props.nearby.length - 1 &&
-                      (id !== props.nearby.length - 2 && ", ")}
-                    </>
+                        id !== props.nearby.length - 2 &&
+                        ", "}
+                    </span>
                   ))}
                   .
                 </p>
@@ -111,16 +113,18 @@ const InfoBox = props => {
             <div>
               <div
                 className="cursor-pointer d-grid md:g-2"
-                css={css`padding: 8px;`}
+                css={css`
+                  padding: 8px;
+                `}
               >
                 <RDAppear
                   image={props.media}
-                  width={props.parent.state.frameWidth / 2}
+                  width={`${props.parent.state.frameWidth / 2}`}
                   height={480}
                   onClick={() => {
                     props.parent.setState({
                       modal: true,
-                      modalImage: props.media,
+                      modalImage: props.media
                       /*
                         modalImageDarkMode prop causes crash at this moment
                         Seems to be it's not used in child component
@@ -146,12 +150,12 @@ const InfoBox = props => {
 
                 <RDAppear
                   image={props.media}
-                  width={props.parent.state.frameWidth / 2}
+                  width={`${props.parent.state.frameWidth / 2}`}
                   height={480}
                   onClick={() => {
                     props.parent.setState({
                       modal: true,
-                      modalImage: props.media,
+                      modalImage: props.media
                       /*
                         modalImageDarkMode prop causes crash at this moment
                         Seems to be it's not used in child component
@@ -227,7 +231,7 @@ class Finder extends Component {
       this.setState({ loadEvenMore: true });
     }, 10000);
 
-    console.log(this.props)
+    console.log(this.props);
   }
 
   render() {
