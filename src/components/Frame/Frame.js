@@ -33,22 +33,19 @@ class Frame extends Component {
   getNewCycle = () => {
     const utcDate = new Date();
     fetch(
-      "https://jeanropke.github.io/RDR2CollectorsMap/data/cycles.json?nocache=1999999"
+      "https://jeanropke.github.io/RDR2CollectorsMap/data/cycles.json?nocache=9999999"
     )
       .then(response => response.json())
       .then(json => {
         [...json].filter(data => {
-          console.log(
-            this.cleanDate(new Date(data.date)),
-            this.cleanDate(utcDate)
-          );
           if (this.cleanDate(new Date(data.date)) === this.cleanDate(utcDate)) {
             this.setState({
               itemsCycle: data,
               ready: true
             });
           }
-          console.log("s", this.state);
+          this.state.itemsCycle &&
+            console.log("State applied", this.state.itemsCycle);
         });
       });
   };
@@ -59,11 +56,9 @@ class Frame extends Component {
     this.setState({
       day: formatDateTweet(new Date(Date.parse(this.props.day)))
     });
-
-    console.log("s", this.state);
   }
   componentDidUpdate() {
-    // this.state.ready && console.log(this.state.itemsCycle);
+    this.state.ready && console.log("Component Updated", this.state.itemsCycle);
   }
   render() {
     const collectiblesPerCycle = this.state.itemsCycle
@@ -135,10 +130,10 @@ class Frame extends Component {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="feather feather-eye"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="feather feather-eye"
               >
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                 <circle cx="12" cy="12" r="3" />
@@ -152,24 +147,31 @@ class Frame extends Component {
                 css={styles.cyclesPopup}
               >
                 {this.state.ready &&
+                  collectiblesPerCycle &&
                   collectiblesPerCycle.map((bucket, cycle) =>
                     bucket ? (
-                      <div className="p-8 bdr-6 cycle-item d-flex fxd-column">
+                      <div
+                        key={cycle}
+                        className="p-8 bdr-6 cycle-item d-flex fxd-column"
+                      >
                         <ul
                           className={`lis-none d-grid g-${
                             bucket.length > 1 ? "2" : "1"
                           } m-0 p-0 fx-12 ai-center jc-center`}
                         >
-                          {bucket.map(collectible => (
-                            <span>
+                          {bucket.map((collectible, idx) => (
+                            <span key={idx}>
                               {collectible === "lost_jewelry" ? (
                                 [
                                   "bracelet",
                                   "earrings",
                                   "necklaces",
                                   "ring"
-                                ].map(jewel => (
-                                  <li className="p-4 d-inline-block">
+                                ].map((jewel, index) => (
+                                  <li
+                                    className="p-4 d-inline-block"
+                                    key={index}
+                                  >
                                     <img
                                       alt=""
                                       src={require(`../../images/icons/lost-${jewel}.png`)}
@@ -179,8 +181,11 @@ class Frame extends Component {
                                 ))
                               ) : collectible === "tarot_cards" ? (
                                 ["cups", "pentacles", "swords", "wands"].map(
-                                  jewel => (
-                                    <li className="p-4 d-inline-block">
+                                  (jewel, index) => (
+                                    <li
+                                      className="p-4 d-inline-block"
+                                      key={index}
+                                    >
                                       <img
                                         alt=""
                                         src={require(`../../images/icons/card-${jewel}.png`)}
