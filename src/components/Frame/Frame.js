@@ -3,6 +3,7 @@ import { Component } from "react";
 import { css, jsx } from "@emotion/core";
 import { formatDateTweet } from "../../scripts/helpers";
 import styles from "./Frame.css";
+import ObjectEntries from "object.entries";
 
 class Frame extends Component {
   constructor(props) {
@@ -23,6 +24,18 @@ class Frame extends Component {
     return mm + "/" + dd + "/" + yyyy;
   };
 
+  formatDate = date => {
+    var d = new Date(date),
+      month = "" + (d.getMonth() + 1),
+      day = "" + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2) month = "0" + month;
+    if (day.length < 2) day = "0" + day;
+
+    return [year, month, day].join("-");
+  };
+
   groupBy = key => array =>
     array.reduce((objectsByKeyValue, obj) => {
       const value = obj[key];
@@ -32,13 +45,14 @@ class Frame extends Component {
 
   getNewCycle = () => {
     const utcDate = new Date();
-    fetch(
-      "https://jeanropke.github.io/RDR2CollectorsMap/data/cycles.json?nocache=9999999"
-    )
+    window
+      .fetch(
+        "https://jeanropke.github.io/RDR2CollectorsMap/data/cycles.json?nocache=9999999"
+      )
       .then(response => response.json())
       .then(json => {
-        [...json].filter(data => {
-          if (this.cleanDate(new Date(data.date)) === this.cleanDate(utcDate)) {
+        json.filter(data => {
+          if (data.date === this.formatDate(utcDate)) {
             this.setState({
               itemsCycle: data,
               ready: true
@@ -57,12 +71,10 @@ class Frame extends Component {
       day: formatDateTweet(new Date(Date.parse(this.props.day)))
     });
   }
-  componentDidUpdate() {
-    this.state.ready && console.log("Component Updated", this.state.itemsCycle);
-  }
+
   render() {
     const collectiblesPerCycle = this.state.itemsCycle
-      ? Object.entries(this.state.itemsCycle).reduce(
+      ? ObjectEntries(this.state.itemsCycle).reduce(
           (acc, [collectible, cycle]) => {
             if (acc[cycle] === undefined) {
               acc[cycle] = [collectible];
@@ -173,7 +185,7 @@ class Frame extends Component {
                                     key={index}
                                   >
                                     <img
-                                      alt=""
+                                      alt={`lost-${jewel}`}
                                       src={require(`../../images/icons/lost-${jewel}.png`)}
                                       className={`h-30 w-30 obf-contain obp-center ${jewel}`}
                                     />
@@ -181,15 +193,15 @@ class Frame extends Component {
                                 ))
                               ) : collectible === "tarot_cards" ? (
                                 ["cups", "pentacles", "swords", "wands"].map(
-                                  (jewel, index) => (
+                                  (card, index) => (
                                     <li
                                       className="p-4 d-inline-block"
                                       key={index}
                                     >
                                       <img
-                                        alt=""
-                                        src={require(`../../images/icons/card-${jewel}.png`)}
-                                        className={`h-30 w-30 obf-contain obp-center ${jewel}`}
+                                        alt={`card-${card}`}
+                                        src={require(`../../images/icons/card-${card}.png`)}
+                                        className={`h-30 w-30 obf-contain obp-center ${card}`}
                                       />
                                     </li>
                                   )
@@ -197,7 +209,7 @@ class Frame extends Component {
                               ) : (
                                 <li className="p-4 d-inline-block">
                                   <img
-                                    alt=""
+                                    alt={collectible}
                                     src={require(`../../images/icons/${collectible.replace(
                                       "_",
                                       "-"
