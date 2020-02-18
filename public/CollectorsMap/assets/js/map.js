@@ -198,21 +198,29 @@ var MapBase = {
     var curDate = new Date();
     date = curDate.getUTCFullYear() + '-' + (curDate.getUTCMonth() + 1) + '-' + curDate.getUTCDate();
 
-    if (date != $.cookie('date') && Settings.resetMarkersDaily) {
-      console.log('New day, resetting markers...');
-
+    if (date != $.cookie('date')) {
       var markers = MapBase.markers;
-
       $.each(markers, function (key, value) {
-        if (Inventory.items[value.text])
-          Inventory.items[value.text].isCollected = false;
 
-        markers[key].isCollected = false;
+        if (Settings.resetMarkersDaily) {
+          console.log('New day, resetting markers...');
 
-        if (Inventory.isEnabled)
-          markers[key].canCollect = value.amount < Inventory.stackSize;
-        else
-          markers[key].canCollect = true;
+          if (Inventory.items[value.text])
+            Inventory.items[value.text].isCollected = false;
+
+          markers[key].isCollected = false;
+
+          if (Inventory.isEnabled)
+            markers[key].canCollect = value.amount < Inventory.stackSize;
+          else
+            markers[key].canCollect = true;
+        }
+
+        // reset all random spots at cycle change
+        if (value.category == 'random') {
+          value.isCollected = false;
+          value.canCollect = true;
+        }
       });
 
       MapBase.markers = markers;
@@ -236,7 +244,7 @@ var MapBase = {
       var goTo = MapBase.markers.filter(_m => _m.text == markerParam && _m.day == Cycles.categories[_m.category])[0];
 
       //if a marker is passed on url, check if is valid
-      if (typeof goTo == 'undefined' || goTo == null) return;
+      if (goTo === undefined || goTo === null) return;
 
       //set map view with marker lat & lng
       MapBase.map.setView([goTo.lat, goTo.lng], 6);
@@ -387,7 +395,7 @@ var MapBase = {
 
           marker.canCollect = true;
         }
-        if (typeof (PathFinder) !== 'undefined') {
+        if (PathFinder !== undefined) {
           PathFinder.wasRemovedFromMap(marker);
         }
       });
@@ -631,7 +639,7 @@ var MapBase = {
   },
 
   loadImportantItems() {
-    if (typeof localStorage.importantItems === 'undefined')
+    if (localStorage.importantItems === undefined)
       localStorage.importantItems = "[]";
 
     MapBase.itemsMarkedAsImportant = JSON.parse(localStorage.importantItems) || [];
