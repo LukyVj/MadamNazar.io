@@ -7,34 +7,40 @@ var Cycles = {
   backwardMaxOffset: 7,
   yesterday: [],
 
-  load: function () {
-    $.getJSON('data/cycles.json?nocache=' + nocache)
-      .done(function (_data) {
-        Cycles.data = _data;
-        Cycles.getTodayCycle();
-      });
-    console.info('%c[Cycles] Loaded!', 'color: #bada55; background: #242424');
+  load: function() {
+    $.getJSON(
+      "https://jeanropke.github.io/RDR2CollectorsMap/data/cycles.json?nocache=" +
+        nocache
+    ).done(function(_data) {
+      Cycles.data = _data;
+      Cycles.getTodayCycle();
+    });
+    console.info("%c[Cycles] Loaded!", "color: #bada55; background: #242424");
   },
-  getFreshSelectedDay: function () {
-    'use strict';
+  getFreshSelectedDay: function() {
+    "use strict";
     const now = new Date();
-    return new Date(Date.UTC(
-      now.getUTCFullYear(),
-      now.getUTCMonth(),
-      now.getUTCDate() + Cycles.offset
-    ));
+    return new Date(
+      Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate() + Cycles.offset
+      )
+    );
   },
-  getTodayCycle: function () {
-    'use strict';
+  getTodayCycle: function() {
+    "use strict";
     const selectedDay = Cycles.getFreshSelectedDay();
-    const selectedDayStr = selectedDay.toISOString().split('T')[0];
-    const cycleIndex = Cycles.data.findIndex(element => element.date === selectedDayStr);
+    const selectedDayStr = selectedDay.toISOString().split("T")[0];
+    const cycleIndex = Cycles.data.findIndex(
+      element => element.date === selectedDayStr
+    );
 
-    $('div>span.cycle-data').toggleClass('not-found', Cycles.offset !== 0);
+    $("div>span.cycle-data").toggleClass("not-found", Cycles.offset !== 0);
 
     if (cycleIndex < 1) {
       // either -1 (not found) or 0 (first day) for which there is no yesterday
-      console.error('[Cycles] Cycle not found: ' + selectedDayStr);
+      console.error("[Cycles] Cycle not found: " + selectedDayStr);
       return;
     }
 
@@ -62,18 +68,15 @@ var Cycles = {
     Cycles.nextDayDataExists();
   },
 
-  setCustomCycles: function () {
+  setCustomCycles: function() {
+    if (getParameterByName("cycles") == null) return;
 
-    if (getParameterByName('cycles') == null)
-      return;
-
-    if (getParameterByName('cycles').includes(',')) {
-      var _cycles = getParameterByName('cycles').split(',');
+    if (getParameterByName("cycles").includes(",")) {
+      var _cycles = getParameterByName("cycles").split(",");
       if (_cycles.length == 9) {
         if (_cycles.some(isNaN)) {
-          console.warn('Cycles parameters invalid');
-        }
-        else {
+          console.warn("Cycles parameters invalid");
+        } else {
           Cycles.categories.american_flowers = _cycles[0];
           Cycles.categories.card_cups = _cycles[1];
           Cycles.categories.card_pentacles = _cycles[1];
@@ -90,67 +93,70 @@ var Cycles = {
           Cycles.categories.coin = _cycles[7];
           Cycles.categories.random = _cycles[8];
         }
-
       } else {
-        console.warn('Cycles parameters invalid');
+        console.warn("Cycles parameters invalid");
       }
     }
   },
 
-  setCycles: function () {
+  setCycles: function() {
     for (var category in Cycles.categories) {
       $(`input[name=${category}]`).val(Cycles.categories[category]);
     }
 
     MapBase.addMarkers(true);
   },
-  setLocaleDate: function () {
-    'use strict';
+  setLocaleDate: function() {
+    "use strict";
     const locale = Settings.language;
-    const options = {timeZone: "UTC", day: "2-digit", month: "long"};
-    $('.cycle-data').text(Cycles.selectedDay.toLocaleString(locale, options));
+    const options = { timeZone: "UTC", day: "2-digit", month: "long" };
+    $(".cycle-data").text(Cycles.selectedDay.toLocaleString(locale, options));
   },
 
-  checkForUpdate: function () {
-    'use strict';
-    if (Cycles.getFreshSelectedDay().valueOf() !== Cycles.selectedDay.valueOf()) {
+  checkForUpdate: function() {
+    "use strict";
+    if (
+      Cycles.getFreshSelectedDay().valueOf() !== Cycles.selectedDay.valueOf()
+    ) {
       if (Cycles.offset !== 1) {
         Cycles.offset = 0;
         Cycles.getTodayCycle();
-      }
-      else {
+      } else {
         Cycles.offset = 0;
-        $('div>span.cycle-data').removeClass('not-found');
+        $("div>span.cycle-data").removeClass("not-found");
       }
     }
   },
 
-  isSameAsYesterday: function (category) {
-    if (!Cycles.yesterday)
-      return;
+  isSameAsYesterday: function(category) {
+    if (!Cycles.yesterday) return;
 
     var todayCycle = Cycles.categories[category];
-    var yesterdayCycle = Cycles.yesterday[Cycles.getCyclesMainCategory(category)];
+    var yesterdayCycle =
+      Cycles.yesterday[Cycles.getCyclesMainCategory(category)];
 
     return todayCycle == yesterdayCycle;
   },
 
-  nextDayDataExists: function () {
+  nextDayDataExists: function() {
     var newDate = new Date();
     newDate.setUTCDate(newDate.getUTCDate() + Cycles.forwardMaxOffset);
-    var nextDayCycle = Cycles.data.findIndex(element => element.date === newDate.toISOString().split('T')[0]);
-    if (nextDayCycle === -1 && Cycles.forwardMaxOffset > 0) {  // protect function, otherwise with no data function can loop to -infinity
+    var nextDayCycle = Cycles.data.findIndex(
+      element => element.date === newDate.toISOString().split("T")[0]
+    );
+    if (nextDayCycle === -1 && Cycles.forwardMaxOffset > 0) {
+      // protect function, otherwise with no data function can loop to -infinity
       Cycles.forwardMaxOffset--;
       Cycles.nextDayDataExists();
       return;
     }
     if (Cycles.forwardMaxOffset === 0 && Cycles.offset === 0)
-      $('#cycle-next').addClass('disable-cycle-changer-arrow');
+      $("#cycle-next").addClass("disable-cycle-changer-arrow");
     else if (Cycles.offset === 0)
-      $('#cycle-next').removeClass('disable-cycle-changer-arrow');
+      $("#cycle-next").removeClass("disable-cycle-changer-arrow");
   },
 
-  getCyclesMainCategory: function (category) {
+  getCyclesMainCategory: function(category) {
     switch (category) {
       case "card_cups":
       case "card_pentacles":
@@ -167,7 +173,7 @@ var Cycles = {
     }
   },
 
-  getInGameCycle: function (category) {
+  getInGameCycle: function(category) {
     var _cycles = [];
 
     //'old cycle': 'new cycle'
@@ -179,35 +185,35 @@ var Cycles = {
       case "lost_necklaces":
       case "lost_ring":
         _cycles = {
-          '2': 1,
-          '3': 2,
-          '1': 3,
-          '6': 4,
-          '4': 5,
-          '5': 6
+          "2": 1,
+          "3": 2,
+          "1": 3,
+          "6": 4,
+          "4": 5,
+          "5": 6
         };
         break;
 
       case "bird_eggs":
       case "family_heirlooms":
         _cycles = {
-          '2': 1,
-          '3': 2,
-          '1': 3,
-          '6': 4,
-          '5': 5,
-          '4': 6
+          "2": 1,
+          "3": 2,
+          "1": 3,
+          "6": 4,
+          "5": 5,
+          "4": 6
         };
         break;
 
       case "coin":
         _cycles = {
-          '2': 1,
-          '3': 2,
-          '1': 3,
-          '4': 4,
-          '6': 5,
-          '5': 6
+          "2": 1,
+          "3": 2,
+          "1": 3,
+          "4": 4,
+          "6": 5,
+          "5": 6
         };
         break;
       case "card_cups":
@@ -216,12 +222,12 @@ var Cycles = {
       case "card_wands":
       case "american_flowers":
         _cycles = {
-          '2': 1,
-          '3': 2,
-          '1': 3,
-          '4': 4,
-          '5': 5,
-          '6': 6
+          "2": 1,
+          "3": 2,
+          "1": 3,
+          "4": 4,
+          "5": 5,
+          "6": 6
         };
         break;
 
@@ -231,7 +237,7 @@ var Cycles = {
     }
     return _cycles;
   },
-  getCycleColor: function (cycle) {
+  getCycleColor: function(cycle) {
     var color = "";
     switch (cycle) {
       case 1:
@@ -256,12 +262,12 @@ var Cycles = {
     return color;
   },
 
-  prevCycle: function () {
+  prevCycle: function() {
     Cycles.offset--;
-    $('#cycle-next').removeClass('disable-cycle-changer-arrow');
+    $("#cycle-next").removeClass("disable-cycle-changer-arrow");
 
     if (Cycles.offset <= -Cycles.backwardMaxOffset)
-      $('#cycle-prev').addClass('disable-cycle-changer-arrow');
+      $("#cycle-prev").addClass("disable-cycle-changer-arrow");
 
     if (Cycles.offset < -Cycles.backwardMaxOffset) {
       Cycles.offset = -Cycles.backwardMaxOffset;
@@ -272,12 +278,12 @@ var Cycles = {
     Cycles.getTodayCycle();
   },
 
-  nextCycle: function () {
+  nextCycle: function() {
     Cycles.offset++;
-    $('#cycle-prev').removeClass('disable-cycle-changer-arrow');
+    $("#cycle-prev").removeClass("disable-cycle-changer-arrow");
 
     if (Cycles.offset >= Cycles.forwardMaxOffset)
-      $('#cycle-next').addClass('disable-cycle-changer-arrow');
+      $("#cycle-next").addClass("disable-cycle-changer-arrow");
 
     if (Cycles.offset > Cycles.forwardMaxOffset) {
       Cycles.offset = Cycles.forwardMaxOffset;
