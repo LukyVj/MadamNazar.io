@@ -51,7 +51,7 @@ const Footer = props => {
           </span>{" "}
           of the RDO community
           <br />
-          V1.5
+          V2.0
         </small>
       </div>
     </footer>

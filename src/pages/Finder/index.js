@@ -33,7 +33,10 @@ const InfoBox = props => {
             url(${bgMainSml});
           background-repeat: no-repeat, repeat;
           background-position: center center, center;
-          background-size: contain, auto;
+          background-size: ${props.parent.state.modalImageZoom
+              ? "cover"
+              : "contain"},
+            auto;
           border-width: 6px;
 
           margin: auto;
@@ -54,6 +57,11 @@ const InfoBox = props => {
               modalImage: null
             });
           }}
+          css={css`
+            background: url(${require("../../images/announcement_background.png")})
+              no-repeat center center / contain;
+          `}
+          className="app-none bdw-0 color-white p-16 d-inline-block fsz-16"
         >
           Close window
         </button>
@@ -122,30 +130,17 @@ const InfoBox = props => {
                   width={`${props.parent.state.frameWidth / 2}`}
                   height={480}
                   onClick={() => {
+                    console.log("click");
                     props.parent.setState({
                       modal: true,
-                      modalImage: props.media
-                      /*
-                        modalImageDarkMode prop causes crash at this moment
-                        Seems to be it's not used in child component
-                        Commented it out for future use
-                      */
-                      // modalImageDarkMode: props.media.negative.full
+                      modalImage: props.media,
+                      modalImageZoom: false
                     });
                     ReactGA.event({
                       category: "click.finder.modal",
                       action: "Open First image"
                     });
                   }}
-                  childrenStyle={css`
-                    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
-                    transform: rotate(-0.3deg);
-                    filter: sepia(1) saturate(0.65);
-
-                    @media (max-width: 960px) {
-                      width: 100% !important;
-                    }
-                  `}
                 />
 
                 <RDAppear
@@ -155,13 +150,8 @@ const InfoBox = props => {
                   onClick={() => {
                     props.parent.setState({
                       modal: true,
-                      modalImage: props.media
-                      /*
-                        modalImageDarkMode prop causes crash at this moment
-                        Seems to be it's not used in child component
-                        Commented it out for future use
-                       */
-                      // modalImageDarkMode: props.media.negative.zoom
+                      modalImage: props.media,
+                      modalImageZoom: true
                     });
                     ReactGA.event({
                       category: "click.finder.modal",
@@ -169,13 +159,7 @@ const InfoBox = props => {
                     });
                   }}
                   childrenStyle={css`
-                    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
-                    transform: rotate(-0.3deg) scale(2);
-                    filter: sepia(1) saturate(0.65);
-
-                    @media (max-width: 960px) {
-                      width: 100% !important;
-                    }
+                    transform: scale(2);
                   `}
                 />
               </div>

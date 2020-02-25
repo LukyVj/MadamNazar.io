@@ -103,12 +103,15 @@ class App extends Component {
     })
       .then(response => response.json())
       .then(json => {
-        const { date, current_location = {} } = json.data;
+        const data = json.data;
+
+        // console.log(json, json.valid_for);
 
         this.setState({
-          today: date,
-          data: current_location.data,
-          dataFor: current_location.dataFor,
+          today: json.valid_for,
+          cycle: { ...json.cycle },
+          data: { location: data.location, _id: data._id },
+          dataFor: json.valid_for,
           fetched: true
         });
       })
@@ -164,16 +167,13 @@ class App extends Component {
 
   render() {
     const dataExists = this.state.data && this.state.data.location;
-    return (
+    return dataExists ? (
       <Router>
         <URLHandler parent={this} />
         <div className="App" css={styles.root}>
           <Frame
             day={this.state.readableDate}
-            cycle={this.state.newCycle !== undefined && this.state.newCycle}
-            cycleItems={
-              this.state.itemsCycle !== undefined && this.state.cycleItems
-            }
+            cycle={dataExists && this.state.cycle}
             offsetTop={this.state.showPatreonAd}
           />
           <Navigation parent={this} navOpen={this.state.navOpen} />
@@ -275,6 +275,27 @@ class App extends Component {
           )}
         </div>
       </Router>
+    ) : (
+      <div
+        css={css`
+          position: absolute;
+          z-index: 9999999999999;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+        `}
+      >
+        <Frame
+          day={this.state.readableDate}
+          cycle={dataExists && this.state.cycle}
+          offsetTop={this.state.showPatreonAd}
+        />
+
+        <span css={styles.badge}>
+          <img src={require("./images/hat.png")} alt="loading" />
+        </span>
+      </div>
     );
   }
 }

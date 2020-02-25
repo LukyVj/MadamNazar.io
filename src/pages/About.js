@@ -1,3 +1,5 @@
+/** @jsx jsx */
+
 import React, { Component } from "react";
 import ReactGA from "react-ga";
 import { css, jsx } from "@emotion/core";
@@ -22,8 +24,15 @@ class About extends Component {
 
   render() {
     return (
-      <>
-        <Infos>
+      <div
+        css={css`
+          a {
+            font-weight: bold;
+            color: #d2241f;
+          }
+        `}
+      >
+        <Infos className="w-100p" extraPadding={true}>
           <h2>Disclaimer:</h2>
           <b
             css={css`
@@ -32,6 +41,8 @@ class About extends Component {
           >
             <i>This project is not affiliated to RockStar in any way</i>
           </b>
+        </Infos>
+        <Infos className="w-100p" extraPadding={true}>
           <h2>Information:</h2>
           <p>
             Hello and thank you for visiting this website, I've put a lot of
@@ -51,13 +62,13 @@ class About extends Component {
             location and what the API returns.
           </p>
 
-          <p>
+          <p className="mb-48">
             If you notice some issues regarding the location provided by the
             website, please contact me using the button on the navigation
           </p>
         </Infos>
 
-        <Infos>
+        <Infos className="w-100p" extraPadding={true}>
           <h2>Credits:</h2>
           <p>
             Made by 
@@ -135,11 +146,13 @@ class About extends Component {
             </a>{" "}
             on Twitch.
           </p>
-          
+
           <h3>Going further</h3>
-          <p>You can use my Epic Games creator code: <b>LUKYVJ</b></p>
+          <p>
+            You can use my Epic Games creator code: <b>LUKYVJ</b>
+          </p>
         </Infos>
-        <Infos>
+        <Infos className="w-100p" extraPadding={true}>
           <h2>Thanks:</h2>
           <p>
             To{" "}
@@ -176,11 +189,19 @@ class About extends Component {
             for his top notch work on the css effect to: "Recreate the Red Dead
             Redemption 2 Tintype Loading Screen Effect in CSS".
           </p>
-
+        </Infos>
+        <Infos className="w-100p" extraPadding={true}>
           <h2>Contributors:</h2>
           <p>Special thanks to all these amazing contributors</p>
           <ul>
-            {["@Noha69980668", "SethStar16T", "Haroenv"].map(contributor => (
+            {[
+              "@Noha69980668",
+              "SethStar16T",
+              "Haroenv",
+              "termatinator",
+              "KagutsuchiBlade",
+              "DurbinoGaming"
+            ].map(contributor => (
               <li key={contributor}>
                 <a
                   href={`https://twitter.com/${contributor}`}
@@ -193,6 +214,14 @@ class About extends Component {
             ))}
           </ul>
 
+          <p className="mb-48">
+            From creating resources, supporting the website, moderating the
+            Discord server or even to help coding this website, I would like to
+            thank all of these amazing person with who this project would never
+            be where it is today.
+          </p>
+        </Infos>
+        <Infos className="w-100p" extraPadding={true}>
           <h2>Donations are welcome!</h2>
           <p>
             You can support us on{" "}
@@ -210,7 +239,8 @@ class About extends Component {
           </p>
         </Infos>
         <Infos
-          className="maw-100p"
+          className="w-100p"
+          extraPadding={true}
           styles={css`
             display: block;
           `}
@@ -226,7 +256,7 @@ class About extends Component {
             </a>
           </div>
         </Infos>
-      </>
+      </div>
     );
   }
 }

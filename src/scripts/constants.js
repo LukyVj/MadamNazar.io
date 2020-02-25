@@ -4,8 +4,10 @@ export const TWITTER_NAME = "@MadamNazarIO";
 export const PATREON_URL = "https://support-madamnazario.surge.sh/";
 export const DISCORD_URL = "https://discord.gg/MhMPPnw";
 
-export const DEV_API = "https://madam-nazar-location-api-2.herokuapp.com/today";
-export const PROD_API = "https://madam-nazar-location-api.herokuapp.com/today";
+export const DEV_API =
+  "https://madam-nazar-location-api-2.herokuapp.com/v2/today";
+export const PROD_API =
+  "https://madam-nazar-location-api.herokuapp.com/v2/today";
 export const MOCK_API = "./data/mock.js";
 
 export const COLLECTOR_MAP_URL = "/CollectorsMap/";
