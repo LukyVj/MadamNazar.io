@@ -5,9 +5,7 @@ import { jsx, css } from "@emotion/core";
 
 const Infos = ({ children, styles, className, extraPadding }) => (
   <span
-    className={`mb-16 ${
-      extraPadding ? "p-32 pr-48" : "p-24 pr-32"
-    } d-inline-block ${className}`}
+    className={`mb-16 d-inline-block ${className}`}
     css={[
       css`
         background: url(${require("../images/announcement_background.png")})
@@ -18,7 +16,11 @@ const Infos = ({ children, styles, className, extraPadding }) => (
       styles
     ]}
   >
-    {children}
+    <span
+      className={`d-inline-block ${extraPadding ? "p-32 pr-48" : "p-24 pr-32"}`}
+    >
+      {children}
+    </span>
   </span>
 );
 

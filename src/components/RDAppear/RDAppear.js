@@ -40,7 +40,6 @@ class RDAppear extends Component {
         & > div {
           height: ${this.props.height - 8}px;
           position: absolute;
-          width: ${this.props.width - 8}px;
         }
 
         .normal,
@@ -89,8 +88,8 @@ class RDAppear extends Component {
     };
     return (
       <div css={styles.root} onClick={this.props.onClick}>
-        <div className="normal" css={this.props.childrenStyle}></div>
-        <div className="invert" css={this.props.childrenStyle}></div>
+        <div className="normal w-100p" css={this.props.childrenStyle}></div>
+        <div className="invert w-100p" css={this.props.childrenStyle}></div>
       </div>
     );
   }
