@@ -11,6 +11,7 @@ export const PROD_API =
 export const MOCK_API = "./data/mock.js";
 
 export const COLLECTOR_MAP_URL = "/CollectorsMap/";
+export const RDO_MAP_URL = "/RDOMap/";
 
 // CLOUDINARY
 export const IMAGES_CDN = "https://madamnazar.github.io/images/";
