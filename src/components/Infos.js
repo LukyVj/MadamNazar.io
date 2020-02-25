@@ -3,19 +3,17 @@ import React from "react";
 import ReactGA from "react-ga";
 import { jsx, css } from "@emotion/core";
 
-const Infos = ({ children, styles, className }) => (
+const Infos = ({ children, styles, className, extraPadding }) => (
   <span
-    className={`mb-16 ph-16 d-inline-block ${className}`}
+    className={`mb-16 ${
+      extraPadding ? "p-32 pr-48" : "p-24 pr-32"
+    } d-inline-block ${className}`}
     css={[
       css`
-        border-image-slice: 10;
-        border-image-outset: 3px;
-        border-image-source: url(${require("../images/frame.png")});
-        border-style: solid;
-        border-width: 4px;
-        background: rgba(255, 255, 255, 0.3);
+        background: url(${require("../images/announcement_background.png")})
+          no-repeat center center / 100% 100%;
 
-        color: var(--Armadillo);
+        color: white;
       `,
       styles
     ]}

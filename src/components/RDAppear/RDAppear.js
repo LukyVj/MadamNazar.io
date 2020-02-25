@@ -30,11 +30,11 @@ class RDAppear extends Component {
           right: 0;
           margin: 1em;
           z-index: 10;
-          background: rgba(0, 0, 0, 0.78);
+          background: url(${require("../../images/announcement_background.png")})
+            no-repeat center center / contain;
           color: var(--EcruWhite);
           font-size: 16px;
-          padding: 6px 10px;
-          border-radius: 100px;
+          padding: 12px 10px;
         }
 
         & > div {
@@ -88,7 +88,7 @@ class RDAppear extends Component {
       `
     };
     return (
-      <div css={styles.root}>
+      <div css={styles.root} onClick={this.props.onClick}>
         <div className="normal" css={this.props.childrenStyle}></div>
         <div className="invert" css={this.props.childrenStyle}></div>
       </div>

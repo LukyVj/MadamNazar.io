@@ -9,7 +9,7 @@ class Frame extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cycle: 0,
+      cycle: this.props.cycle,
       day: 0,
       loaded: false,
       showCycles: false
@@ -43,48 +43,23 @@ class Frame extends Component {
       return objectsByKeyValue;
     }, {});
 
-  getNewCycle = () => {
-    const utcDate = new Date();
-    window
-      .fetch(
-        "https://jeanropke.github.io/RDR2CollectorsMap/data/cycles.json?nocache=9999999"
-      )
-      .then(response => response.json())
-      .then(json => {
-        json.filter(data => {
-          if (data.date === this.formatDate(utcDate)) {
-            this.setState({
-              itemsCycle: data,
-              ready: true
-            });
-          }
-          this.state.itemsCycle &&
-            console.log("State applied", this.state.itemsCycle);
-        });
-      });
-  };
-
   componentDidMount() {
-    this.getNewCycle();
-    this.setState({ loaded: true });
     this.setState({
+      loaded: true,
       day: formatDateTweet(new Date(Date.parse(this.props.day)))
     });
   }
 
   render() {
-    const collectiblesPerCycle = this.state.itemsCycle
-      ? ObjectEntries(this.state.itemsCycle).reduce(
-          (acc, [collectible, cycle]) => {
-            if (acc[cycle] === undefined) {
-              acc[cycle] = [collectible];
-            } else {
-              acc[cycle].push(collectible);
-            }
-            return acc;
-          },
-          []
-        )
+    const collectiblesPerCycle = this.state.cycle
+      ? ObjectEntries(this.state.cycle).reduce((acc, [collectible, cycle]) => {
+          if (acc[cycle] === undefined) {
+            acc[cycle] = [collectible];
+          } else {
+            acc[cycle].push(collectible);
+          }
+          return acc;
+        }, [])
       : [];
 
     return (
@@ -107,7 +82,7 @@ class Frame extends Component {
               order: 1;
             `}
           >
-            <h1 className="p-0 m-0 pos-relative ph-8">
+            <h1 className="p-0 m-0 pos-relative ph-8 d-inline-block">
               <a href="/" className="td-none color-current">
                 MadamNazar.io
               </a>
@@ -158,8 +133,7 @@ class Frame extends Component {
                 }`}
                 css={styles.cyclesPopup}
               >
-                {this.state.ready &&
-                  collectiblesPerCycle &&
+                {collectiblesPerCycle &&
                   collectiblesPerCycle.map((bucket, cycle) =>
                     bucket ? (
                       <div
