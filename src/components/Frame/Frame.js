@@ -62,6 +62,8 @@ class Frame extends Component {
         }, [])
       : [];
 
+    console.log(this.state.cycle);
+
     return (
       <div css={[styles.root]} className="p-16">
         <div className="maw-1200 m-auto d-flex ai-center jc-between md:jc-center fxw-wrap md:fxw-nowrap">
