@@ -150,23 +150,20 @@ class Frame extends Component {
                           {bucket.map((collectible, idx) => (
                             <span key={idx}>
                               {collectible === "lost_jewelry" ? (
-                                [
-                                  "bracelet",
-                                  "earrings",
-                                  "necklaces",
-                                  "ring"
-                                ].map((jewel, index) => (
-                                  <li
-                                    className="p-4 d-inline-block"
-                                    key={index}
-                                  >
-                                    <img
-                                      alt={`lost-${jewel}`}
-                                      src={require(`../../images/icons/lost-${jewel}.png`)}
-                                      className={`h-30 w-30 obf-contain obp-center ${jewel}`}
-                                    />
-                                  </li>
-                                ))
+                                ["bracelet", "earring", "necklace", "ring"].map(
+                                  (jewel, index) => (
+                                    <li
+                                      className="p-4 d-inline-block"
+                                      key={index}
+                                    >
+                                      <img
+                                        alt={`${jewel}`}
+                                        src={require(`../../images/icons/${jewel}.png`)}
+                                        className={`h-30 w-30 obf-contain obp-center ${jewel}`}
+                                      />
+                                    </li>
+                                  )
+                                )
                               ) : collectible === "tarot_cards" ? (
                                 ["cups", "pentacles", "swords", "wands"].map(
                                   (card, index) => (
@@ -176,7 +173,7 @@ class Frame extends Component {
                                     >
                                       <img
                                         alt={`card-${card}`}
-                                        src={require(`../../images/icons/card-${card}.png`)}
+                                        src={require(`../../images/icons/${card}.png`)}
                                         className={`h-30 w-30 obf-contain obp-center ${card}`}
                                       />
                                     </li>
