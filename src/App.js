@@ -35,7 +35,7 @@ const currentEnv = process.env.NODE_ENV;
 const patreonAdHidden = docCookies.getItem("patreon-ad-hidden") || false;
 const todayDate = new Date().toDateString();
 
-const URLHandler = props => {
+const URLHandler = (props) => {
   const history = useHistory();
   const url = new URL(window.location.href);
   if (url.searchParams.get("page")) {
@@ -68,7 +68,7 @@ const bannerStyles = {
         margin: 0 auto;
         right: 0;
       }
-    `
+    `,
 };
 
 class App extends Component {
@@ -82,7 +82,7 @@ class App extends Component {
       readableDate: todayDate,
       showPatreonAd: !patreonAdHidden,
       showPatreonModal: false,
-      extraSupport: 1
+      extraSupport: 1,
     };
   }
 
@@ -98,24 +98,24 @@ class App extends Component {
         "Accept-Encoding": "gzip, deflate",
 
         "Cache-Control": "no-cache",
-        Connection: "keep-alive"
-      }
+        Connection: "keep-alive",
+      },
     })
-      .then(response => response.json())
-      .then(json => {
+      .then((response) => response.json())
+      .then((json) => {
         const data = json.data;
-
-        // console.log(json, json.valid_for);
 
         this.setState({
           today: json.valid_for,
           cycle: { ...json.cycle },
           data: { location: data.location, _id: data._id },
           dataFor: json.valid_for,
-          fetched: true
+          fetched: true,
         });
+
+        console.table(`today:${this.state.today}`, `Cycle:`, this.state.cycle);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log("error", err);
       });
   };
@@ -123,7 +123,7 @@ class App extends Component {
   handlePatreonAdOpen = () => {
     this.setState({
       showPatreonAd: false,
-      showPatreonModal: true
+      showPatreonModal: true,
     });
   };
 
@@ -131,7 +131,7 @@ class App extends Component {
     docCookies.setItem("patreon-ad-hidden", true, maxAgeToGMT(999));
     this.setState({
       showPatreonAd: false,
-      showPatreonModal: false
+      showPatreonModal: false,
     });
   };
 
@@ -159,7 +159,7 @@ class App extends Component {
             dataFor: mockData.current_location.dataFor,
             cycle: mockData.cycle,
             fetched: true,
-            apiUrl: isOnline === true ? DEV_API : MOCK_API
+            apiUrl: isOnline === true ? DEV_API : MOCK_API,
           })
         : this.fetchData();
     }
