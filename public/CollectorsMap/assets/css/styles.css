@@ -14,7 +14,9 @@
     text-rendering: optimizeLegibility
 }
 
-*, *:before, *:after {
+*,
+*:before,
+*:after {
     box-sizing: border-box;
 }
 
@@ -55,10 +57,13 @@ h4 {
 }
 
 p {
-    margin: 0!important;
+    margin: 0 !important;
 }
 
-input, textarea, select, .btn {
+input,
+textarea,
+select,
+.btn {
     outline: none;
 }
 
@@ -67,9 +72,22 @@ input, textarea, select, .btn {
     background: black;
 }
 
-.cycle-table td, .cycle-table th {
+.cycle-table td,
+.cycle-table th {
     padding: 2px;
     border: 1px solid black;
+}
+
+.update-warning {
+    width: 100%;
+    background: #800000;
+    color: #eee;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    z-index: 9909;
+    display: none;
+    /* When the time comes, you gotta run and change this to block. This is a warning. */
 }
 
 #main-header {
@@ -95,7 +113,8 @@ input, textarea, select, .btn {
     font-weight: normal;
 }
 
-#main-header-left, #main-header-right {
+#main-header-left,
+#main-header-right {
     user-select: none;
     height: 75px;
 }
@@ -123,12 +142,15 @@ input, textarea, select, .btn {
     line-height: normal;
     margin: 0 12px;
     text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .header-border {
     -webkit-box-flex: 1;
     flex: 1 0 auto;
-    min-width: 40px;
+    min-width: 12px;
     position: relative;
 }
 
@@ -165,20 +187,45 @@ input, textarea, select, .btn {
     text-align: center;
 }
 
-.map-cycle-alert {
-    background: #000;
-    color: #fff;
-    width: 50%;
-    left: 25%;
-    right: 25%;
+.map-cycle-alert,
+.filter-alert {
     position: absolute;
-    bottom: 20px;
-    z-index: 1020;
-    padding: 10px;
+    z-index: 990;
+    text-align: center;
+    cursor: pointer;
+    background-image: url(../images/menu_hover.png);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    color: #fff;
+    padding: 10px 25px;
     text-align: center;
 }
 
-.map-alert .close-button, .map-cycle-alert .close-button {
+.map-cycle-alert {
+    z-index: 1010 !important;
+}
+
+@media (max-width: 1024px) {
+    .map-cycle-alert,
+    .filter-alert {
+        left: 2px;
+        right: 2px;
+        bottom: 2px;
+    }
+}
+
+@media (min-width: 1025px) {
+    .map-cycle-alert,
+    .filter-alert {
+        left: 50%;
+        transform: translate(-50%, -50%);
+        bottom: 0;
+    }
+}
+
+.map-alert .close-button,
+.map-cycle-alert .close-button,
+.filter-alert .close-button {
     position: absolute;
     top: 0;
     right: 15px;
@@ -209,13 +256,16 @@ input, textarea, select, .btn {
     margin-right: 5px;
 }
 
-#countdown, #item-counter, #time-in-game {
+#countdown,
+#item-counter,
+#time-in-game {
     font-size: 16px;
     user-select: none;
     margin: auto 8px auto 0;
 }
 
-.timer-container, .clock-container {
+.timer-container,
+.clock-container {
     position: fixed;
     z-index: 1010;
     background: #111;
@@ -260,7 +310,8 @@ input, textarea, select, .btn {
     background-size: auto 3px;
 }
 
-.save-button, .remove-button {
+.save-button,
+.remove-button {
     text-align: center;
     font-size: 14px;
     cursor: pointer;
@@ -284,7 +335,8 @@ input, textarea, select, .btn {
     line-height: 33px;
 }
 
-.marker-popup-pin-input-name, .marker-popup-pin-input-desc {
+.marker-popup-pin-input-name,
+.marker-popup-pin-input-desc {
     border: none;
     width: 100%;
 }
@@ -322,12 +374,13 @@ input, textarea, select, .btn {
     border-top: 1px solid #B0B0B0;
     border-bottom: 1px solid #B0B0B0;
     padding: 10px 0;
-    margin: 15px 0;
+    margin: 5px 0 15px 0;
 }
 
 .links-container a {
     color: #eee;
     text-decoration: none;
+    user-select: none;
 }
 
 .settings-container {
@@ -391,7 +444,7 @@ input, textarea, select, .btn {
     border: 1px solid #999;
 }
 
-.input-day {
+.input-text {
     background: #383838;
     border: none;
     padding: 4px 10px;
@@ -402,12 +455,16 @@ input, textarea, select, .btn {
     margin-left: 6px;
 }
 
-.input-container-noflex .input-day {
+.input-container-noflex .input-text {
     margin-left: 0;
 }
 
-.input-day:disabled {
+.input-text:disabled {
     cursor: not-allowed;
+}
+
+.input-text.input-cycle.random {
+    margin-right: 42px;
 }
 
 .issues-container a {
@@ -434,7 +491,7 @@ input, textarea, select, .btn {
 
 .side-menu {
     width: 100%;
-    background: #000 url(../images/bg.jpg);
+    background: #000;
     box-shadow: 1px 0 2px 0 rgba(85, 85, 85, 0.85);
     position: fixed;
     top: -1800px;
@@ -445,18 +502,21 @@ input, textarea, select, .btn {
     color: #eee;
     z-index: 1000;
     scrollbar-width: thin;
+    user-select: none;
 }
 
 .menu-opened {
     top: 0;
 }
 
-.side-menu, .menu-toggle {
+.side-menu,
+.menu-toggle {
     transition: all 200ms ease-out;
 }
 
 .side-menu .menu-option {
     display: flex;
+    justify-content: space-between;
     align-items: start;
     padding: 0 5px;
     user-select: none;
@@ -464,7 +524,8 @@ input, textarea, select, .btn {
     line-height: 36px;
 }
 
-.side-menu .menu-option:hover, .side-menu .menu-hidden .collectible-wrapper:hover {
+.side-menu .menu-option:hover,
+.side-menu .menu-hidden .collectible-wrapper:hover {
     background-image: url(../images/menu_hover.png);
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -472,6 +533,10 @@ input, textarea, select, .btn {
 
 .side-menu .disabled {
     opacity: .5;
+}
+
+.side-menu .disabled .menu-option-text,
+.side-menu .disabled .collectible-text {
     text-decoration: line-through;
 }
 
@@ -500,18 +565,32 @@ input, textarea, select, .btn {
     transform: rotate(180deg);
 }
 
-.side-menu .menu-hidden, #debug-container {
+.side-menu .menu-hidden,
+#weekly-container,
+#utilities-container,
+#customization-container,
+#routes-container,
+#import-export-container,
+#debug-container,
+#inventory-container {
     max-height: 0;
     overflow: hidden;
     transition: max-height 250ms ease-out;
 }
 
-.side-menu .menu-hidden.opened, #debug-container.opened {
+.side-menu .menu-hidden.opened,
+#weekly-container.opened,
+#utilities-container.opened,
+#customization-container.opened,
+#routes-container.opened,
+#import-export-container.opened,
+#debug-container.opened,
+#inventory-container.opened {
     max-height: 2000px;
     transition: max-height 400ms linear;
 }
 
-.side-menu .menu-hidden .collection-value {
+.side-menu .collection-value {
     text-align: center;
     border-top: 1px white solid;
     border-bottom: 1px white solid;
@@ -520,28 +599,43 @@ input, textarea, select, .btn {
     justify-content: space-around;
 }
 
-.side-menu .menu-hidden .collection-value a {
+.side-menu .collection-value-bottom {
+    text-align: center;
+    border-bottom: 1px white solid;
+    padding: 5px 0;
+    display: flex;
+    justify-content: space-around;
+}
+
+.side-menu .weekly-item-listings .collection-value {
+    margin-bottom: 6px;
+}
+
+.side-menu .collection-value a {
     color: #fff;
 }
 
-.side-menu .menu-hidden .collection-sell, .collection-reset {
+.side-menu .collection-sell,
+.disable-collected-items,
+.collection-collect-all,
+.collection-reset {
     cursor: pointer;
     user-select: none;
 }
 
-.side-menu .menu-hidden .collectible-wrapper {
+.side-menu .collectible-wrapper {
     padding: 6px 12px;
     cursor: pointer;
     user-select: none;
 }
 
-.side-menu .menu-hidden .collectible-icon {
+.side-menu .collectible-icon {
     float: left;
     height: 28px;
     margin-right: 10px;
 }
 
-.side-menu .menu-hidden .collectible-icon.random-encounter {
+.side-menu .collectible-icon.random-encounter {
     width: 32px;
     height: auto;
     margin-top: 1px;
@@ -549,19 +643,22 @@ input, textarea, select, .btn {
     margin-bottom: -3px;
 }
 
-.side-menu .menu-hidden .collectible-text {
+.side-menu .collectible-text {
     display: flex;
     justify-content: space-between;
     font-size: 15px;
 }
 
-.side-menu .menu-hidden .collectible, .input-container label, .menu-option span {
+.side-menu .collectible,
+.input-container label,
+.menu-option span {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
-.side-menu .menu-hidden .collectible, .input-container label {
+.side-menu .collectible,
+.input-container label {
     line-height: 24px;
 }
 
@@ -585,6 +682,10 @@ input, textarea, select, .btn {
     padding: 14px 8px;
     border-radius: 3px;
     display: none;
+}
+
+.lat-lng-container a {
+    color: #fff;
 }
 
 .lat-lng-container #lat-lng-container-close-button {
@@ -625,6 +726,19 @@ a.wiki-page:visited {
     filter: drop-shadow(0 0 .5rem #cc0000) drop-shadow(0 0 .4rem #cc0000);
 }
 
+.highlight-low-amount-items-animated {
+    animation: highlight-low-amount-items-animation 1s infinite alternate;
+}
+
+@keyframes highlight-low-amount-items-animation {
+    from {
+        opacity: 0.0;
+    }
+    to {
+        opacity: var(--animation-target-opacity);
+    }
+}
+
 .highlight-important-items-menu {
     text-decoration: underline;
     text-decoration-color: #cc0000;
@@ -645,7 +759,7 @@ a.wiki-page:visited {
 .help-container {
     height: 100%;
     padding: 25px;
-    background: #000 url(../images/bg.jpg);
+    background: #000;
     border: 1px solid #eee;
     box-shadow: 0 0 10px 0 black;
 }
@@ -676,8 +790,14 @@ a.wiki-page:visited {
 }
 
 .explain-text {
+    text-align: center;
     margin-bottom: 12px !important;
     font-size: 14px;
+}
+
+.explain-text a {
+    color: #fff !important;
+    text-decoration: underline;
 }
 
 .no-margin-top {
@@ -696,6 +816,7 @@ a.wiki-page:visited {
     min-width: 12px;
     display: inline-block;
     text-align: center;
+    font-size: 15px;
 }
 
 .counter-button {
@@ -725,13 +846,33 @@ a.wiki-page:visited {
 
 #cycle-changer-container .cycle-data {
     text-align: center;
-    min-width: 100px;
+    min-width: 170px;
     margin: 0 6px;
+}
+
+.cycle-icon {
+    margin: auto 6px auto auto;
+}
+
+.cycle-icon.random {
+    margin-right: 38px;
 }
 
 .marker-content-wrapper {
     display: flex;
     align-items: center;
+}
+
+.marker-content-wrapper p {
+    margin-bottom: 4px !important;
+}
+
+.marker-content-wrapper .unavailable-item {
+    color: #cc0000 !important;
+}
+
+.marker-content-wrapper .weekly-item {
+    color: #478200 !important;
 }
 
 .marker-warning-wrapper {
@@ -751,6 +892,11 @@ a.wiki-page:visited {
     cursor: default !important;
     opacity: .3;
 }
+
+.collection-collected {
+    min-width: 5.5rem;
+}
+
 
 /* Custom checkbox styling */
 
@@ -784,13 +930,16 @@ a.wiki-page:visited {
     cursor: not-allowed !important;
 }
 
+
 /* Custom action button styling */
 
-.input-container.clickable, .input-container.clickable label {
+.input-container.clickable,
+.input-container.clickable label {
     cursor: pointer !important;
 }
 
-.input-container.clickable.disabled, .input-container.clickable.disabled label {
+.input-container.clickable.disabled,
+.input-container.clickable.disabled label {
     cursor: not-allowed !important;
 }
 
@@ -808,14 +957,22 @@ a.wiki-page:visited {
     background-image: url(../images/action_indicator_external.png) !important;
 }
 
-.input-action-copy {
+.input-action-copy,
+.input-action-clear {
     width: 30px;
-    background-image: url(../images/action_indicator_copy.png);
     background-size: auto 20px;
     background-repeat: no-repeat;
     background-position: center;
     margin-left: 6px;
     cursor: pointer;
+}
+
+.input-action-copy {
+    background-image: url(../images/action_indicator_copy.png);
+}
+
+.input-action-clear {
+    background-image: url(../images/action_indicator_clear.png);
 }
 
 .input-selection-arrow {
@@ -846,6 +1003,10 @@ a.no-style:visited {
     color: #333;
 }
 
+.leaflet-control-attribution a {
+    color: #333 !important;
+}
+
 .leaflet-dark-mode .leaflet-control-attribution {
     background: #333;
     color: white;
@@ -863,7 +1024,40 @@ a.no-style:visited {
     display: none !important;
 }
 
+#weekly-container {
+    user-select: none;
+}
+
+.weekly-item-listings p {
+    text-align: center;
+    font-size: 14px;
+    margin: 0 12px 14px 12px !important;
+}
+
+.weekly-item-listing {
+    cursor: default;
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 12px;
+}
+
+.weekly-item-listing .icon {
+    height: 28px;
+    margin-right: 10px;
+}
+
+.weekly-item-listing span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
 /* Bootstrap modal styling */
+
+.modal {
+    user-select: none;
+}
 
 .modal-content {
     background: url(../images/modal_bg_long.png);
@@ -882,14 +1076,17 @@ a.no-style:visited {
     border: none !important;
 }
 
-.modal-header, .modal-body, .modal-footer {
+.modal-header,
+.modal-body,
+.modal-footer {
     padding-left: 40px;
     padding-right: 40px;
     text-align: center;
     border: none;
 }
 
-.modal-header, .modal-body {
+.modal-header,
+.modal-body {
     color: #fff;
 }
 
@@ -908,7 +1105,7 @@ a.no-style:visited {
 @media (min-width: 768px) {
     .modal {
         text-align: center;
-        padding: 0!important;
+        padding: 0 !important;
     }
     .modal:before {
         content: '';
@@ -928,9 +1125,11 @@ a.no-style:visited {
     }
 }
 
+
 /* Fix buttons showing on top of sidebar on mobile menu */
 
-.leaflet-top, .leaflet-bottom {
+.leaflet-top,
+.leaflet-bottom {
     z-index: 910;
 }
 
@@ -938,6 +1137,12 @@ a.no-style:visited {
     font-size: 14px;
     margin: 8px;
     display: inline-grid;
+}
+
+.leaflet-popup-content>div.handover-wrapper-with-no-influence {
+    display: inherit;
+    /* fallback for Edge18 */
+    display: contents;
 }
 
 .leaflet-popup-content ::-webkit-scrollbar-thumb {
@@ -950,6 +1155,18 @@ a.no-style:visited {
     }
     .counter-menu-opened {
         display: none;
+    }
+    .side-menu .menu-hidden .collectible-icon {
+        margin-top: 7px;
+    }
+    .counter-button {
+        height: 32px;
+        width: 32px;
+        line-height: 1.5;
+    }
+    .side-menu .menu-hidden .collectible,
+    .input-container label {
+        line-height: 38px;
     }
 }
 
@@ -970,6 +1187,7 @@ a.no-style:visited {
     }
 }
 
+
 /* Tutorial styling */
 
 #help-container {
@@ -984,6 +1202,7 @@ a.no-style:visited {
     background-size: 100% 100%;
     padding: 15px 25px;
 }
+
 
 /* Pathfinder styling */
 
@@ -1030,6 +1249,7 @@ a.no-style:visited {
     text-transform: uppercase;
 }
 
+
 /* Leaflet Marker styling */
 
 .leaflet-div-icon {
@@ -1039,28 +1259,44 @@ a.no-style:visited {
     border: none;
 }
 
-.leaflet-div-icon .overlay, .leaflet-div-icon .icon, .leaflet-div-icon .background, .leaflet-div-icon .shadow {
+.leaflet-div-icon .overlay,
+.leaflet-div-icon .icon,
+.leaflet-div-icon .background,
+.leaflet-div-icon .marker-contour,
+.leaflet-div-icon .shadow {
     position: absolute;
     text-align: center;
 }
 
 .leaflet-div-icon .overlay {
-    z-index: 4;
+    z-index: 5;
     width: 100%;
     height: auto;
 }
 
 .leaflet-div-icon .icon {
-    z-index: 3;
+    z-index: 4;
     width: 100%;
     height: auto;
     padding-top: 6px;
 }
 
 .leaflet-div-icon .background {
-    z-index: 2;
+    z-index: 3;
     width: 100%;
     height: 100%;
+}
+
+.leaflet-div-icon .marker-contour {
+    z-index: 2;
+    width: 130%;
+    height: 130%;
+    left: -15%;
+    bottom: -15%;
+}
+
+.marker-contour {
+    opacity: 0.0;
 }
 
 .leaflet-div-icon .shadow {
@@ -1068,6 +1304,7 @@ a.no-style:visited {
     bottom: -2px;
     left: 9px;
 }
+
 
 /* Donate form */
 
@@ -1081,6 +1318,6 @@ a.no-style:visited {
     padding: 10px;
 }
 
-.donate-form .input-day {
+.donate-form .input-text {
     margin: auto 0 auto auto;
 }

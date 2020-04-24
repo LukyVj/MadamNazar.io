@@ -3,23 +3,27 @@
  */
 
 var Routes = {
+  routesData: [],
+  polylines: null,
+  customRouteConnections: [],
+
   init: function () {
-    $('#custom-routes').prop("checked", Routes.customRouteEnabled);
+    $('#custom-routes').prop("checked", RouteSettings.customRouteEnabled);
 
-    $('#generate-route-use-pathfinder').prop("checked", Routes.usePathfinder);
-    $('#generate-route-generate-on-visit').prop("checked", Routes.generateOnVisit);
-    $('#generate-route-ignore-collected').prop("checked", Routes.ignoreCollected);
-    $("#generate-route-important-only").prop("checked", Routes.importantOnly);
-    $('#generate-route-auto-update').prop("checked", Routes.autoUpdatePath);
-    $('#generate-route-distance').val(Routes.maxDistance);
-    $('#generate-route-start-lat').val(Routes.startMarkerLat);
-    $('#generate-route-start-lng').val(Routes.startMarkerLng);
+    $('#generate-route-use-pathfinder').prop("checked", RouteSettings.usePathfinder);
+    $('#generate-route-generate-on-visit').prop("checked", RouteSettings.generateOnVisit);
+    $('#generate-route-ignore-collected').prop("checked", RouteSettings.ignoreCollected);
+    $("#generate-route-important-only").prop("checked", RouteSettings.importantOnly);
+    $('#generate-route-auto-update').prop("checked", RouteSettings.autoUpdatePath);
+    $('#generate-route-distance').val(RouteSettings.maxDistance);
+    $('#generate-route-start-lat').val(RouteSettings.startMarkerLat);
+    $('#generate-route-start-lng').val(RouteSettings.startMarkerLng);
 
-    $('#generate-route-fasttravel-weight').val(Routes.fasttravelWeight);
-    $('#generate-route-railroad-weight').val(Routes.railroadWeight);
+    $('#generate-route-fasttravel-weight').val(RouteSettings.fasttravelWeight);
+    $('#generate-route-railroad-weight').val(RouteSettings.railroadWeight);
 
     // Pathfinder / Generator toggle
-    if (Routes.usePathfinder) {
+    if (RouteSettings.usePathfinder) {
       $('#generate-route-distance').parent().hide();
       $('#generate-route-auto-update').parent().parent().hide();
       $('#generate-route-fasttravel-weight').parent().show();
@@ -32,14 +36,26 @@ var Routes = {
     }
 
     // Route starts at
-    var genPathStart = $.cookie('generator-path-start');
-    if (!genPathStart) genPathStart = "SW";
+    $('#generate-route-start').val(RouteSettings.genPathStart);
 
-    $('#generate-route-start').val(genPathStart);
-
-    if (genPathStart != "Custom") {
+    if (RouteSettings.genPathStart != "Custom") {
       $('#generate-route-start-lat').parent().hide();
       $('#generate-route-start-lng').parent().hide();
+    }
+  },
+
+  getCustomRoute: function () {
+    var customRoute = JSON.parse(localStorage.getItem("routes.customRoute"));
+
+    if (customRoute) {
+      Routes.loadCustomRoute(customRoute);
+      var itemsArray = customRoute.split(",");
+
+      for (var item of itemsArray) {
+        if (!Routes.customRouteConnections.includes(item)) {
+          Routes.addMarkerOnCustomRoute(item, true);
+        }
+      }
     }
   },
 
@@ -50,12 +66,8 @@ var Routes = {
       input = input.replace(/\r?\n|\r/g, '').replace(/\s/g, '').split(',');
 
       $.each(input, function (key, value) {
-        var _marker = MapBase.markers.filter(marker => marker.text == value && marker.day == Cycles.categories[marker.category])[0];
-        if (_marker == null) {
-          console.log(`Item not found on map: '${value}'`);
-        } else {
-          connections.push([_marker.lat, _marker.lng]);
-        }
+        var _marker = MapBase.markers.find(marker => marker.text == value && marker.isCurrent);
+        if (_marker) connections.push([_marker.lat, _marker.lng]);
       });
 
       if (Routes.polylines instanceof L.Polyline) {
@@ -68,12 +80,12 @@ var Routes = {
       MapBase.map.addLayer(Routes.polylines);
     } catch (e) {
       alert(Language.get('routes.invalid'));
-      console.log(e);
+      console.error(e);
     }
   },
 
-  addMarkerOnCustomRoute: function (value) {
-    if (Routes.customRouteEnabled) {
+  addMarkerOnCustomRoute: function (value, autoLoad = false) {
+    if (RouteSettings.customRouteEnabled || autoLoad) {
       if (Routes.customRouteConnections.includes(value)) {
         Routes.customRouteConnections = Routes.customRouteConnections.filter(function (item) {
           return item !== value;
@@ -86,7 +98,8 @@ var Routes = {
 
       $.each(Routes.customRouteConnections, function (key, item) {
         var _marker = MapBase.markers.filter(marker => marker.text == item && marker.day == Cycles.categories[marker.category])[0];
-        connections.push([_marker.lat, _marker.lng]);
+        if (_marker != undefined)
+          connections.push([_marker.lat, _marker.lng]);
       });
 
       if (Routes.polylines instanceof L.Polyline) {
@@ -115,48 +128,23 @@ var Routes = {
     }
   },
 
+  clearCustomRoutes: function () {
+    Routes.customRouteConnections = [];
+    RouteSettings.customRoute = '';
+    //this needs to be in try catch because throw an error when is no route to remove
+    try {
+      MapBase.map.removeLayer(Routes.polylines);
+    } catch(e) {};
+  },
 
-  routesData: [],
-  polylines: null,
-
-  customRouteEnabled: $.cookie('custom-routes-enabled') == '1',
-  customRouteConnections: [],
 
   /**
    * Path generator by Senexis
    */
-  // Whether the route should be generated when the map is loaded.
-  generateOnVisit: $.cookie('generator-path-generate-on-visit') == '1',
-
-  // Whether collected items should be ignored or not when pathing.
-  ignoreCollected: $.cookie('generator-path-ignore-collected') == '1',
-
-  // Wether to only use important or all items when pathing.
-  importantOnly: $.cookie('generator-path-important-only') == '1',
-
-  // Whether to automatically update the path.
-  autoUpdatePath: $.cookie('generator-path-auto-update') == '1',
-
-  // The maximum distance a path can be in points.
-  // - This number might need to be tweaked depending on how many markers there are.
-  // - 25 seems optimal for everything, a higher number is needed for less markers.
-  // - If the number is too low, the path will end prematurely.
-  // - If the number is too high, undesirable paths might be drawn (across Iron Lake for example).
-  maxDistance: parseInt($.cookie('generator-path-distance')) ? parseInt($.cookie('generator-path-distance')) : 25,
-
   // The point to start the path generator from, default is SW edge.
-  startMarkerLat: parseFloat($.cookie('generator-path-start-lat')) ? parseFloat($.cookie('generator-path-start-lat')) : -119.9063,
-  startMarkerLng: parseFloat($.cookie('generator-path-start-lng')) ? parseFloat($.cookie('generator-path-start-lng')) : 8.0313,
   startMarker: function () {
-    return { lat: Routes.startMarkerLat, lng: Routes.startMarkerLng };
+    return { lat: RouteSettings.startMarkerLat, lng: RouteSettings.startMarkerLng };
   },
-
-  // Path finder options
-  usePathfinder: $.cookie('generator-path-use-pathfinder') == '1',
-  allowFasttravel: $.cookie('generator-path-allow-fasttravel') == '1',
-  allowRailroad: $.cookie('generator-path-allow-railroad') == '1',
-  fasttravelWeight: parseFloat($.cookie('generator-path-fasttravel-weight')) ? parseFloat($.cookie('generator-path-fasttravel-weight')) : ($.cookie('generator-path-allow-fasttravel') == '1' ? 1 : Infinity),
-  railroadWeight: parseFloat($.cookie('generator-path-railroad-weight')) ? parseFloat($.cookie('generator-path-railroad-weight')) : ($.cookie('generator-path-allow-railroad') == '1' ? 1 : 2),
 
   // Needed to keep track of the previously drawn path so we can remove it later.
   lastPolyline: null,
@@ -175,9 +163,14 @@ var Routes = {
   },
 
   // Simple utility to clear the given polyline from Leaflet.
-  clearPath: function (starting) {
-    if ((typeof (starting) !== 'boolean' || !starting) && Routes.usePathfinder) {
-      PathFinder.routegenClear();
+  clearPath: function (starting = false) {
+    try {
+      if (!starting && RouteSettings.usePathfinder) {
+        PathFinder.routegenClear();
+      }
+    } catch (error) {
+      alert(Language.get('alerts.feature_not_supported'));
+      console.error(error);
     }
 
     if (!Routes.lastPolyline) return;
@@ -272,28 +265,37 @@ var Routes = {
       if (Routes.lastPolyline == null) return;
 
       // Only run when the autoUpdatePath option is selected.
-      if (!Routes.autoUpdatePath) return;
+      if (!RouteSettings.autoUpdatePath) return;
     }
 
     // Clean up before generating.
     Routes.clearPath(true);
 
     // Setup variables.
-    var newMarkers = MapBase.markers.filter((marker) => { return marker.isVisible; });
+    var newMarkers = MapBase.markers.filter((marker) => {
+      if (!marker.isVisible) return false;
+
+      var toolType = Settings.toolType;
+      var markerTool = parseInt(marker.tool);
+      if (toolType >= 0) {
+        if (toolType < markerTool) return false;
+      } else {
+        if (toolType == -1 && markerTool != 1) return false;
+        if (toolType == -2 && markerTool != 2) return false;
+      }
+
+      return true;
+    });
 
     // Optionally ignore the already collected markers.
-    if (Routes.ignoreCollected) {
-      newMarkers = newMarkers.filter((marker) => { return marker.canCollect && !marker.isCollected; });
+    if (RouteSettings.ignoreCollected) {
+      newMarkers = newMarkers.filter(marker => marker.canCollect);
     }
 
-    if (Inventory.isEnabled) {
-      newMarkers = newMarkers.filter((marker) => { return marker.amount < Inventory.stackSize; });
-    }
-
-    if(Routes.importantOnly) {
-      newMarkersImp = newMarkers.filter((marker) => { return MapBase.itemsMarkedAsImportant.indexOf(marker.text) >= 0; });
-      if(newMarkers.length > 0 && newMarkersImp.length == 0) {
-        if(!confirm(Language.get('dialog.generate_route_important_only_ignore'))) {
+    if (RouteSettings.importantOnly) {
+      newMarkersImp = newMarkers.filter(marker => MapBase.importantItems.includes(marker.text));
+      if (newMarkers.length > 0 && newMarkersImp.length == 0) {
+        if (!confirm(Language.get('dialog.generate_route_important_only_ignore'))) {
           return;
         }
       } else {
@@ -301,7 +303,7 @@ var Routes = {
       }
     }
 
-    if(newMarkers.length <= 1) {
+    if (newMarkers.length <= 1) {
       return;
     }
 
@@ -317,19 +319,24 @@ var Routes = {
     var last = first.marker;
 
     // Use path finder when enabled
-    if (Routes.usePathfinder) {
-      PathFinder.routegenStart(last, newMarkers, Routes.fasttravelWeight, Routes.railroadWeight);
-      return;
+    try {
+      if (RouteSettings.usePathfinder) {
+        PathFinder.routegenStart(last, newMarkers, RouteSettings.fasttravelWeight, RouteSettings.railroadWeight, true);
+        return;
+      }
+    } catch (error) {
+      alert(Language.get('alerts.feature_not_supported'));
+      console.error(error);
     }
 
     // Loop through all markers and pick the nearest neighbor to that marker.
     for (var i = 0; i < newMarkers.length; i++) {
-      var current = Routes.nearestNeighborTo(last, newMarkers, polylines, Routes.maxDistance);
+      var current = Routes.nearestNeighborTo(last, newMarkers, polylines, RouteSettings.maxDistance);
       if (!current) break;
       current = current.marker;
 
       // A last fallback to not draw paths that are too long.
-      if (Routes.getDistance(last, current) < Routes.maxDistance) {
+      if (Routes.getDistance(last, current) < RouteSettings.maxDistance) {
         polylines.push([{ lat: last.lat, lng: last.lng }, { lat: current.lat, lng: current.lng }]);
       }
 
@@ -338,5 +345,20 @@ var Routes = {
 
     // Draw all paths on the map, and save the instance of the polyline to be able to clean it up later.
     Routes.lastPolyline = L.polyline(polylines).addTo(MapBase.map);
+  },
+
+  setCustomRouteStart: function (lat, lng) {
+    lat = parseFloat(lat) ? parseFloat(lat) : -119.9063;
+    lng = parseFloat(lng) ? parseFloat(lng) : 8.0313;
+
+    $('#generate-route-start').val("Custom");
+    $('#generate-route-start-lat').val(lat);
+    $('#generate-route-start-lat').parent().show();
+    $('#generate-route-start-lng').val(lng);
+    $('#generate-route-start-lng').parent().show();
+
+    RouteSettings.genPathStart = 'Custom';
+    RouteSettings.startMarkerLat = lat;
+    RouteSettings.startMarkerLng = lng;
   }
 };

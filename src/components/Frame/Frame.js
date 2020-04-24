@@ -12,11 +12,11 @@ class Frame extends Component {
       cycle: this.props.cycle,
       day: 0,
       loaded: false,
-      showCycles: false
+      showCycles: false,
     };
   }
 
-  cleanDate = date => {
+  cleanDate = (date) => {
     var dd = String(date.getDate()).padStart(2, "0");
     var mm = String(date.getMonth() + 1).padStart(2, "0"); //January is 0!
     var yyyy = date.getFullYear();
@@ -24,7 +24,7 @@ class Frame extends Component {
     return mm + "/" + dd + "/" + yyyy;
   };
 
-  formatDate = date => {
+  formatDate = (date) => {
     var d = new Date(date),
       month = "" + (d.getMonth() + 1),
       day = "" + d.getDate(),
@@ -36,7 +36,7 @@ class Frame extends Component {
     return [year, month, day].join("-");
   };
 
-  groupBy = key => array =>
+  groupBy = (key) => (array) =>
     array.reduce((objectsByKeyValue, obj) => {
       const value = obj[key];
       objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
@@ -46,7 +46,7 @@ class Frame extends Component {
   componentDidMount() {
     this.setState({
       loaded: true,
-      day: formatDateTweet(new Date(Date.parse(this.props.day)))
+      day: formatDateTweet(new Date(Date.parse(this.props.day))),
     });
   }
 
@@ -61,8 +61,6 @@ class Frame extends Component {
           return acc;
         }, [])
       : [];
-
-    console.log(this.state.cycle);
 
     return (
       <div css={[styles.root]} className="p-16">
