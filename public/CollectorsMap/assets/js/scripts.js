@@ -53,12 +53,10 @@ L.LayerGroup.include({
 });
 
 /*
-- all <script> will be loaded and executed (because this <script> comes last)
-- DOM will be ready
-- everything in here will be executed
+- DOM will be ready, all scripts will be loaded (all loaded via DOM script elements)
+- everything in this file here will be executed
 - they can depend on their order here
-- unfortunately they do async data loading and no one checks if they finished
-- → NO GUARANTEE json data is available
+- unfortunately some async dependencies are not properly taken care of (yet)
 */
 $(function () {
   try {
@@ -80,26 +78,24 @@ function init() {
 
   Settings.language = Language.availableLanguages.includes(Settings.language) ? Settings.language : 'en';
 
-  Inventory.load();
-  const itemsAndCollections = Item.init();  // Item.items & Collection.collections promise
-  MapBase.loadWeeklySet();
-  itemsAndCollections.then(MapBase.loadOverlays);
-  MapBase.init();
+  // Item.items, Collection.collections, Collection.weekly*
+  const itemsCollectionsWeekly = Item.init();
+  itemsCollectionsWeekly.then(MapBase.loadOverlays);
+  MapBase.mapInit();  // MapBase.map
   Language.init();
   Language.setMenuLanguage();
   Pins.addToMap();
   changeCursor();
-  itemsAndCollections.then(Cycles.load);
+  const markers = MapBase.loadMarkers();  // MapBase.markers
+  const cycles = Promise.all([itemsCollectionsWeekly, markers]).then(Cycles.load);
   Inventory.init();
   MapBase.loadFastTravels();
   MadamNazar.loadMadamNazar();
   const treasureFinished = Treasure.init();
-  MapBase.loadMarkers();
+  Promise.all([cycles, markers]).then(MapBase.runOncePostLoad);
   Routes.init();
   // depends on MapBase, Treasure, Pins
-  // via `promise.then()`, the Treasure dependency is _guaranteed_ to have finished
-  // the other two still need a little rewriting
-  treasureFinished.then(Menu.activateHandlers);
+  Promise.all([treasureFinished, markers]).then(Menu.activateHandlers);
 
   if (Settings.isMenuOpened) $('.menu-toggle').click();
 
@@ -348,11 +344,8 @@ $("#clear-markers").on("click", function () {
 });
 
 $("#clear-inventory").on("click", function () {
-  $.each(MapBase.markers, function (key, marker) {
-    marker.amount = 0;
-  });
-
-  Inventory.save();
+  Object.values(Item.items).forEach(item => item.amount = 0);
+  Inventory.updateItemHighlights();
   Menu.refreshMenu();
   MapBase.addMarkers();
 });
@@ -443,21 +436,15 @@ $('.menu-hidden .collection-sell, .menu-hidden .collection-collect-all').on('cli
   MapBase.markers.filter(m => m.category === category && m.isCurrent).forEach(marker => {
     if (marker.itemNumber === 1) Inventory.changeMarkerAmount(marker.legacyItemId, changeAmount);
 
-    if (InventorySettings.autoEnableSoldItems && marker.amount === 0 && marker.isCollected) {
+    if (InventorySettings.autoEnableSoldItems && marker.item.amount === 0 && marker.isCollected) {
       MapBase.removeItemFromMap(marker.day, marker.text, marker.subdata, marker.category, true);
     }
   });
 });
 
 $('.weekly-item-listings .collection-sell').on('click', function (e) {
-  var weeklyItems = weeklySetData.sets[weeklySetData.current];
-
-  $.each(weeklyItems, function (key, weeklyItem) {
-    var amount = Inventory.items[weeklyItem.item];
-
-    if (amount !== undefined) {
-      Inventory.changeMarkerAmount(weeklyItem.item.replace(/flower_|egg_/, ''), -1);
-    }
+  Collection.weeklyItems.forEach(weeklyItemId => {
+    Inventory.changeMarkerAmount(Item.items[weeklyItemId].legacyItemId, -1);
   });
 });
 
@@ -478,13 +465,12 @@ $('.collection-reset').on('click', function (e) {
 
 // disable only collected items (one or more in the inventory)
 $('.disable-collected-items').on('click', function (e) {
-  var collectionType = $(this).parent().parent().data('type');
-
-  var getMarkers = MapBase.markers.filter(_m =>
-    _m.canCollect && _m.category == collectionType && _m.isCurrent);
-
-  getMarkers.forEach(marker => {
-    if (marker.amount > 0) {
+  'use strict';
+  const category = $(this).parent().parent().data('type');
+  MapBase.markers
+    .filter(m => m.category === category && m.isCurrent && m.canCollect)
+    .forEach(marker => {
+    if (marker.item && marker.item.amount > 0) {
       $(`[data-type=${marker.legacyItemId}]`).addClass('disabled');
       MapBase.removeItemFromMap(marker.cycleName,
         marker.text, marker.subdata, marker.category, true);
@@ -609,7 +595,7 @@ $('#enable-inventory').on("change", function () {
 
   MapBase.addMarkers();
   Menu.refreshWeeklyItems();
-  ItemsValue.reloadInventoryItems();
+  Menu.refreshTotalInventoryValue();
 
   $('#weekly-container .collection-value, .collection-sell, .counter, .counter-number').toggle(InventorySettings.isEnabled);
   $('#inventory-container').toggleClass("opened", InventorySettings.isEnabled);
@@ -677,6 +663,7 @@ $('#cookie-export').on("click", function () {
 
     // Remove irrelevant properties (permanently from localStorage):
     delete settings.randid;
+    delete settings['inventory'];
 
     // Remove irrelevant properties (from COPY of localStorage, only to do not export them):
     settings = $.extend(true, {}, localStorage);

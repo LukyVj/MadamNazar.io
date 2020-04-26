@@ -44,20 +44,11 @@ Menu.refreshMenu = function () {
   $('.menu-hidden[data-type]:not([data-type=treasure])')
     .children('.collectible-wrapper').remove();
 
-  var weeklyItems = [];
-  if (weeklySetData.sets !== null) {
-    weeklyItems = weeklySetData.sets[weeklySetData.current];
-  }
-
   var anyUnavailableCategories = [];
 
-  const currentItemMarkers = {}
-  MapBase.markers.forEach(marker => {
-    if (marker.isCurrent) {
-      currentItemMarkers[marker.itemId] = marker;
-    }
-  });
-  Object.values(currentItemMarkers).forEach(marker => {
+  MapBase.markers
+    .filter(m => m.isCurrent && m.itemNumber === 1)
+    .forEach(marker => {
     var collectibleTitle = Language.get(marker.itemTranslationKey);
     var collectibleImage = null;
 
@@ -71,7 +62,8 @@ Menu.refreshMenu = function () {
     var collectibleTextElement = $('<p class="collectible">').text(collectibleTitle);
 
     var collectibleCountDecreaseElement = $('<div class="counter-button">-</div>');
-    var collectibleCountTextElement = $('<div class="counter-number">').text(marker.amount);
+    var collectibleCountTextElement = $('<div class="counter-number">')
+      .text(marker.item && marker.item.amount);
     var collectibleCountIncreaseElement = $('<div class="counter-button">+</div>');
 
     collectibleCountDecreaseElement.on('click', function (e) {
@@ -92,10 +84,12 @@ Menu.refreshMenu = function () {
       }
     });
 
-    var collectibleCountElement = $('<span>').addClass('counter').append(collectibleCountDecreaseElement).append(collectibleCountTextElement).append(collectibleCountIncreaseElement);
-
-    if (!InventorySettings.isEnabled)
-      collectibleCountElement.hide();
+    var collectibleCountElement = $('<span>')
+      .addClass('counter')
+      .append(collectibleCountDecreaseElement)
+      .append(collectibleCountTextElement)
+      .append(collectibleCountIncreaseElement)
+      .toggle(InventorySettings.isEnabled);
 
     var collectibleCategory = $(`.menu-option[data-type=${marker.category}]`);
 
@@ -110,7 +104,8 @@ Menu.refreshMenu = function () {
     if (collectibleCategory.hasClass('not-found') && !anyUnavailableCategories.includes(marker.category))
       collectibleCategory.attr('data-help', 'item_category').removeClass('not-found');
 
-    collectibleCountTextElement.toggleClass('text-danger', marker.amount >= InventorySettings.stackSize);
+    collectibleCountTextElement.toggleClass('text-danger',
+      marker.category !== 'random' && marker.item.amount >= InventorySettings.stackSize);
 
     if (['flower_agarita', 'flower_blood_flower'].includes(marker.itemId)) {
       collectibleElement.attr('data-help', 'item_night_only');
@@ -125,8 +120,8 @@ Menu.refreshMenu = function () {
       collectibleElement.addClass('disabled');
     }
 
-    $.each(weeklyItems, function (key, weeklyItem) {
-      if (marker.itemId == weeklyItem.item) {
+    Collection.weeklyItems.forEach(weeklyItemId => {
+      if (marker.itemId === weeklyItemId) {
         collectibleElement.attr('data-help', 'item_weekly');
         collectibleElement.addClass('weekly-item');
       }
@@ -197,8 +192,7 @@ Menu.refreshItemsCounter = function () {
     .replace('{count}', _markers.filter(marker => marker.isCollected).length)
     .replace('{max}', _markers.length));
 
-  // refresh items value counter
-  ItemsValue.reloadInventoryItems();
+  Menu.refreshTotalInventoryValue();
 
   $.each($(".menu-hidden[data-type]"), function (key, value) {
     var category = $(value).attr('data-type');
@@ -206,31 +200,30 @@ Menu.refreshItemsCounter = function () {
   });
 };
 
-Menu.refreshWeeklyItems = function () {
-  var weeklyItems = weeklySetData.sets[weeklySetData.current];
+Menu.refreshTotalInventoryValue = function () {
+  $('#items-value').text(`$${Collection.totalValue().toFixed(2)}`);
+};
 
+Menu.refreshWeeklyItems = function () {
   $('#weekly-container .weekly-item-listings').children('.weekly-item-listing').remove();
   $('#weekly-container .weekly-item-title').text(Language.get('collection'));
   $('#weekly-container .weekly-flavor-text').text(Language.get('weekly_flavor'));
 
-  $.each(weeklyItems, function (key, value) {
+  Collection.weeklyItems.forEach(weeklyItemId => {
     var inventoryCount = '';
 
     if (InventorySettings.isEnabled) {
-      var amount = Inventory.items[value.item];
-
-      if (amount !== undefined) {
-        inventoryCount = $(`<small class="counter-number">${amount}</small>`);
-        inventoryCount.toggleClass('text-danger', amount >= InventorySettings.stackSize);
-        inventoryCount = inventoryCount.prop('outerHTML');
-      }
+      const amount = Item.items[weeklyItemId].amount;
+      inventoryCount = $(`<small class="counter-number">${amount}</small>`);
+      inventoryCount.toggleClass('text-danger', amount >= InventorySettings.stackSize);
+      inventoryCount = inventoryCount.prop('outerHTML');
     }
 
     var element = `
       <div class="weekly-item-listing">
         <span>
-          <img class="icon" src="./assets/images/icons/game/${value.item}.png" alt="Weekly item icon" />
-          <span>${Language.get(value.item + '.name')}</span>
+          <img class="icon" src="./assets/images/icons/game/${weeklyItemId}.png" alt="Weekly item icon" />
+          <span>${Language.get(weeklyItemId + '.name')}</span>
         </span>
         ${inventoryCount}
       </div>
