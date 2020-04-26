@@ -9,10 +9,10 @@ var Cycles = {
 
   load: function () {
     return Loader.promises['cycles'].consumeJson(_data => {
-        Cycles.data = _data;
-        Cycles.getTodayCycle();
-        setInterval(Cycles.checkForUpdate, 1000 * 10);
-        console.info('%c[Cycles] Loaded!', 'color: #bada55; background: #242424');
+      Cycles.data = _data;
+      Cycles.getTodayCycle();
+      setInterval(Cycles.checkForUpdate, 1000 * 10);
+      console.info('%c[Cycles] Loaded!', 'color: #bada55; background: #242424');
     });
   },
   getFreshSelectedDay: function () {
@@ -126,7 +126,7 @@ var Cycles = {
         Cycles.offset = 0;
         $('div>span.cycle-data').removeClass('not-found');
       }
-      MapBase.updateOnDayChange();
+      MapBase.runOnDayChange();
     }
   },
 
