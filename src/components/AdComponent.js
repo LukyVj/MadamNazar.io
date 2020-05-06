@@ -9,7 +9,11 @@ export default class AdComponent extends React.Component {
     return (
       <ins
         className="adsbygoogle"
-        style={{ display: "block" }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
         data-ad-client="ca-pub-2046602277842498"
         data-ad-slot="7948800993"
         data-ad-format="auto"
