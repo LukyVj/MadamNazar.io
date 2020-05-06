@@ -1,19 +1,37 @@
+Object.defineProperty(String.prototype, 'includesOneOf', {
+  value: function (...elements) {
+    var include = false;
+    for (var str of elements) {
+      if (this.includes(str)) {
+        include = true;
+        break;
+      }
+    }
+    return include;
+  }
+});
+
+Object.defineProperty(Date.prototype, 'toISOUTCDateString', {
+  value: function () { return this.toISOString().split('T')[0]; },
+});
+
 var searchTerms = [];
 var uniqueSearchMarkers = [];
 
 var categories = [
-  'ambush', 'boats', 'campfires', 'defend_campsite', 'dailies', 'dog_encounter',
+  'ambush', 'boats', 'campfires', 'daily_locations', 'defend_campsite', 'dog_encounter',
   'egg_encounter', 'escort', 'fame_seeker', 'fast_travel', 'grave_robber', 'hideouts',
-  'hogtied_lawman', 'hostile_conversation', 'moonshiner_camp', 'nazar', 'people_in_need',
-  'plants', 'rescue', 'rival_collector', 'runaway_wagon', 'shops', 'trains', 'treasure',
-  'treasure_hunter', 'tree_map', 'user_pins', 'wounded_animal',
+  'hogtied_lawman', 'duel', 'moonshiner_camp', 'moonshiner_destroy', 'moonshiner_roadblock',
+  'moonshiner_sabotage', 'nazar', 'plants', 'rescue', 'rival_collector', 'runaway_wagon',
+  'shops', 'sightseeing', 'trains', 'treasure', 'treasure_hunter', 'tree_map', 'user_pins',
+  'wounded_animal',
 ];
 
 var categoriesDisabledByDefault = [
-  'ambush', 'dailies', 'dog_encounter', 'egg_encounter', 'escort', 'fame_seeker',
-  'grave_robber', 'hogtied_lawman', 'hostile_conversation', 'moonshiner_camp',
-  'people_in_need', 'rescue', 'rival_collector', 'runaway_wagon', 'treasure_hunter',
-  'treasure', 'tree_map', 'wounded_animal',
+  'ambush', 'daily_locations', 'dog_encounter', 'egg_encounter', 'escort', 'fame_seeker',
+  'grave_robber', 'hogtied_lawman', 'duel', 'moonshiner_camp', 'moonshiner_destroy',
+  'moonshiner_roadblock', 'moonshiner_sabotage', 'rescue', 'rival_collector', 'runaway_wagon',
+  'sightseeing', 'treasure_hunter', 'tree_map', 'wounded_animal',
 ];
 
 var plants = [
@@ -36,16 +54,9 @@ var shopsDisabledByDefault = [
   'stable', 'tackle', 'tailor'
 ];
 
-var dailies = [
-  'visits'
-];
-
-var dailiesDisabledByDefault = [];
-
 var enabledCategories = categories;
 var enabledPlants = plants;
 var enabledShops = shops;
-var enabledDailies = dailies;
 var categoryButtons = $(".clickable[data-type]");
 
 var date;
@@ -94,18 +105,14 @@ function init() {
     return shopsDisabledByDefault.indexOf(item) === -1;
   });
 
-  if (typeof $.cookie('disabled-dailies') !== 'undefined')
-    dailiesDisabledByDefault = $.cookie('disabled-dailies').split(',');
-
-  enabledDailies = enabledDailies.filter(function (item) {
-    return dailiesDisabledByDefault.indexOf(item) === -1;
-  });
-
   if ($.cookie('map-layer') === undefined || isNaN(parseInt($.cookie('map-layer'))))
     $.cookie('map-layer', 0, { expires: 999 });
 
-  if (!Language.availableLanguages.includes(Settings.language))
-    Settings.language = 'en-us';
+  if (!Language.availableLanguages.includes(Settings.language)) {
+    Settings.language = 'en';
+    $.cookie('language', Settings.language, { expires: 999 });
+    $('#language').val(Settings.language);
+  }
 
   if ($.cookie('remove-markers-daily') === undefined) {
     Settings.resetMarkersDaily = true;
@@ -152,16 +159,6 @@ function init() {
     $.cookie('fme-display', '3', { expires: 999 });
   }
 
-  if ($.cookie('cycle-input-enabled') === undefined) {
-    Settings.isCycleInputEnabled = 1;
-    $.cookie('cycle-input-enabled', '1', { expires: 999 });
-  }
-
-  if ($.cookie('clock-or-timer') === undefined) {
-    Settings.displayClockHideTimer = false;
-    $.cookie('clock-or-timer', 'false', { expires: 999 });
-  }
-
   if ($.cookie('timestamps-24') === undefined) {
     Settings.display24HoursTimestamps = false;
     $.cookie('timestamps-24', 'false', { expires: 999 });
@@ -170,6 +167,7 @@ function init() {
   MapBase.init();
   MapBase.setOverlays(Settings.overlayOpacity);
 
+  Language.init();
   Language.setMenuLanguage();
 
   setMapBackground($.cookie('map-layer'));
@@ -194,7 +192,6 @@ function init() {
   $('#show-coordinates').prop("checked", Settings.isCoordsEnabled);
   $('#timestamps-24').prop("checked", Settings.display24HoursTimestamps);
   $('#sort-items-alphabetically').prop("checked", Settings.sortItemsAlphabetically);
-  $('#enable-cycle-input').prop("checked", Settings.isCycleInputEnabled);
   $("#enable-right-click").prop('checked', $.cookie('right-click') != null);
   $("#enable-debug").prop('checked', $.cookie('debug') != null);
   $("#enable-cycle-changer").prop('checked', $.cookie('cycle-changer-enabled') != null);
@@ -281,27 +278,19 @@ function downloadAsFile(filename, text) {
 }
 
 function clockTick() {
-  // Clock in game created by Michal__d
-  var display_24 = Settings.display24HoursTimestamps;
-  var newDate = new Date();
-  var startTime = newDate.valueOf();
-  var factor = 30;
-  var correctTime = new Date(startTime * factor);
+  const now = new Date();
+  const gameTime = new Date(now * 30);
+  const gameHour = gameTime.getUTCHours();
+  const nightTime = gameHour >= 22 || gameHour < 5;
+  const clockFormat = {
+    timeZone: 'UTC',
+    hour: 'numeric',
+    minute: '2-digit',
+    hourCycle: Settings.display24HoursTimestamps ? 'h23' : 'h12',
+  };
 
-  correctTime.setHours(correctTime.getUTCHours());
-  correctTime.setMinutes(correctTime.getUTCMinutes() - 3); //for some reason time in game is 3 sec. delayed to normal time
-
-  if (display_24) {
-    $('#time-in-game').text(addZeroToNumber(correctTime.getHours()) + ":" + addZeroToNumber(correctTime.getMinutes()));
-  } else {
-    $('#time-in-game').text((addZeroToNumber(correctTime.getHours() % 12) == '00' ? '12' : addZeroToNumber(correctTime.getHours() % 12)) + ":" + addZeroToNumber(correctTime.getMinutes()) + " " + ((correctTime.getHours() < 12) ? "AM" : "PM"));
-  }
-
-  if (correctTime.getHours() >= 22 || correctTime.getHours() < 5) {
-    $('.day-cycle').css('background', 'url(assets/images/moon.png)');
-  } else {
-    $('.day-cycle').css('background', 'url(assets/images/sun.png)');
-  }
+  $('#time-in-game').text(gameTime.toLocaleString(Settings.language, clockFormat));
+  $('.day-cycle').css('background', `url(assets/images/${nightTime ? 'moon' : 'sun'}.png)`);
 
   if (!enabledCategories.includes('hideouts')) return;
 
@@ -309,7 +298,7 @@ function clockTick() {
     var time = $(this).data('time') + '';
     if (time === null || time == '') return;
 
-    var hour = correctTime.getHours();
+    var hour = gameTime.getHours();
     if (hour >= 5 && hour < 8) {
       // 1) 05 - 08: Sunrise
       if (time.indexOf("1") >= 0) {
@@ -462,13 +451,6 @@ $("#marker-size").on("change", function () {
   Treasures.set();
 });
 
-//Enable cycle input
-$("#enable-cycle-input").on("change", function () {
-  Settings.isCycleInputEnabled = $("#enable-cycle-input").prop('checked');
-  $.cookie('cycle-input-enabled', Settings.isCycleInputEnabled ? '1' : '0', { expires: 999 });
-  $('.input-cycle').toggleClass('hidden', !(Settings.isCycleInputEnabled));
-});
-
 // Toggle visibility of FME cards.
 $("#fme-display").on("change", function () {
   var parsed = parseInt($("#fme-display").val());
@@ -588,24 +570,6 @@ $(document).on('click', '.collectible-wrapper[data-type]', function () {
     }
 
     $.cookie('disabled-shops', shopsDisabledByDefault.join(','), { expires: 999 });
-
-    MapBase.addMarkers();
-  } else if (category == 'dailies') {
-    if (isDisabled) {
-      enabledDailies = $.grep(enabledDailies, function (value) {
-        return value != collectible;
-      });
-
-      dailiesDisabledByDefault.push(collectible);
-    } else {
-      enabledDailies.push(collectible);
-
-      dailiesDisabledByDefault = $.grep(dailiesDisabledByDefault, function (value) {
-        return value != collectible;
-      });
-    }
-
-    $.cookie('disabled-dailies', dailiesDisabledByDefault.join(','), { expires: 999 });
 
     MapBase.addMarkers();
   } else {
@@ -735,10 +699,24 @@ $('#cookie-export').on("click", function () {
     var cookies = $.cookie();
     var storage = localStorage;
 
-    // Remove irrelevant properties.
+    // Remove irrelevant properties (permanently from localStorage):
     delete cookies['_ga'];
     delete storage['randid'];
+    delete storage['inventory'];
+
+    // TODO: Need to more differentiate settings form RDO and Collectors map, to don't add hundreds of settings to this list (add prefix or sth)
+    // Remove irrelevant properties (from COPY of localStorage, only to do not export them):
+    storage = $.extend(true, {}, localStorage);
     delete storage['pinned-items'];
+    delete storage['routes.customRoute'];
+    delete storage['importantItems'];
+    delete storage['enabled-categories'];
+
+    for (var key in storage) {
+      if (storage.hasOwnProperty(key) && key.includesOneOf('collected.', 'routes.', 'shown.', 'amount.')) {
+        delete storage[key];
+      }
+    }
 
     var settings = {
       'cookies': cookies,
@@ -746,13 +724,26 @@ $('#cookie-export').on("click", function () {
     };
 
     var settingsJson = JSON.stringify(settings, null, 4);
+    var exportDate = new Date().toISOUTCDateString();
 
-    downloadAsFile("collectible-map-settings.json", settingsJson);
+    downloadAsFile(`RDO-map-settings-(${exportDate}).json`, settingsJson);
   } catch (error) {
     console.error(error);
     alert(Language.get('alerts.feature_not_supported'));
   }
 });
+
+function setSettings(settings) {
+  $.each(settings.cookies, function (key, value) {
+    $.cookie(key, value, { expires: 999 });
+  });
+
+  $.each(settings.local, function (key, value) {
+    localStorage.setItem(key, value);
+  });
+
+  location.reload();
+}
 
 $('#cookie-import').on('click', function () {
   try {
@@ -769,12 +760,14 @@ $('#cookie-import').on('click', function () {
       file.text().then((text) => {
         try {
           settings = JSON.parse(text);
+          setSettings(settings);
         } catch (error) {
           alert(Language.get('alerts.file_not_valid'));
           return;
         }
       });
-    } catch (error) {
+    }
+    catch (error) {
       fallback = true;
     }
 
@@ -786,7 +779,9 @@ $('#cookie-import').on('click', function () {
 
         try {
           settings = JSON.parse(text);
-        } catch (error) {
+          setSettings(settings);
+        }
+        catch (error) {
           alert(Language.get('alerts.file_not_valid'));
           return;
         }
@@ -794,34 +789,8 @@ $('#cookie-import').on('click', function () {
 
       reader.readAsText(file);
     }
-
-    // Remove all current settings.
-    $.each($.cookie(), function (key, value) {
-      $.removeCookie(key);
-    });
-
-    $.each(localStorage, function (key, value) {
-      localStorage.removeItem(key);
-    });
-
-    // Import all the settings from the file.
-    if (settings.cookies === undefined && settings.local === undefined) {
-      $.each(settings, function (key, value) {
-        $.cookie(key, value, { expires: 999 });
-      });
-    }
-
-    $.each(settings.cookies, function (key, value) {
-      $.cookie(key, value, { expires: 999 });
-    });
-
-    $.each(settings.local, function (key, value) {
-      localStorage.setItem(key, value);
-    });
-
-    // Do this for now, maybe look into refreshing the menu completely (from init) later.
-    location.reload();
-  } catch (error) {
+  }
+  catch (error) {
     console.error(error);
     alert(Language.get('alerts.feature_not_supported'));
   }
@@ -915,7 +884,6 @@ $(function () {
   init();
   MapBase.loadFastTravels();
   MapBase.loadShops();
-  MapBase.loadDailies();
   MadamNazar.loadMadamNazar();
   Treasures.load();
   Encounters.load();

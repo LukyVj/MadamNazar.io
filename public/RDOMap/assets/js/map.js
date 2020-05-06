@@ -3,12 +3,12 @@
  */
 
 var MapBase = {
-  minZoom: 2,
-  maxZoom: 7,
+  minZoom: Settings.isDebugEnabled ? 0 : 2,
+  maxZoom: Settings.isDebugEnabled ? 10 : 7,
   map: null,
   overlays: [],
   markers: [],
-  itemsMarkedAsImportant: [],
+  importantItems: [],
   isDarkMode: false,
   fastTravelData: null,
   shopData: null,
@@ -150,13 +150,17 @@ var MapBase = {
       bounds = L.latLngBounds(southWest, northEast);
     MapBase.map.setMaxBounds(bounds);
 
-    Layers.oms = new OverlappingMarkerSpiderfier(MapBase.map, { keepSpiderfied: true });
+    Layers.oms = new OverlappingMarkerSpiderfier(MapBase.map, {
+      keepSpiderfied: true
+    });
     Layers.oms.addListener('spiderfy', function (markers) {
       MapBase.map.closePopup();
     });
 
     MapBase.loadOverlays();
 
+    // Enable this and disable the above to see cool stuff.
+    // MapBase.loadOverlaysBeta();
   },
 
   loadOverlays: function () {
@@ -175,7 +179,42 @@ var MapBase = {
 
     $.each(MapBase.overlays, function (key, value) {
       var overlay = `assets/overlays/${(MapBase.isDarkMode ? 'dark' : 'normal')}/${key}.png?nocache=${nocache}`;
-      Layers.overlaysLayer.addLayer(L.imageOverlay(overlay, value, { opacity: opacity }));
+      Layers.overlaysLayer.addLayer(L.imageOverlay(overlay, value, {
+        opacity: opacity
+      }));
+    });
+
+    Layers.overlaysLayer.addTo(MapBase.map);
+  },
+
+  loadOverlaysBeta: function () {
+    $.getJSON('data/overlays_beta.json?nocache=' + nocache)
+      .done(function (data) {
+        MapBase.overlaysBeta = data;
+        MapBase.setOverlaysBeta(Settings.overlayOpacity);
+        console.info('%c[Overlays] Loaded!', 'color: #bada55; background: #242424');
+      });
+  },
+
+  setOverlaysBeta: function (opacity = 0.5) {
+    Layers.overlaysLayer.clearLayers();
+
+    if (opacity == 0) return;
+
+    $.each(MapBase.overlaysBeta, function (key, value) {
+      var overlay = `assets/overlays/${(MapBase.isDarkMode ? 'dark' : 'normal')}/game/${value.name}.png?nocache=${nocache}`;
+
+      var x = (value.width / 2);
+      var y = (value.height / 2);
+      var scaleX = 0.00076;
+      var scaleY = scaleX;
+
+      Layers.overlaysLayer.addLayer(L.imageOverlay(overlay, [
+        [(parseFloat(value.lat) + (y * scaleY)), (parseFloat(value.lng) - (x * scaleX))],
+        [(parseFloat(value.lat) - (y * scaleY)), (parseFloat(value.lng) + (x * scaleX))]
+      ], {
+        opacity: opacity
+      }));
     });
 
     Layers.overlaysLayer.addTo(MapBase.map);
@@ -280,8 +319,8 @@ var MapBase = {
 
     var opacity = Settings.markerOpacity;
 
-    var baseMarkers = MapBase.markers.filter(_m => { return enabledCategories.includes(_m.category) && _m.category != 'plants'; });
-    var plantMarkers = MapBase.markers.filter(_m => { return enabledCategories.includes('plants') && enabledPlants.includes(_m.subdata) && _m.category == 'plants'; });
+    var baseMarkers = MapBase.markers.filter(_m => enabledCategories.includes(_m.category) && _m.category != 'plants');
+    var plantMarkers = MapBase.markers.filter(_m => enabledCategories.includes('plants') && enabledPlants.includes(_m.subdata) && _m.category == 'plants');
 
     $.each(baseMarkers, function (key, marker) {
       //Set isVisible to false. addMarkerOnMap will set to true if needs
@@ -312,7 +351,6 @@ var MapBase = {
 
     MapBase.addFastTravelMarker();
     MapBase.addShops();
-    MapBase.addDailies();
 
     Treasures.addToMap();
     Encounters.addToMap();
@@ -320,8 +358,6 @@ var MapBase = {
 
     if (refreshMenu)
       Menu.refreshMenu();
-
-    MapBase.loadImportantItems();
   },
 
   removeItemFromMap: function (text, subdata, category) {
@@ -352,6 +388,9 @@ var MapBase = {
         return "darkblue";
       case "plants":
         return "green";
+      case "daily_locations":
+      case "sightseeing":
+        return "lightgray";
       default:
         return "red";
     }
@@ -380,7 +419,6 @@ var MapBase = {
 
     // TODO: Fix later. :-)
     // var shareText = `<a href="javascript:void(0)" onclick="setClipboardText('https://jeanropke.github.io/RDOMap/?m=${marker.text}')">${Language.get('map.copy_link')}</a>`;
-    // var importantItem = ` | <a href="javascript:void(0)" onclick="MapBase.highlightImportantItem('${marker.text || marker.subdata}', '${marker.category}')">${Language.get('map.mark_important')}</a>`;
     // var linksElement = $('<p>').addClass('marker-popup-links').append(shareText).append(importantItem);
     var linksElement = $('<p>');
     var debugDisplayLatLng = $('<small>').text(`Latitude: ${marker.lat} / Longitude: ${marker.lng}`);
@@ -432,13 +470,14 @@ var MapBase = {
 
     marker.isVisible = true;
     tempMarker.id = marker.text;
-    tempMarker.bindPopup(MapBase.updateMarkerContent(marker), { minWidth: 300, maxWidth: 400 });
+    tempMarker.bindPopup(MapBase.updateMarkerContent(marker), {
+      minWidth: 300,
+      maxWidth: 400
+    });
 
     Layers.itemMarkersLayer.addLayer(tempMarker);
     if (Settings.markerCluster)
       Layers.oms.addMarker(tempMarker);
-
-    MapBase.loadImportantItems();
   },
 
   createCanvasMarker: function (marker, opacity = 1) {
@@ -448,7 +487,7 @@ var MapBase = {
     var tempMarker = L.marker([marker.lat, marker.lng], {
       opacity: opacity,
       icon: new L.divIcon({
-        iconUrl: `assets/images/markers/plants.png`,
+        iconUrl: `assets/images/markers/${marker.text}.png`,
         iconSize: [35 * Settings.markerSize, 45 * Settings.markerSize],
         iconAnchor: [17 * Settings.markerSize, 42 * Settings.markerSize],
         popupAnchor: [0 * Settings.markerSize, -28 * Settings.markerSize]
@@ -457,52 +496,24 @@ var MapBase = {
 
     marker.isVisible = true;
     tempMarker.id = marker.text;
-    tempMarker.bindPopup(MapBase.updateMarkerContent(marker), { minWidth: 300, maxWidth: 400 });
+    tempMarker.bindPopup(MapBase.updateMarkerContent(marker), {
+      minWidth: 300,
+      maxWidth: 400
+    });
 
     return tempMarker;
   },
 
   gameToMap: function (lat, lng, name = "Debug Marker") {
-    MapBase.debugMarker((0.01552 * lng + -63.6), (0.01552 * lat + 111.29), name);
+    MapBase.debugMarker((0.01552 * lng + -63.6).toFixed(4), (0.01552 * lat + 111.29).toFixed(4), name);
   },
 
-  game2Map: function ({ x, y, z }) {
-    MapBase.debugMarker((0.01552 * y + -63.6), (0.01552 * x + 111.29), z);
-  },
-
-  highlightImportantItem(text, category) {
-    if (category === 'american_flowers' || category === 'bird_eggs')
-      text = text.replace(/(egg_|flower_)(\w+)(_\d)/, '$2');
-
-    $(`[data-type=${text}]`).toggleClass('highlight-important-items-menu');
-
-    if (text === 'eagle') // prevent from highlight eagle coins and eggs together
-      text = 'egg_eagle';
-
-    $(`[data-marker*=${text}]`).toggleClass('highlight-items');
-
-    if ($(`[data-marker*=${text}].highlight-items`).length)
-      MapBase.itemsMarkedAsImportant.push(text);
-    else
-      MapBase.itemsMarkedAsImportant.splice(MapBase.itemsMarkedAsImportant.indexOf(text), 1);
-
-    $.each(localStorage, function (key) {
-      localStorage.removeItem('importantItems');
-    });
-
-    localStorage.setItem('importantItems', JSON.stringify(MapBase.itemsMarkedAsImportant));
-  },
-
-  loadImportantItems() {
-    if (localStorage.importantItems === undefined)
-      localStorage.importantItems = "[]";
-
-    MapBase.itemsMarkedAsImportant = JSON.parse(localStorage.importantItems) || [];
-
-    $.each(MapBase.itemsMarkedAsImportant, function (key, value) {
-      $(`[data-marker*=${value}]`).addClass('highlight-items');
-      $(`[data-type=${value}]`).addClass('highlight-important-items-menu');
-    });
+  game2Map: function ({
+    x,
+    y,
+    z
+  }) {
+    MapBase.debugMarker((0.01552 * y + -63.6).toFixed(4), (0.01552 * x + 111.29).toFixed(4), z);
   },
 
   loadFastTravels: function () {
@@ -573,43 +584,6 @@ var MapBase = {
     }
   },
 
-  loadDailies: function () {
-    $.getJSON('data/dailies.json?nocache=' + nocache)
-      .done(function (data) {
-        MapBase.dailyData = data;
-      });
-    console.info('%c[Dailies] Loaded!', 'color: #bada55; background: #242424');
-  },
-
-  addDailies: function () {
-    if (enabledCategories.includes('dailies')) {
-      $.each(MapBase.dailyData, function (category, categoryValue) {
-        if (!enabledDailies.includes(category)) return;
-        $.each(categoryValue, function (key, value) {
-          var shadow = Settings.isShadowsEnabled ? '<img class="shadow" src="./assets/images/markers-shadow.png" alt="Shadow">' : '';
-          var marker = L.marker([value.lat, value.lng], {
-            opacity: Settings.markerOpacity,
-            icon: L.divIcon({
-              iconSize: [35 * Settings.markerSize, 45 * Settings.markerSize],
-              iconAnchor: [17 * Settings.markerSize, 42 * Settings.markerSize],
-              popupAnchor: [0 * Settings.markerSize, -28 * Settings.markerSize],
-              html: `
-                <img class="icon" src="./assets/images/icons/${category}.png" alt="Icon">
-                <img class="background" src="./assets/images/icons/marker_beige.png" alt="Background">
-                ${shadow}
-              `
-            })
-          });
-
-          marker.bindPopup(`<h1>${Language.get(`map.dailies.${category}.${value.text}.name`)}</h1><p>${Language.get(`map.dailies.${category}.desc`)}</p>`);
-
-          Layers.itemMarkersLayer.addLayer(marker);
-        });
-      });
-    }
-  },
-
-
   submitDebugForm: function () {
     var lat = $('input[name=debug-marker-lat]').val();
     var lng = $('input[name=debug-marker-lng]').val();
@@ -618,9 +592,8 @@ var MapBase = {
   },
 
   debugMarker: function (lat, long, name = 'Debug Marker') {
-    var shadow = Settings.isShadowsEnabled ? '<img class="shadow" src="./assets/images/markers-shadow.png" alt="Shadow">' : '';
+    var shadow = Settings.isShadowsEnabled ? '<img class="shadow" width="' + 35 * Settings.markerSize + '" height="' + 16 * Settings.markerSize + '" src="./assets/images/markers-shadow.png" alt="Shadow">' : '';
     var marker = L.marker([lat, long], {
-      opacity: Settings.markerOpacity,
       icon: L.divIcon({
         iconSize: [35 * Settings.markerSize, 45 * Settings.markerSize],
         iconAnchor: [17 * Settings.markerSize, 42 * Settings.markerSize],
@@ -632,15 +605,17 @@ var MapBase = {
         `
       })
     });
-    var customMarkerName = ($('#debug-marker-name').val() != '' ? $('#debug-marker-name').val() : name);
-    marker.bindPopup(`<h1>${customMarkerName}</h1><p>Lat.: ${lat}<br>Long.: ${long}</p>`, { minWidth: 300, maxWidth: 400 });
+
+    marker.bindPopup(`<h1>${name}</h1><p>Lat.: ${lat}<br>Long.: ${long}</p>`, {
+      minWidth: 300
+    });
     Layers.itemMarkersLayer.addLayer(marker);
-    var tempArray = [];
-    tempArray.push(lat || 0, long || 0, customMarkerName);
-    debugMarkersArray.push(tempArray);
   },
 
-  testData: { max: 10, data: [] },
+  testData: {
+    max: 10,
+    data: []
+  },
   heatmapCount: 10,
   addCoordsOnMap: function (coords) {
     // Show clicked coordinates (like google maps)
@@ -654,23 +629,18 @@ var MapBase = {
       });
     }
 
-    if (Settings.isDebugEnabled) {
+    if (false && Settings.isDebugEnabled) {
       console.log(`{"lat":"${coords.latlng.lat.toFixed(4)}","lng":"${coords.latlng.lng.toFixed(4)}","count":"${MapBase.heatmapCount}"},`);
-      MapBase.testData.data.push({ lat: coords.latlng.lat.toFixed(4), lng: coords.latlng.lng.toFixed(4), count: MapBase.heatmapCount });
+      MapBase.testData.data.push({
+        lat: coords.latlng.lat.toFixed(4),
+        lng: coords.latlng.lng.toFixed(4),
+        count: MapBase.heatmapCount
+      });
       Layers.heatmapLayer.setData(MapBase.testData);
     }
 
     if (Settings.isPinsPlacingEnabled)
       Pins.addPin(coords.latlng.lat, coords.latlng.lng);
-  },
-
-  formatDate: function (date) {
-    var pad = (e, s) => (1e3 + e + '').slice(-s);
-    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    var _day = date.split('/')[2];
-    var _month = monthNames[date.split('/')[1] - 1];
-    var _year = date.split('/')[0];
-    return `${_month} ${pad(_day, 2)} ${_year}`;
   },
 
   yieldingLoop: function (count, chunksize, callback, finished) {

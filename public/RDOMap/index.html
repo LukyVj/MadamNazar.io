@@ -23,10 +23,10 @@
 
   <link rel="stylesheet" href="assets/css/leaflet.css" />
   <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="assets/css/styles.css?nocache=51" />
+  <link rel="stylesheet" href="assets/css/styles.css?nocache=1387" />
 
   <script>
-    var nocache = 51;
+    var nocache = 1387;
   </script>
 </head>
 
@@ -85,14 +85,19 @@
       </div>
     </div>
     <div>
+      <div class="menu-option clickable" data-type="daily_locations" data-help="item_category">
+        <span>
+          <img class="icon" src="./assets/images/icons/daily_locations.png" />
+          <span data-text="map.daily_locations.name">Daily challenge locations</span>
+        </span>
+      </div>
+    </div>
+    <div>
       <div class="menu-option clickable" data-type="plants" data-help="item_category">
         <span>
           <img class="icon" src="./assets/images/icons/plants.png" />
           <span data-text="map.plants">Plants</span>
         </span>
-        <div class="counter" style="margin: auto 0 auto auto;" data-help="item_submit_new_herb">
-          <a id="submit-new-herb" class="counter-button no-style" href="https://forms.gle/1oQWp6UF9UBZGRu27" target="_blank">+</a>
-        </div>
         <div class="open-submenu"></div>
       </div>
       <div class="menu-hidden two-column" data-type="plants">
@@ -116,16 +121,6 @@
           <a data-text="menu.show_all" href="javascript:void(0);" onclick="Menu.showHideAllShops(false)">Show all</a>
         </div>
       </div>
-    </div>
-    <div>
-      <div class="menu-option clickable" data-type="dailies" data-help="item_category">
-        <span>
-          <img class="icon" src="./assets/images/icons/dailies.png" />
-          <span data-text="map.dailies">Dailies</span>
-        </span>
-        <div class="open-submenu" style="margin: auto 0 auto auto;"></div>
-      </div>
-      <div class="menu-hidden two-column" data-type="dailies"></div>
     </div>
     <div>
       <div class="menu-option submenu-only" data-help="item_category_submenu">
@@ -184,22 +179,34 @@
             <p class="collectible" data-text="menu.hogtied_lawman">Hogtied Lawman</p>
           </span>
         </div>
-        <div class="collectible-wrapper clickable" data-type="hostile_conversation" data-help="item">
-          <img src="./assets/images/icons/hostile_conversation.png" class="collectible-icon random-encounter" />
+        <div class="collectible-wrapper clickable" data-type="duel" data-help="item">
+          <img src="./assets/images/icons/duel.png" class="collectible-icon random-encounter" />
           <span class="collectible-text">
-            <p class="collectible" data-text="menu.hostile_conversation">Hostile Conversation</p>
+            <p class="collectible" data-text="menu.duel">Duel</p>
           </span>
         </div>
         <div class="collectible-wrapper clickable" data-type="moonshiner_camp" data-help="item">
           <img src="./assets/images/icons/moonshiner_camp.png" class="collectible-icon random-encounter" />
           <span class="collectible-text">
-            <p class="collectible" data-text="menu.moonshiner_camp">Moonshiner Camp</p>
+            <p class="collectible" data-text="menu.moonshiner_camp">Camp (Moonshiners)</p>
           </span>
         </div>
-        <div class="collectible-wrapper clickable" data-type="people_in_need" data-help="item">
-          <img src="./assets/images/icons/people_in_need.png" class="collectible-icon random-encounter" />
+        <div class="collectible-wrapper clickable" data-type="moonshiner_destroy" data-help="item">
+          <img src="./assets/images/icons/moonshiner_destroy.png" class="collectible-icon random-encounter" />
           <span class="collectible-text">
-            <p class="collectible" data-text="menu.people_in_need">People in Need</p>
+            <p class="collectible" data-text="menu.moonshiner_destroy">Destroy (Moonshiners)</p>
+          </span>
+        </div>
+        <div class="collectible-wrapper clickable" data-type="moonshiner_roadblock" data-help="item">
+          <img src="./assets/images/icons/moonshiner_roadblock.png" class="collectible-icon random-encounter" />
+          <span class="collectible-text">
+            <p class="collectible" data-text="menu.moonshiner_roadblock">Roadblock (Moonshiners)</p>
+          </span>
+        </div>
+        <div class="collectible-wrapper clickable" data-type="moonshiner_sabotage" data-help="item">
+          <img src="./assets/images/icons/moonshiner_sabotage.png" class="collectible-icon random-encounter" />
+          <span class="collectible-text">
+            <p class="collectible" data-text="menu.moonshiner_sabotage">Sabotage (Moonshiners)</p>
           </span>
         </div>
         <div class="collectible-wrapper clickable" data-type="rescue" data-help="item">
@@ -310,6 +317,14 @@
         </div>
       </div>
     </div>
+    <div>
+      <div class="menu-option clickable" data-type="sightseeing" data-help="item_category">
+        <span>
+          <img class="icon" src="./assets/images/icons/sightseeing.png" />
+          <span data-text="menu.sightseeing">Sightseeing</span>
+        </span>
+      </div>
+    </div>
 
     <div class="header">
       <span class="header-border"></span>
@@ -317,29 +332,52 @@
       <span class="header-border"></span>
     </div>
     <div class="settings-container">
+      <p class="explain-text">
+        Translations are made by the community for the community. <a href="https://crowdin.com/project/rdr2rdomap" target="_blank" rel="noopener noreferrer">Help us by translating on Crowdin</a>.
+      </p>
+      <hr class="menu-divider">
       <div class="input-container" data-help="language">
         <label for="language" data-text="menu.language">Language</label>
         <select class="input-text wide-select-menu" id="language">
-          <option value="de-de">Deutsch</option>
-          <option value="en-us" selected>English</option>
-          <option value="es-es">Español</option>
-          <option value="fr-fr">Français</option>
-          <option value="it-it">Italiano</option>
-          <option value="hu-hu">Magyar nyelv</option>
-          <option value="pt-br">Português</option>
-          <option value="pl">Polski</option>
-          <option value="ru">Русский</option>
-          <option value="ar-ar">ٱلْعَرَبِيَّة</option>
-          <option value="ko">한국어</option>
-          <option value="th-th">ภาษาไทย</option>
-          <option value="zh-s">简体中文</option>
-          <option value="zh-t">繁体中文</option>
+          <option value="en" selected>English</option>
+          <option value="en-GB">English (UK)</option>
+          <option value="af">Afrikaans (Afrikaans)</option>
+          <option value="ar">ٱلْعَرَبِيَّة (Arabic)</option>
+          <option value="ca">Català (Catalan)</option>
+          <option value="cs">Нохчийн мотт (Chech)</option>
+          <option value="da">Dansk (Danish)</option>
+          <option value="de">Deutsch (German)</option>
+          <option value="el">ελληνικά (Greek)</option>
+          <option value="es">Español (Spanish)</option>
+          <option value="fi">Suomi (Finnish)</option>
+          <option value="fr">Français (French)</option>
+          <option value="he">עברית (Hebrew)</option>
+          <option value="hu">Magyar (Hungarian)</option>
+          <option value="it">Italiano (Italian)</option>
+          <option value="ja">日本語 (Japanese)</option>
+          <option value="ko">한국어 (Korean)</option>
+          <option value="no">Norsk (Norwegian)</option>
+          <option value="pl">Polski (Polish)</option>
+          <option value="pt">Português (Portuguese)</option>
+          <option value="pt-BR">Português (Brazilian Portuguese)</option>
+          <option value="ro">Limba română (Romanian)</option>
+          <option value="ru">Русский язык (Russian)</option>
+          <option value="sr">Српски (Serbian)</option>
+          <option value="sv">Svenska (Swedish)</option>
+          <option value="th">ภาษาไทย (Thai)</option>
+          <option value="tr">Türkçe (Turkish)</option>
+          <option value="uk">Українська мова (Ukrainian)</option>
+          <option value="vi">Tiếng Việt (Vietnamese)</option>
+          <option value="zh-Hans">简体中文 (Chinese Simplified)</option>
+          <option value="zh-Hant">繁体中文 (Chinese Traditional)</option>
         </select>
       </div>
       <div class="input-container" data-help="marker_size">
         <label for="marker-size" data-text="menu.marker_size">Marker size</label>
         <select class="input-text wide-select-menu" id="marker-size">
-          <option value="0.75" data-text="menu.marker_size.75">75%</option>
+          <option value="0.7" data-text="menu.marker_size.70">70%</option>
+          <option value="0.8" data-text="menu.marker_size.80">80%</option>
+          <option value="0.9" data-text="menu.marker_size.90">90%</option>
           <option value="1" data-text="menu.marker_size.100" selected>100%</option>
           <option value="1.25" data-text="menu.marker_size.125">125%</option>
           <option value="1.5" data-text="menu.marker_size.150">150%</option>
@@ -376,10 +414,10 @@
           <option value="3" data-text="menu.fme_display.3" selected>Both</option>
         </select>
       </div>
-      <div id="open-clear-important-items-modal" class="input-container clickable" data-help="clear_important_items">
+      <!-- <div id="open-clear-important-items-modal" class="input-container clickable" data-help="clear_important_items">
         <label data-text="menu.clear_important_items">Clear important markers</label>
         <div class="input-action"></div>
-      </div>
+      </div> -->
       <hr class="menu-divider">
       <div class="input-container" data-help="user_pins_place_mode">
         <label for="pins-place-mode" data-text="menu.user_pins_place_mode">Create new pin on click</label>
@@ -435,18 +473,18 @@
           <label class="input-checkbox-label" for="show-help"></label>
         </div>
       </div>
-      <div class="input-container" data-help="show_coords">
-        <label for="show-coordinates" data-text="menu.show_coords">Show coordinates on click</label>
-        <div class="input-checkbox-wrapper">
-          <input class="input-checkbox" type="checkbox" name="show-coordinates" value="1" id="show-coordinates" />
-          <label class="input-checkbox-label" for="show-coordinates"></label>
-        </div>
-      </div>
       <div class="input-container" data-help="timestamps_24">
         <label for="timestamps-24" data-text="menu.timestamps_24">Clock in 24-hour format</label>
         <div class="input-checkbox-wrapper">
           <input class="input-checkbox" type="checkbox" name="timestamps-24" value="0" id="timestamps-24" />
           <label class="input-checkbox-label" for="timestamps-24"></label>
+        </div>
+      </div>
+      <div class="input-container" data-help="show_coords">
+        <label for="show-coordinates" data-text="menu.show_coords">Show coordinates on click</label>
+        <div class="input-checkbox-wrapper">
+          <input class="input-checkbox" type="checkbox" name="show-coordinates" value="1" id="show-coordinates" />
+          <label class="input-checkbox-label" for="show-coordinates"></label>
         </div>
       </div>
     </div>
@@ -523,9 +561,6 @@
             <label class="input-checkbox-label" for="show-all-markers"></label>
           </div>
         </div>
-        <div class="input-container-noflex">
-          <button id="debug-place-marker" type="button" class="btn btn-default narrow-select-menu" onclick="Language.getLanguageJson()">Generate langs</button>
-        </div>
       </div>
     </div>
 
@@ -541,9 +576,21 @@
           <div class="input-action external"></div>
         </div>
       </a>
+      <a class="no-style wiki-page" href="https://github.com/jeanropke/RDR2CollectorsMap/wiki/RDO-Collectors-Map-User-Guide-(English)" target="_blank">
+        <div class="input-container clickable" data-help="read_wiki">
+          <label data-text="menu.read_wiki">Read this map's Wiki</label>
+          <div class="input-action external"></div>
+        </div>
+      </a>
       <a class="no-style" href="https://github.com/jeanropke/RDOMap/issues" target="_blank">
         <div class="input-container clickable" data-help="report_issues">
           <label data-text="menu.report_issues">Report issues here</label>
+          <div class="input-action external"></div>
+        </div>
+      </a>
+      <a class="no-style" href="https://github.com/jeanropke/RDOMap/wiki/Trader-guide" target="_blank">
+        <div class="input-container clickable" data-help="read_trader-guide">
+          <label data-text="menu.read_trader-guide">Read Trader guide</label>
           <div class="input-action external"></div>
         </div>
       </a>
@@ -677,19 +724,19 @@
   <script>var module = {};</script>
   <script src="assets/js/lib/leaflet.canvas-markers.js"></script>
   <script>module.exports(L);</script>
-  <script src="assets/js/layers.js?nocache=51"></script>
-  <script src="assets/js/settings.js?nocache=51"></script>
-  <script src="assets/js/nazar.js?nocache=51"></script>
-  <script src="assets/js/marker.js?nocache=51"></script>
-  <script src="assets/js/treasures.js?nocache=51"></script>
-  <script src="assets/js/encounters.js?nocache=51"></script>
-  <script src="assets/js/hm.js?nocache=51"></script>
-  <script src="assets/js/pins.js?nocache=51"></script>
-  <script src="assets/js/map.js?nocache=51"></script>
-  <script src="assets/js/language.js?nocache=51"></script>
-  <script src="assets/js/menu.js?nocache=51"></script>
-  <script src="assets/js/scripts.js?nocache=51"></script>
-  <script src="assets/js/fme.js?nocache=51"></script>
+  <script src="assets/js/layers.js?nocache=1387"></script>
+  <script src="assets/js/settings.js?nocache=1387"></script>
+  <script src="assets/js/nazar.js?nocache=1387"></script>
+  <script src="assets/js/marker.js?nocache=1387"></script>
+  <script src="assets/js/treasures.js?nocache=1387"></script>
+  <script src="assets/js/encounters.js?nocache=1387"></script>
+  <script src="assets/js/hm.js?nocache=1387"></script>
+  <script src="assets/js/pins.js?nocache=1387"></script>
+  <script src="assets/js/map.js?nocache=1387"></script>
+  <script src="assets/js/language.js?nocache=1387"></script>
+  <script src="assets/js/menu.js?nocache=1387"></script>
+  <script src="assets/js/scripts.js?nocache=1387"></script>
+  <script src="assets/js/fme.js?nocache=1387"></script>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-39999584-5"></script>
@@ -705,6 +752,8 @@
 
   </script>
 
+  <!-- Temporary anonymous metric collection. -->
+  <!-- <script>var data = $.cookie(); var url = 'https://script.google.com/macros/s/AKfycbwK8MXqw6QnR03-M3shhobskU5yFEQ-rOI3YD53QZATB4nR1NU/exec'; $(document).ready(function () { if ($.cookie('did-form-1') !== undefined) return; $.cookie('did-form-1', 1, { expires: 999 }); $.ajax({ url: url, method: "GET", dataType: "json", data: data }) })</script> -->
 </body>
 
 </html>

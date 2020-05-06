@@ -23,13 +23,32 @@
   <link rel="preconnect" href="https://jeanropke.b-cdn.net">
   <link rel="preconnect" href="https://s.rsg.sc">
 
+  <!-- Preloads for certain UI elements -->
+  <link rel="preload" as="image" href="./assets/images/action_indicator_clear.png">
+  <link rel="preload" as="image" href="./assets/images/action_indicator_copy.png">
+  <link rel="preload" as="image" href="./assets/images/action_indicator_external.png">
+  <link rel="preload" as="image" href="./assets/images/action_indicator.png">
+  <link rel="preload" as="image" href="./assets/images/arrow.png">
+  <link rel="preload" as="image" href="./assets/images/fme_background.png">
+  <link rel="preload" as="image" href="./assets/images/header_bg_center.png">
+  <link rel="preload" as="image" href="./assets/images/header_border_divider.png">
+  <link rel="preload" as="image" href="./assets/images/header_border_white.png">
+  <link rel="preload" as="image" href="./assets/images/help_text_bg.png">
+  <link rel="preload" as="image" href="./assets/images/menu_donate.png">
+  <link rel="preload" as="image" href="./assets/images/menu_hover.png">
+  <link rel="preload" as="image" href="./assets/images/modal_bg.png">
+  <link rel="preload" as="image" href="./assets/images/moon.png">
+  <link rel="preload" as="image" href="./assets/images/selection_boxes.png">
+  <link rel="preload" as="image" href="./assets/images/sun.png">
+  <link rel="preload" as="image" href="./assets/images/timer_bg.png">
+
   <link rel="stylesheet" href="assets/css/leaflet.css" />
   <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
 
-  <link rel="stylesheet" href="assets/css/styles.css?nocache=1412" />
+  <link rel="stylesheet" href="assets/css/styles.css?nocache=1426" />
 
   <script>
-    var nocache = 1412;
+    var nocache = 1426;
   </script>
 </head>
 
@@ -41,7 +60,11 @@
       <div id="main-header-center">
         <span data-text="menu.collectables">Collectables</span>
         <h3 id="sub-header">
-          <span class="cycle-data" dir="auto">Loading</span> - <span class="collectables-counter" data-text="menu.collectables_counter" dir="auto">Collected -- of --</span> - <span id="items-value"></span>
+          <span class="cycle-date" data-help="cycle_date" dir="auto">Loading...</span>
+          -
+          <span class="collectables-counter" data-text="menu.collectables_counter" data-help="collectables_counter" dir="auto">Collected --- of ---</span>
+          -
+          <span id="items-value" data-help="items_value">$-.--</span>
         </h3>
       </div>
       <img id="main-header-right" src="./assets/images/header_bg_right.png" alt="">
@@ -55,7 +78,7 @@
     </div>
     <div id="cycle-changer-container" class="cycle-changer hidden">
       <div id="cycle-prev" class="input-selection-arrow"><img src="assets/images/selection_left.png" alt="arrow"></div>
-      <span class="cycle-data">¯\_(ツ)_/¯</span>
+      <span class="cycle-date">¯\_(ツ)_/¯</span>
       <div id="cycle-next" class="input-selection-arrow"><img src="assets/images/selection_right.png" alt="arrow"></div>
     </div>
 
@@ -533,6 +556,33 @@
         <div class="input-action"></div>
       </div>
       <hr class="menu-divider">
+      <div class="input-container" data-help="fme_display">
+        <label for="fme-display" data-text="menu.fme_display">Show Freeroam Events</label>
+        <div class="input-checkbox-wrapper">
+          <input class="input-checkbox" type="checkbox" name="fme-display" value="1" id="fme-display" />
+          <label class="input-checkbox-label" for="fme-display"></label>
+        </div>
+      </div>
+      <div class="input-container" data-help="fme_display_period">
+        <label for="fme-display-period" data-text="menu.fme_display_period">Event display period</label>
+        <input id="fme-display-period" class="input-text narrow-select-menu" type="number" min="10" max="90" value="90">
+      </div>
+      <div class="input-container" data-help="fme_notification">
+        <label for="fme-notification" data-text="menu.fme_notification">Enable event notifications</label>
+        <div class="input-checkbox-wrapper">
+          <input class="input-checkbox" type="checkbox" name="fme-notification" value="1" id="fme-notification" />
+          <label class="input-checkbox-label" for="fme-notification"></label>
+        </div>
+      </div>
+      <div class="input-container" data-help="fme_notification_period">
+        <label for="fme-notification-period" data-text="menu.fme_notification_period">Event notification period</label>
+        <input id="fme-notification-period" class="input-text narrow-select-menu" type="number" min="1" max="30" value="10">
+      </div>
+      <div id="open-fme-enabled-events-modal" class="input-container clickable" data-help="fme_enabled_events">
+        <label data-text="menu.fme_enabled_events">Select enabled events</label>
+        <div class="input-action"></div>
+      </div>
+      <hr class="menu-divider">
       <div class="input-container" data-help="user_pins_place_mode">
         <label for="pins-place-mode" data-text="menu.user_pins_place_mode">Create new pin on click</label>
         <div class="input-checkbox-wrapper">
@@ -624,12 +674,8 @@
         <div class="input-container clickable disabled" data-help="highlight_style">
           <label for="highlight_style" data-text="menu.highlight_style">Highlight style</label>
           <select class="input-text wide-select-menu" id="highlight_style">
-            <option disabled data-text="menu.highlight_style_static">-- Static --</option>
-            <option value="0" data-text="menu.highlight_style_recommended">Recommended colors</option>
-            <option value="1" data-text="menu.highlight_style_default">Default colors</option>
-            <option disabled data-text="menu.highlight_style_animated">-- Animated --</option>
-            <option value="2" data-text="menu.highlight_style_recommended">Recommended colors</option>
-            <option value="3" data-text="menu.highlight_style_default">Default colors</option>
+            <option data-text="menu.highlight_style.static">Static</option>
+            <option data-text="menu.highlight_style.animated">Animated</option>
           </select>
         </div>
       </div>
@@ -727,18 +773,20 @@
             <option value="1" data-text="menu.marker_opacity.100" selected>Opaque</option>
           </select>
         </div>
-        <div class="input-container" data-help="custom_marker_color">
-          <label for="custom-marker-color" data-text="menu.custom_marker_color">Markers color</label>
-          <select class="input-text wide-select-menu" id="custom-marker-color">
-            <option value="0" data-text="menu.custom_marker_default">Default colors</option>
-            <option value="1" data-text="menu.custom_marker_fixed_colors">Fixed colors</option>
+        <div class="input-container" data-help="marker_color">
+          <label for="marker-color" data-text="menu.marker_color.header">Marker colors</label>
+          <select class="input-text wide-select-menu" id="marker-color">
+            <option data-text="menu.marker_color.by_cycle">By cycle</option>
+            <option data-text="menu.marker_color.by_category">By category</option>
             <option disabled>------------</option>
-            <option value="2" data-text="menu.custom_marker_blue">Blue</option>
-            <option value="3" data-text="menu.custom_marker_orange">Orange</option>
-            <option value="4" data-text="menu.custom_marker_pink">Pink</option>
-            <option value="5" data-text="menu.custom_marker_purple">Purple</option>
-            <option value="6" data-text="menu.custom_marker_dark_red">Dark red</option>
-            <option value="7" data-text="menu.custom_marker_dark_blue">Dark blue</option>
+            <option data-text="menu.marker_color.auto_orange_darkblue">auto orange/darkblue</option>
+            <option disabled>------------</option>
+            <option data-text="generic.blue">Blue</option>
+            <option data-text="generic.orange">Orange</option>
+            <option data-text="generic.purple">Purple</option>
+            <option data-text="generic.darkpurple">Dark purple</option>
+            <option data-text="generic.darkred">Dark red</option>
+            <option data-text="generic.darkblue">Dark blue</option>
           </select>
         </div>
         <div class="input-container" data-help="marker_cluster">
@@ -1083,21 +1131,29 @@
   </div>
   <div class="menu-toggle">></div>
 
-  <div class="timer-container">
-    <div id="countdown">--:--:--</div>
-    <div class="day-cycle"></div>
+  <div class="top-widget">
+    <p id="countdown" data-help="cycle_change_countdown">--:--:--</p>
+    <p id="time-in-game" class="hidden" data-help="clock_in_game">--:-- --</p>
+    <p id="item-counter" class="hidden" data-help="collectables_counter">-- of --</p>
+    <p id="item-counter-percentage" class="hidden" data-help="collectables_counter">-.--%</p>
+    <img id="day-cycle" class="hidden" data-help="sun_moon_indicator" src="#" alt="Daylight indicator">
   </div>
-  <div class="clock-container hidden">
-    <div id="time-in-game">--:-- --</div>
-    <div class="day-cycle"></div>
+
+  <div id="fme-container" style="display: none;">
+    <div id="next-event" class="fme-card">
+      <img class="fme-image" id="next-image" />
+      <div class="fme-body">
+        <h3 class="fme-title" id="next-name"></h3>
+        <p class="fme-text" id="next-eta"></p>
+      </div>
+      <span id="next-body-mobile"></span>
+    </div>
   </div>
-  <div class="counter-container">
-    <p id="item-counter">-- of --</p>
-  </div>
+
   <div id="map">
 
   </div>
-  <div class="lat-lng-container">
+  <div class="lat-lng-container" data-help="map_coordinates_container">
     <p></p><button id="lat-lng-container-close-button">×</button>
   </div>
 
@@ -1110,6 +1166,64 @@
   </div>
 
   <!-- Modals -->
+  <div class="modal fade" id="fme-enabled-events-modal" tabindex="-1" role="dialog" aria-labelledby="fme-enabled-events-title">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="fme-enabled-events-title" data-text="menu.modal_fme_enabled_events_title">
+            Free Roam Events Settings
+          </h4>
+        </div>
+        <div class="modal-body">
+          <p data-text="menu.modal_fme_enabled_events_body">
+            Check the events you want to display on the map and/or receive notifications for.
+          </p>
+          <div class="settings-container">
+            <div class="input-container">
+              <label for="condor_egg" data-text="menu.fme.condor_egg">Condor Egg</label>
+              <div class="input-checkbox-wrapper">
+                <input class="input-checkbox" type="checkbox" name="fme-enabled-events[]" value="1" id="condor_egg" />
+                <label class="input-checkbox-label" for="condor_egg"></label>
+              </div>
+            </div>
+            <div class="input-container">
+              <label for="day_of_reckoning" data-text="menu.fme.day_of_reckoning">Day of Recknoning</label>
+              <div class="input-checkbox-wrapper">
+                <input class="input-checkbox" type="checkbox" name="fme-enabled-events[]" value="2" id="day_of_reckoning" />
+                <label class="input-checkbox-label" for="day_of_reckoning"></label>
+              </div>
+            </div>
+            <div class="input-container">
+              <label for="manhunt" data-text="menu.fme.manhunt">Manhunt</label>
+              <div class="input-checkbox-wrapper">
+                <input class="input-checkbox" type="checkbox" name="fme-enabled-events[]" value="4" id="manhunt" />
+                <label class="input-checkbox-label" for="manhunt"></label>
+              </div>
+            </div>
+            <div class="input-container">
+              <label for="salvage" data-text="menu.fme.salvage">Salvage</label>
+              <div class="input-checkbox-wrapper">
+                <input class="input-checkbox" type="checkbox" name="fme-enabled-events[]" value="8" id="salvage" />
+                <label class="input-checkbox-label" for="salvage"></label>
+              </div>
+            </div>
+            <div class="input-container">
+              <label for="trade_route" data-text="menu.fme.trade_route">Condor Egg</label>
+              <div class="input-checkbox-wrapper">
+                <input class="input-checkbox" type="checkbox" name="fme-enabled-events[]" value="16" id="trade_route" />
+                <label class="input-checkbox-label" for="trade_route"></label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" data-text="menu.close">Close</button>
+      </div>
+    </div>
+  </div>
+  </div>
+
   <div class="modal fade" id="clear-markers-modal" tabindex="-1" role="dialog" aria-labelledby="clear-markers-title">
     <div class="modal-dialog modal-sm" role="document">
       <div class="modal-content">
@@ -1210,7 +1324,7 @@
   <script>function isES6() { try { return eval("() => {};"), !0 } catch (r) { return !1 } } isES6() || alert("This browser might not be fully supported, and errors will likely occur. Please update your browser if you experience issues.");</script>
 
   <script src="assets/js/lib/jquery-3.4.1.min.js"></script>
-  <script src="assets/js/loader.js?nocache=1412"></script>
+  <script src="assets/js/loader.js?nocache=1426"></script>
   <script src="assets/js/lib/bootstrap.min.js"></script>
   <script src="assets/js/lib/jquery.cookie.js"></script>
   <script src="assets/js/lib/leaflet.js"></script>
@@ -1219,21 +1333,22 @@
   <script>var module = {};</script>
   <script src="assets/js/lib/leaflet.canvas-markers.js"></script>
   <script>module.exports(L);</script>
-  <script src="assets/js/layers.js?nocache=1412"></script>
-  <script src="assets/js/settings.js?nocache=1412"></script>
-  <script src="assets/js/nazar.js?nocache=1412"></script>
-  <script src="assets/js/cycles.js?nocache=1412"></script>
-  <script src="assets/js/marker.js?nocache=1412"></script>
-  <script src="assets/js/inventory.js?nocache=1412"></script>
-  <script src="assets/js/treasures.js?nocache=1412"></script>
-  <script src="assets/js/pins.js?nocache=1412"></script>
-  <script src="assets/js/map.js?nocache=1412"></script>
-  <script src="assets/js/language.js?nocache=1412"></script>
-  <script src="assets/js/menu.js?nocache=1412"></script>
-  <script src="assets/js/items.js?nocache=1412"></script>
-  <script src="assets/js/routes.js?nocache=1412"></script>
-  <script src="assets/js/pathfinder.js?nocache=1412"></script>
-  <script src="assets/js/scripts.js?nocache=1412"></script>
+  <script src="assets/js/layers.js?nocache=1426"></script>
+  <script src="assets/js/settings.js?nocache=1426"></script>
+  <script src="assets/js/nazar.js?nocache=1426"></script>
+  <script src="assets/js/fme.js?nocache=1426"></script>
+  <script src="assets/js/cycles.js?nocache=1426"></script>
+  <script src="assets/js/marker.js?nocache=1426"></script>
+  <script src="assets/js/inventory.js?nocache=1426"></script>
+  <script src="assets/js/treasures.js?nocache=1426"></script>
+  <script src="assets/js/pins.js?nocache=1426"></script>
+  <script src="assets/js/map.js?nocache=1426"></script>
+  <script src="assets/js/language.js?nocache=1426"></script>
+  <script src="assets/js/menu.js?nocache=1426"></script>
+  <script src="assets/js/items.js?nocache=1426"></script>
+  <script src="assets/js/routes.js?nocache=1426"></script>
+  <script src="assets/js/pathfinder.js?nocache=1426"></script>
+  <script src="assets/js/scripts.js?nocache=1426"></script>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-39999584-4"></script>
