@@ -29,11 +29,11 @@ var Encounters = {
     // var importantItem = ` | <a href="javascript:void(0)" onclick="MapBase.highlightImportantItem('${marker.text || marker.subdata}', '${marker.category}')">${Language.get('map.mark_important')}</a>`;
     // var linksElement = $('<p>').addClass('marker-popup-links').append(shareText).append(importantItem);
     var linksElement = $('<p>');
-    var debugDisplayLatLng = $('<small>').text(`Latitude: ${marker.lat} / Longitude: ${marker.lng}`);
+    var debugDisplayLatLng = $('<small>').text(`Text: ${marker.text} / Latitude: ${marker.lat} / Longitude: ${marker.lng}`);
 
-    return `<h1>${marker.title}</h1>
+    return `<h1>${Language.get(`map.${marker.category}.name`)}</h1>
         <span class="marker-content-wrapper">
-        <p>${popupContent}</p>
+        <p>${Language.get(`map.${marker.category}.desc`)}</p>
         </span>
         ${linksElement.prop('outerHTML')}
         ${Settings.isDebugEnabled ? debugDisplayLatLng.prop('outerHTML') : ''}
@@ -95,13 +95,12 @@ var Encounters = {
         return "orange";
       case "ambush":
         return "red";
-      case "people_in_need":
       case "runaway_wagon":
       case "hogtied_lawman":
       case "rescue":
         return "blue";
       case "fame_seeker":
-      case "hostile_conversation":
+      case "duel":
         return "lightgray";
       case "tree_map":
       case "treasure_hunter":
@@ -110,8 +109,12 @@ var Encounters = {
       case "dog_encounter":
       case "wounded_animal":
       case "rival_collector":
-      case "moonshiner_camp":
         return "purple";
+      case "moonshiner_camp":
+      case "moonshiner_destroy":
+      case "moonshiner_roadblock":
+      case "moonshiner_sabotage":
+        return "darkpurple";
       default:
         return "lightred";
     }

@@ -10,7 +10,7 @@ var Pins = {
 
   addPin: function (lat, lng, id = null, name = null, desc = null, icon = null, doSave = true) {
     if (lat === null || lat === undefined || lng === null || lng === undefined) return;
-    
+
     var pinAtPositionExists = this.pinsList.some(function (marker) { return marker._latlng.lat == lat && marker._latlng.lng == lng; });
     if (pinAtPositionExists) return;
 
@@ -148,7 +148,7 @@ var Pins = {
       alert(Language.get('alerts.nothing_to_export'));
       return;
     }
-    
+
     var element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
     element.setAttribute('download', filename);

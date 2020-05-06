@@ -206,6 +206,7 @@ select,
 }
 
 @media (max-width: 1024px) {
+
     .map-cycle-alert,
     .filter-alert {
         left: 2px;
@@ -215,6 +216,7 @@ select,
 }
 
 @media (min-width: 1025px) {
+
     .map-cycle-alert,
     .filter-alert {
         left: 50%;
@@ -256,50 +258,37 @@ select,
     margin-right: 5px;
 }
 
-#countdown,
-#item-counter,
-#time-in-game {
-    font-size: 16px;
-    user-select: none;
-    margin: auto 8px auto 0;
-}
-
-.timer-container,
-.clock-container {
-    position: fixed;
+.top-widget {
     z-index: 1010;
-    background: #111;
-    border: 1px solid #888;
-    color: #eee;
+    position: fixed;
     left: 40px;
-    top: 5px;
-    min-width: 50px;
-    height: 30px;
+    top: 3px;
+    height: 34px;
+    width: 130px;
+    background-image: url(../../assets/images/timer_bg.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    padding: 5px;
+    color: #fff;
+    text-align: center;
+    user-select: none;
     transition: all 200ms ease-out;
-    padding: 0 8px;
-    display: inline-flex;
-    cursor: pointer;
-    line-height: 28px;
 }
 
-.day-cycle {
+.top-widget>* {
+    display: inline-block;
+    line-height: 18px;
+}
+
+.top-widget>p {
+    margin-right: 2px !important;
+    cursor: pointer;
+}
+
+#day-cycle {
+    margin-top: -2px;
     width: 16px;
     height: 16px;
-    margin: auto 0 auto auto;
-}
-
-.counter-container {
-    position: fixed;
-    z-index: 1010;
-    background: #111;
-    border: 1px solid #888;
-    color: #eee;
-    left: 125px;
-    top: 5px;
-    width: 80px;
-    height: 30px;
-    transition: all 200ms ease-out;
-    display: none;
 }
 
 .white-line-divider {
@@ -453,6 +442,7 @@ select,
     height: 100%;
     border-radius: 3px;
     margin-left: 6px;
+    text-overflow: ellipsis;
 }
 
 .input-container-noflex .input-text {
@@ -660,6 +650,8 @@ select,
 .side-menu .collectible,
 .input-container label {
     line-height: 24px;
+    width: 100%;
+    text-align: left;
 }
 
 .same-cycle-warning-menu {
@@ -734,6 +726,7 @@ a.wiki-page:visited {
     from {
         opacity: 0.0;
     }
+
     to {
         opacity: var(--animation-target-opacity);
     }
@@ -844,7 +837,7 @@ a.wiki-page:visited {
     margin: 10px 0;
 }
 
-#cycle-changer-container .cycle-data {
+#cycle-changer-container .cycle-date {
     text-align: center;
     min-width: 170px;
     margin: 0 6px;
@@ -1041,9 +1034,16 @@ a.no-style:visited {
     padding: 2px 12px;
 }
 
+.weekly-item-listing .icon-wrapper {
+    height: 28px;
+    min-width: 28px;
+    margin-right: 10px;
+    text-align: center;
+    float: left;
+}
+
 .weekly-item-listing .icon {
     height: 28px;
-    margin-right: 10px;
 }
 
 .weekly-item-listing span {
@@ -1059,21 +1059,18 @@ a.no-style:visited {
     user-select: none;
 }
 
-.modal-content {
-    background: url(../images/modal_bg_long.png);
-    background-size: 100% 100% !important;
-    background-repeat: no-repeat !important;
-    -webkit-box-shadow: none !important;
-    box-shadow: none !important;
-    border: none !important;
-}
-
-.modal-sm .modal-content {
+.modal-dialog.modal-sm {
     background: url(../images/modal_bg.png);
     background-repeat: no-repeat !important;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+.modal-content {
+    border: none !important;
+    background: transparent !important;
     -webkit-box-shadow: none !important;
     box-shadow: none !important;
-    border: none !important;
 }
 
 .modal-header,
@@ -1098,6 +1095,10 @@ a.no-style:visited {
     padding-top: 0;
 }
 
+.modal-body .settings-container {
+    margin-top: 15px;
+}
+
 .modal-footer {
     padding-bottom: 60px;
 }
@@ -1107,6 +1108,7 @@ a.no-style:visited {
         text-align: center;
         padding: 0 !important;
     }
+
     .modal:before {
         content: '';
         display: inline-block;
@@ -1115,11 +1117,13 @@ a.no-style:visited {
         margin-right: -4px;
         /* Adjusts for spacing */
     }
+
     .modal-dialog {
         display: inline-block;
         text-align: left;
         vertical-align: middle;
     }
+
     .modal-sm {
         width: 450px;
     }
@@ -1150,20 +1154,22 @@ a.no-style:visited {
 }
 
 @media (max-width: 1024px) {
-    .timer-menu-opened {
-        display: none;
+
+    .top-widget-menu-opened,
+    .fme-menu-opened {
+        display: none !important;
     }
-    .counter-menu-opened {
-        display: none;
-    }
+
     .side-menu .menu-hidden .collectible-icon {
         margin-top: 7px;
     }
+
     .counter-button {
         height: 32px;
         width: 32px;
         line-height: 1.5;
     }
+
     .side-menu .menu-hidden .collectible,
     .input-container label {
         line-height: 38px;
@@ -1176,14 +1182,13 @@ a.no-style:visited {
         left: -390px;
         top: 0;
     }
+
     .menu-opened {
         left: 0;
     }
-    .timer-menu-opened {
+
+    .top-widget-menu-opened {
         left: 395px;
-    }
-    .counter-menu-opened {
-        left: 410px;
     }
 }
 
@@ -1320,4 +1325,84 @@ a.no-style:visited {
 
 .donate-form .input-text {
     margin: auto 0 auto auto;
+}
+
+/* Freemode Events */
+
+#fme-container {
+    position: absolute;
+    left: 5px;
+    bottom: 25px;
+    z-index: 990;
+    user-select: none;
+    transition: all 200ms ease-out;
+}
+
+#fme-container.fme-menu-opened {
+    left: 395px;
+}
+
+#fme-container .fme-card {
+    display: flex;
+    align-items: center;
+    background-image: url(../../assets/images/fme_background.png);
+    background-size: 100% 100%;
+    padding: 25px;
+    width: 400px;
+    max-width: 400px;
+    color: #fff;
+}
+
+#fme-container .fme-card .fme-image {
+    margin-right: 12px;
+}
+
+#fme-container .fme-card .fme-body {
+    flex-grow: 1;
+}
+
+#fme-container .fme-card .fme-body .fme-title {
+    font-family: RDRLino, serif;
+    color: #7b66af;
+    margin: 0;
+    text-align: left;
+    font-size: 20px;
+}
+
+#fme-container .fme-card .fme-body .fme-text {
+    margin: 0;
+    text-align: left;
+}
+
+#fme-container .fme-card #next-body-mobile {
+    display: none;
+}
+
+#fme-container .fme-card .fme-body {
+    display: block;
+}
+
+@media (max-width: 1024px) {
+    #fme-container {
+        right: 50px;
+    }
+
+    #fme-container .fme-card {
+        padding: 10px 20px 10px 10px;
+        width: initial;
+    }
+
+    #fme-container .fme-card #next-body-mobile {
+        display: block;
+    }
+
+    #fme-container .fme-card .fme-body {
+        display: none;
+    }
+
+    #fme-container .fme-card .fme-image {
+        width: 32px;
+        height: auto;
+        margin-right: 8px;
+    }
 }

@@ -139,6 +139,64 @@ class Marker {
       enabledCategories.includes(this.category);
   }
 
+  colorUrls() {
+    const url = ([base, contour]) => [
+      `assets/images/icons/marker_${base}.png`,
+      `assets/images/icons/contours/contour_marker_${contour}.png`,
+    ];
+    const markerColor = Settings.markerColor;
+    if (markerColor.startsWith('auto')) {
+      const [, normal, dark] = markerColor.split('_');
+      return url(MapBase.isDarkMode ? [dark, normal] : [normal, dark]);
+    }
+
+    let base;
+    if (this.isWeekly) {
+      base = 'green';
+    } else if (this.category === 'random') {
+      base = markerColor === 'by_category' && this.tool == 2 ? 'black' : 'lightgray';
+    } else if (markerColor === 'by_category') {
+      base = {
+        flower: 'darkred',
+        cups: 'blue',
+        swords: 'blue',
+        wands: 'blue',
+        pentacles: 'blue',
+        bracelet: 'beige',
+        necklace: 'orange',
+        ring: 'orange',
+        earring: 'orange',
+        bottle: 'cadetblue',
+        egg: 'white',
+        arrowhead: 'darkpurple',
+        heirlooms: 'purple',
+        coin: 'lightred'
+      } [this.category] || 'lightred';
+    } else if (markerColor === 'by_cycle') {
+      base = ['blue', 'orange', 'purple', 'darkpurple', 'darkred',
+        'darkblue'
+      ][+this.cycleName - 1] || 'lightred';
+    } else {
+      base = markerColor;
+    }
+    const contour = {
+      beige: 'darkblue',
+      black: 'white',
+      blue: 'orange',
+      cadetblue: 'lightred',
+      darkblue: 'red',
+      darkgreen: 'purple',
+      darkpurple: 'green',
+      darkred: 'blue',
+      green: 'pink',
+      lightred: 'cadetblue',
+      orange: 'lightblue',
+      purple: 'lightgreen',
+      white: 'gray'
+    } [base] || 'darkblue';
+    return url([base, contour]);
+  }
+
   popupContent() {
     const unknownCycle = this.cycleName == Cycles.unknownCycleNumber;
     const snippet = $(`<div class="handover-wrapper-with-no-influence">
@@ -184,16 +242,16 @@ class Marker {
 
     snippet.find('.marker-popup-links')
       .find('[data-text="map.copy_link"]')
-        .click((e) => {
-          e.preventDefault();
-          setClipboardText(`https://jeanropke.github.io/RDR2CollectorsMap/?m=${this.text}`);
-        })
+      .click((e) => {
+        e.preventDefault();
+        setClipboardText(`https://jeanropke.github.io/RDR2CollectorsMap/?m=${this.text}`);
+      })
       .end()
       .find('[data-text="map.mark_important"]')
-        .click((e) => {
-          e.preventDefault();
-          MapBase.highlightImportantItem(this.text, this.category);
-        });
+      .click((e) => {
+        e.preventDefault();
+        MapBase.highlightImportantItem(this.text, this.category);
+      });
     snippet.find('.remove-button').click(() =>
       MapBase.removeItemFromMap(this.cycleName, this.text, this.subdata || '', this.category));
     if (!Cycles.isSameAsYesterday(this.category) && !unknownCycle) {
@@ -222,17 +280,101 @@ class Marker {
     const inventoryButtons = snippet.find('.marker-popup-buttons')
     if (InventorySettings.isEnabled && InventorySettings.isPopupsEnabled &&
       this.category !== 'random') {
-        inventoryButtons.find('small')
-          .toggleClass('text-danger', this.item.amount >= InventorySettings.stackSize)
-          .attr('data-item', this.text)
-          .text(this.item.amount);
-        inventoryButtons.find('button').click(e =>
-          Inventory.changeMarkerAmount(this.legacyItemId,
-            $(e.target).hasClass('btn-danger') ? -1 : 1));
+      inventoryButtons.find('small')
+        .toggleClass('text-danger', this.item.amount >= InventorySettings.stackSize)
+        .attr('data-item', this.text)
+        .text(this.item.amount);
+      inventoryButtons.find('button').click(e =>
+        Inventory.changeMarkerAmount(this.legacyItemId,
+          $(e.target).hasClass('btn-danger') ? -1 : 1));
     } else {
-        inventoryButtons.hide();
+      inventoryButtons.hide();
     }
 
     return Language.translateDom(snippet)[0];
+  }
+  updateColor() {
+    if (!this.lMarker) return;
+    const [bgUrl, contourUrl] = this.colorUrls();
+    $(this.lMarker.getElement())
+      .find('img.marker-contour').attr('src', contourUrl)
+      .end()
+      .find('img.background').attr('src', bgUrl);
+  }
+  recreateLMarker(opacity = Settings.markerOpacity, markerSize = Settings.markerSize) {
+    const icon = this.category !== 'random' ? this.category :
+      (this.tool == 1 ? 'shovel' : 'magnet');
+    const [bgUrl, contourUrl] = this.colorUrls();
+    const aii = 'assets/images/icons';
+    const snippet = $(`<div>
+      <img class="overlay" src="${aii}/overlay_cross.png" alt="crossed out">
+      <img class="marker-contour" src="${contourUrl}" alt="markerContour">
+      <img class="icon" src="${aii}/${icon}.png" alt="Icon">
+      <img class="background" src="${bgUrl}" alt="Background">
+      <img class="shadow" width="${35 * markerSize}"
+        height="${16 * markerSize}" src="./assets/images/markers-shadow.png" alt="Shadow">
+    </div>`);
+
+    Settings.isShadowsEnabled || snippet.find('.shadow').remove();
+    {
+      let detail = false;
+      if (this.tool == '-1') {
+        detail = ['cross', 'crossed out'];
+      } else if (['flower_agarita', 'flower_blood_flower'].includes(this.itemId)) {
+        detail = ['time', 'timed'];
+      } else if (this.height == '1') {
+        detail = ['high', 'high ground'];
+      } else if (this.height == '-1') {
+        detail = ['low', 'underground/low ground'];
+      }
+      const extra = snippet.find('.overlay');
+      detail ?
+        extra.attr('src', `${aii}/overlay_${detail[0]}.png`).attr('alt', detail[1]) :
+        extra.remove();
+    }
+
+    this.lMarker = L.marker([this.lat, this.lng], {
+      opacity: this.canCollect ? opacity : opacity / 3,
+      icon: new L.DivIcon.DataMarkup({
+        iconSize: [35 * markerSize, 45 * markerSize],
+        iconAnchor: [17 * markerSize, 42 * markerSize],
+        popupAnchor: [0 * markerSize, -28 * markerSize],
+        html: snippet[0],
+        marker: this.text
+      })
+    });
+
+    this.lMarker.id = this.text;
+
+    if (Settings.isPopupsEnabled) {
+      this.lMarker.bindPopup(this.popupContent.bind(this), { minWidth: 300, maxWidth: 400 });
+    }
+
+    this.lMarker.on('click', e => {
+      if (!Settings.isPopupsEnabled) {
+        MapBase.removeItemFromMap(this.day, this.text, this.subdata || '', this.category);
+      }
+
+      Routes.addMarkerOnCustomRoute(this.text);
+      if (RouteSettings.customRouteEnabled) e.target.closePopup();
+    });
+
+    this.lMarker.on('contextmenu', () => {
+      MapBase.removeItemFromMap(this.day, this.text, this.subdata || '', this.category);
+    });
+  }
+  static init() {
+    [
+      [Settings, 'markerColor', 'by_cycle', '#marker-color'],
+      [InventorySettings, 'highlightStyle', 'animated', '#highlight_style'],
+    ].forEach(([proxy, settingName, settingDefault, domSelector]) => {
+      SettingProxy.addSetting(proxy, settingName, { default: settingDefault });
+      $(domSelector)
+        .find(`option[data-text$="${proxy[settingName]}"]`).prop('selected', true).end()
+        .on('change', e => {
+          proxy[settingName] = $(e.target.selectedOptions[0]).attr('data-text').split('.').pop();
+          MapBase.addMarkers();
+        });
+    });
   }
 }

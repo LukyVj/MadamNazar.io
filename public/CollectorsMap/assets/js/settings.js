@@ -120,13 +120,17 @@ const Settings = SettingProxy.createSettingProxy('main');
 Object.entries({
   alertClosed: { default: false },
   baseLayer: { default: 'map.layers.default' },
+  fmeDisplayPeriod: { default: 60 },
+  fmeEnabledEvents: { default: 31 },
+  fmeNotificationPeriod: { default: 10 },
   isClock24Hour: { default: false },
-  isClockVisible: { default: false },
   isCoordsOnClickEnabled: { default: false },
   isCycleChangerEnabled: { default: false },
   isCycleInputEnabled: { default: false },
   isDebugEnabled: { default: false },
   isDoubleClickZoomEnabled: { default: true },
+  isFmeDisplayEnabled: { default: true },
+  isFmeNotificationEnabled: { default: false },
   isMarkerClusterEnabled: { default: true },
   isMenuOpened: { default: false },
   isPinsEditingEnabled: { default: true },
@@ -135,7 +139,6 @@ Object.entries({
   isPopupsHoverEnabled: { default: false },
   isRightClickEnabled: { default: false },
   isShadowsEnabled: { default: true },
-  markerCustomColor: { default: 0 },
   markerOpacity: { default: 1 },
   markerSize: { default: 1 },
   overlayOpacity: { default: 0.5 },
@@ -149,13 +152,13 @@ Object.entries({
   showWeeklySettings: { default: true },
   sortItemsAlphabetically: { default: false },
   toolType: { default: 3 },
+  topWidgetState: { default: 0 },
 }).forEach(([name, config]) => SettingProxy.addSetting(Settings, name, config));
 
 // Inventory settings
 const InventorySettings = SettingProxy.createSettingProxy('inventory');
 Object.entries({
   highlightLowAmountItems: { default: false },
-  highlightStyle: { default: 2 },
   isEnabled: { default: false },
   isMenuUpdateEnabled: { default: true },
   isPopupsEnabled: { default: true },

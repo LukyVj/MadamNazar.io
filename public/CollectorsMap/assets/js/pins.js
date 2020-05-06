@@ -8,7 +8,7 @@ var Pins = {
       this.loadAllPins();
   },
 
-  addPin: function (lat, lng, id = null, name = null, desc = null, icon = null, doSave = true) {
+  addPin: function (lat, lng, id = null, name = null, desc = null, icon = null, doSave = true, markerSize = Settings.markerSize) {
     if (lat === null || lat === undefined || lng === null || lng === undefined) return;
 
     var pinAtPositionExists = this.pinsList.some(function (marker) {
@@ -25,10 +25,10 @@ var Pins = {
       icon_name: icon,
       draggable: Settings.isPinsEditingEnabled,
       icon: L.divIcon({
-        iconSize: [35 * Settings.markerSize, 45 * Settings.markerSize],
-        iconAnchor: [17 * Settings.markerSize, 42 * Settings.markerSize],
-        popupAnchor: [0 * Settings.markerSize, -28 * Settings.markerSize],
-        shadowAnchor: [10 * Settings.markerSize, 12 * Settings.markerSize],
+        iconSize: [35 * markerSize, 45 * markerSize],
+        iconAnchor: [17 * markerSize, 42 * markerSize],
+        popupAnchor: [0 * markerSize, -28 * markerSize],
+        shadowAnchor: [10 * markerSize, 12 * markerSize],
         html:
             `<img class="icon" src="./assets/images/icons/${icon}.png" alt="Icon">
             <img class="background" src="./assets/images/icons/marker_red.png" alt="Background">
@@ -121,7 +121,7 @@ var Pins = {
       <p id="${markerId}_desc">${marker.options.desc}</p>`;
 
     if (Settings.isPinsEditingEnabled) {
-      var markerIcons = ["pin", "random", "shovel", "magnet", "flower", "bottle", "arrowhead", "egg", "cups", "pentacles", "swords", "wands", "coin", "heirlooms", "fast_travel", "bracelet", "earring", "necklace", "ring", "nazar", "treasure"];
+      var markerIcons = ["pin", "random", "shovel", "magnet", "flower", "bottle", "arrowhead", "egg", "cups", "pentacles", "swords", "wands", "coin", "heirlooms", "fast_travel", "bracelet", "earring", "necklace", "ring", "nazar", "treasure", "camp"];
       var markerIconSelect = $('<select>').attr('id', `${markerId}_icon`).addClass('marker-popup-pin-input-icon');
 
       markerIcons.forEach(icon => {
