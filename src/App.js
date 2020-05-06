@@ -72,6 +72,29 @@ const bannerStyles = {
     `,
 };
 
+const AdBlock = () => (
+  <div
+    css={css`
+      position: relative;
+      margin: auto;
+    `}
+  >
+    <script
+      async
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+    ></script>
+    <ins
+      className="adsbygoogle"
+      style={{ display: "block" }}
+      data-ad-client="ca-pub-2046602277842498"
+      data-ad-slot="7948800993"
+      data-ad-format="auto"
+      data-full-width-responsive="true"
+    ></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+);
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -185,6 +208,8 @@ class App extends Component {
             offsetTop={this.state.showPatreonAd}
           />
           <Navigation parent={this} navOpen={this.state.navOpen} />
+
+          <AdBlock />
 
           {this.state.extraSupport === 1 && (
             <div className="ta-center" css={bannerStyles.root}>
