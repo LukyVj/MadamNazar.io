@@ -191,15 +191,9 @@ class App extends Component {
 
   render() {
     const dataExists = this.state.data && this.state.data.location;
+
     return dataExists ? (
       <Router>
-        <Helmet>
-          <script
-            data-ad-client="ca-pub-2046602277842498"
-            async
-            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
-          ></script>
-        </Helmet>
         <URLHandler parent={this} />
         <div className="App" css={styles.root}>
           <Frame
