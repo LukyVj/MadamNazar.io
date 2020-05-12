@@ -23,10 +23,10 @@
 
   <link rel="stylesheet" href="assets/css/leaflet.css" />
   <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="assets/css/styles.css?nocache=1387" />
+  <link rel="stylesheet" href="assets/css/styles.css?nocache=1399" />
 
   <script>
-    var nocache = 1387;
+    var nocache = 1399;
   </script>
 </head>
 
@@ -85,18 +85,25 @@
       </div>
     </div>
     <div>
-      <div class="menu-option clickable" data-type="daily_locations" data-help="item_category">
+      <div class="menu-option clickable" data-type="camps" data-help="item_category">
         <span>
-          <img class="icon" src="./assets/images/icons/daily_locations.png" />
-          <span data-text="map.daily_locations.name">Daily challenge locations</span>
+          <img class="icon" src="./assets/images/icons/camps.png" />
+          <span data-text="menu.camps">Player Camps</span>
         </span>
+        <div class="open-submenu"></div>
+      </div>
+      <div class="menu-hidden two-column" data-type="camps">
+        <div class="collection-value">
+          <a data-text="menu.hide_all" href="javascript:void(0);" onclick="Menu.showHideAllCamps(true)">Hide all</a>
+          <a data-text="menu.show_all" href="javascript:void(0);" onclick="Menu.showHideAllCamps(false)">Show all</a>
+        </div>
       </div>
     </div>
     <div>
       <div class="menu-option clickable" data-type="plants" data-help="item_category">
         <span>
           <img class="icon" src="./assets/images/icons/plants.png" />
-          <span data-text="map.plants">Plants</span>
+          <span data-text="menu.plants">Plants</span>
         </span>
         <div class="open-submenu"></div>
       </div>
@@ -111,7 +118,7 @@
       <div class="menu-option clickable" data-type="shops" data-help="item_category">
         <span>
           <img class="icon" src="./assets/images/icons/fence.png" />
-          <span data-text="map.shops">Shops</span>
+          <span data-text="menu.shops">Shops</span>
         </span>
         <div class="open-submenu" style="margin: auto 0 auto auto;"></div>
       </div>
@@ -122,6 +129,7 @@
         </div>
       </div>
     </div>
+
     <div>
       <div class="menu-option submenu-only" data-help="item_category_submenu">
         <span>
@@ -137,6 +145,12 @@
             <p class="collectible" data-text="menu.ambush">Ambush</p>
           </span>
         </div>
+        <div class="collectible-wrapper clickable" data-type="animal_attack" data-help="item">
+          <img src="./assets/images/icons/animal_attack.png" class="collectible-icon random-encounter" />
+          <span class="collectible-text">
+            <p class="collectible" data-text="menu.animal_attack">Animal Attack</p>
+          </span>
+        </div>
         <div class="collectible-wrapper clickable" data-type="defend_campsite" data-help="item">
           <img src="./assets/images/icons/defend_campsite.png" class="collectible-icon random-encounter" />
           <span class="collectible-text">
@@ -147,6 +161,12 @@
           <img src="./assets/images/icons/dog_encounter.png" class="collectible-icon random-encounter" />
           <span class="collectible-text">
             <p class="collectible" data-text="menu.dog_encounter">Dog Encounter</p>
+          </span>
+        </div>
+        <div class="collectible-wrapper clickable" data-type="duel" data-help="item">
+          <img src="./assets/images/icons/duel.png" class="collectible-icon random-encounter" />
+          <span class="collectible-text">
+            <p class="collectible" data-text="menu.duel">Duel</p>
           </span>
         </div>
         <div class="collectible-wrapper clickable" data-type="egg_encounter" data-help="item">
@@ -179,34 +199,10 @@
             <p class="collectible" data-text="menu.hogtied_lawman">Hogtied Lawman</p>
           </span>
         </div>
-        <div class="collectible-wrapper clickable" data-type="duel" data-help="item">
-          <img src="./assets/images/icons/duel.png" class="collectible-icon random-encounter" />
+        <div class="collectible-wrapper clickable" data-type="kidnapped" data-help="item">
+          <img src="./assets/images/icons/kidnapped.png" class="collectible-icon random-encounter" />
           <span class="collectible-text">
-            <p class="collectible" data-text="menu.duel">Duel</p>
-          </span>
-        </div>
-        <div class="collectible-wrapper clickable" data-type="moonshiner_camp" data-help="item">
-          <img src="./assets/images/icons/moonshiner_camp.png" class="collectible-icon random-encounter" />
-          <span class="collectible-text">
-            <p class="collectible" data-text="menu.moonshiner_camp">Camp (Moonshiners)</p>
-          </span>
-        </div>
-        <div class="collectible-wrapper clickable" data-type="moonshiner_destroy" data-help="item">
-          <img src="./assets/images/icons/moonshiner_destroy.png" class="collectible-icon random-encounter" />
-          <span class="collectible-text">
-            <p class="collectible" data-text="menu.moonshiner_destroy">Destroy (Moonshiners)</p>
-          </span>
-        </div>
-        <div class="collectible-wrapper clickable" data-type="moonshiner_roadblock" data-help="item">
-          <img src="./assets/images/icons/moonshiner_roadblock.png" class="collectible-icon random-encounter" />
-          <span class="collectible-text">
-            <p class="collectible" data-text="menu.moonshiner_roadblock">Roadblock (Moonshiners)</p>
-          </span>
-        </div>
-        <div class="collectible-wrapper clickable" data-type="moonshiner_sabotage" data-help="item">
-          <img src="./assets/images/icons/moonshiner_sabotage.png" class="collectible-icon random-encounter" />
-          <span class="collectible-text">
-            <p class="collectible" data-text="menu.moonshiner_sabotage">Sabotage (Moonshiners)</p>
+            <p class="collectible" data-text="menu.kidnapped">Kidnapping</p>
           </span>
         </div>
         <div class="collectible-wrapper clickable" data-type="rescue" data-help="item">
@@ -243,6 +239,42 @@
           <img src="./assets/images/icons/wounded_animal.png" class="collectible-icon random-encounter" />
           <span class="collectible-text">
             <p class="collectible" data-text="menu.wounded_animal">Wounded Animal</p>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="menu-option submenu-only" data-help="item_category_submenu">
+        <span>
+          <img class="icon" src="./assets/images/icons/moonshiner.png">
+          <span data-text="menu.moonshiner_missions">Moonshiner Missions</span>
+        </span>
+        <div class="open-submenu" style="margin: auto 0 auto auto;"></div>
+      </div>
+      <div id="moonshiner_missions" class="menu-hidden">
+        <div class="collectible-wrapper clickable" data-type="moonshiner_camp" data-help="item">
+          <img src="./assets/images/icons/moonshiner_camp.png" class="collectible-icon random-encounter" />
+          <span class="collectible-text">
+            <p class="collectible" data-text="menu.moonshiner_camp">Moonshiner Camp</p>
+          </span>
+        </div>
+        <div class="collectible-wrapper clickable" data-type="moonshiner_destroy" data-help="item">
+          <img src="./assets/images/icons/moonshiner_destroy.png" class="collectible-icon random-encounter" />
+          <span class="collectible-text">
+            <p class="collectible" data-text="menu.moonshiner_destroy">Bootlegger - Destroy</p>
+          </span>
+        </div>
+        <div class="collectible-wrapper clickable" data-type="moonshiner_roadblock" data-help="item">
+          <img src="./assets/images/icons/moonshiner_roadblock.png" class="collectible-icon random-encounter" />
+          <span class="collectible-text">
+            <p class="collectible" data-text="menu.moonshiner_roadblock">Bootlegger - Roadblock</p>
+          </span>
+        </div>
+        <div class="collectible-wrapper clickable" data-type="moonshiner_sabotage" data-help="item">
+          <img src="./assets/images/icons/moonshiner_sabotage.png" class="collectible-icon random-encounter" />
+          <span class="collectible-text">
+            <p class="collectible" data-text="menu.moonshiner_sabotage">Bootlegger - Sabotage</p>
           </span>
         </div>
       </div>
@@ -315,6 +347,14 @@
           <a data-text="menu.hide_all" href="javascript:void(0);" onclick="Treasures.showHideAll(true)">Hide all</a>
           <a data-text="menu.show_all" href="javascript:void(0);" onclick="Treasures.showHideAll(false)">Show all</a>
         </div>
+      </div>
+    </div>
+    <div>
+      <div class="menu-option clickable" data-type="daily_locations" data-help="item_category">
+        <span>
+          <img class="icon" src="./assets/images/icons/daily_locations.png" />
+          <span data-text="menu.daily_locations.name">Daily Challenge Locations</span>
+        </span>
       </div>
     </div>
     <div>
@@ -724,19 +764,19 @@
   <script>var module = {};</script>
   <script src="assets/js/lib/leaflet.canvas-markers.js"></script>
   <script>module.exports(L);</script>
-  <script src="assets/js/layers.js?nocache=1387"></script>
-  <script src="assets/js/settings.js?nocache=1387"></script>
-  <script src="assets/js/nazar.js?nocache=1387"></script>
-  <script src="assets/js/marker.js?nocache=1387"></script>
-  <script src="assets/js/treasures.js?nocache=1387"></script>
-  <script src="assets/js/encounters.js?nocache=1387"></script>
-  <script src="assets/js/hm.js?nocache=1387"></script>
-  <script src="assets/js/pins.js?nocache=1387"></script>
-  <script src="assets/js/map.js?nocache=1387"></script>
-  <script src="assets/js/language.js?nocache=1387"></script>
-  <script src="assets/js/menu.js?nocache=1387"></script>
-  <script src="assets/js/scripts.js?nocache=1387"></script>
-  <script src="assets/js/fme.js?nocache=1387"></script>
+  <script src="assets/js/layers.js?nocache=1399"></script>
+  <script src="assets/js/settings.js?nocache=1399"></script>
+  <script src="assets/js/nazar.js?nocache=1399"></script>
+  <script src="assets/js/marker.js?nocache=1399"></script>
+  <script src="assets/js/treasures.js?nocache=1399"></script>
+  <script src="assets/js/encounters.js?nocache=1399"></script>
+  <script src="assets/js/hm.js?nocache=1399"></script>
+  <script src="assets/js/pins.js?nocache=1399"></script>
+  <script src="assets/js/map.js?nocache=1399"></script>
+  <script src="assets/js/language.js?nocache=1399"></script>
+  <script src="assets/js/menu.js?nocache=1399"></script>
+  <script src="assets/js/scripts.js?nocache=1399"></script>
+  <script src="assets/js/fme.js?nocache=1399"></script>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-39999584-5"></script>

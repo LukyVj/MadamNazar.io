@@ -130,7 +130,7 @@
         { "text": "fort_wallace", "lat": "-40.8281", "lng": "116.8594" },
         { "text": "van_horn", "lat": "-55.5469", "lng": "157.2422" },
         { "text": "macfarlanes_ranch", "lat": "-100.9297", "lng": "74.6172" }
-    ],
+	],
 	"plants": {
 		"alaskan_ginseng": [
 			{ "lat": "-48.2218", "lng": "111.1274" },
