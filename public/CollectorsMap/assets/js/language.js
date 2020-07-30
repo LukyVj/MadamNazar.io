@@ -1,14 +1,17 @@
 jQuery.fn.translate = function () {
   return Language.translateDom(this);
 };
+jQuery.fn.findWithSelf = function(...args) {
+  return this.pushStack(this.find(...args).add(this.filter(...args)));
+};
 
-var Language = {
+const Language = {
   data: {},
   availableLanguages: ['en', 'af', 'ar', 'ca', 'cs', 'da', 'de', 'el', 'en-GB', 'es', 'fi', 'fr', 'he', 'hu', 'it', 'ja', 'ko', 'no', 'pl', 'pt', 'pt-BR', 'ro', 'ru', 'sr', 'sv', 'th', 'tr', 'uk', 'vi', 'zh-Hans', 'zh-Hant'],
 
   init: function () {
     'use strict';
-    let langs = ['en'];
+    const langs = ['en'];
 
     if (Settings.language !== 'en') {
       langs.push(Settings.language);
@@ -22,7 +25,7 @@ var Language = {
         success: function (json) {
           let result = {};
 
-          for (let propName in json) {
+          for (const propName in json) {
             if (json[propName] !== "" && ($.isEmptyObject(Language.data.en) || Language.data.en[propName] !== json[propName])) {
               result[propName] = json[propName];
             }
@@ -39,6 +42,7 @@ var Language = {
     'Discord': ['https://discord.gg/WWru8cP', 'Discord'],
     'int.nazar.link': ['https://twitter.com/MadamNazarIO', '@MadamNazarIO'],
     'int.random_spot.link': ['https://github.com/jeanropke/RDR2CollectorsMap/wiki/Random-Item-Possible-Loot'],
+    'int.naturalist_faq.link': ['https://github.com/jeanropke/RDR2CollectorsMap/wiki/Naturalist-Update-Changes'],
   },
 
   _externalLink: function (key) {
@@ -58,11 +62,7 @@ var Language = {
     } else if (transKey === 'int.end.link') {
       translation = '</a>';
     } else if (transKey === 'collection') {
-      transKey = `weekly.desc.${Collection.weeklySetName}`;
-    } else if (transKey === 'weekly_flavor') {
-      transKey = `weekly.flavor.${Collection.weeklySetName}`;
-    } else if (['count', 'max', 'minutes', 'time'].includes(transKey)) {
-      return `{${transKey}}`;
+      transKey = `weekly.desc.${Weekly.current.weeklyId}`;
     }
 
     translation =
@@ -71,13 +71,15 @@ var Language = {
       Language.data.en[transKey] ||
       (optional ? '' : transKey);
 
-    return translation.replace(/\{([\w.]+)\}/g, (full, key) =>
-      this.get(key, true) || `{${key}}`);
+    return translation.replace(/\{([\w.]+)\}/g, (full, key) => {
+      const translation = this.get(key);
+      return translation === key ? `{${key}}` : translation;
+    });
   },
 
   translateDom: function (context) {
     'use strict';
-    $('[data-text]', context).html(function () {
+    $(context || document).findWithSelf('[data-text]').html(function () {
       const $this = $(this);
       const string = Language.get($this.attr('data-text'), $this.data('text-optional'));
 
@@ -98,7 +100,7 @@ var Language = {
         success: function (json) {
           let result = {};
 
-          for (let propName in json) {
+          for (const propName in json) {
             if (json[propName] !== "" && ($.isEmptyObject(Language.data.en) || Language.data.en[propName] !== json[propName])) {
               result[propName] = json[propName];
             }

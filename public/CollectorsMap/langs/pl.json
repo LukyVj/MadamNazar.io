@@ -1563,7 +1563,7 @@
     "menu.marker_size.200": "200%",
     "menu.toggle_debug": "Włącz narzędzia debugowania",
     "map.random_spot.desc": "To miejsce zapewnia losowy przedmot, więcej informacji tutaj: {int.random_spot.link}Tabela losowych przedmiotów{int.end.link}.",
-    "map.attribution_prefix": "Części mapy dostarczone przez:",
+    "map.attribution_prefix": "Współtwórcy mapy kolekcjonera",
     "menu.clear_important_items": "Usuń podświetlanie ważnych przedmiotów",
     "menu.modal_clear_important_items_body": "Ta opcja usunie podświetlenie ze wszystkich ważnych przedmiotów. Tej operacji nie można cofnąć.",
     "menu.modal_clear_important_items_title": "Usunąć podświetlenia?",
@@ -1586,8 +1586,8 @@
     "menu.show_all_cycles_markers": "Pokaż znaczniki wszystkich cykli",
     "menu.enable_context_menu": "Włącz contexmenu",
     "menu.marker_color.header": "Kolor znaczników",
-    "menu.marker_color.by_cycle": "Domyślny kolor",
-    "menu.marker_color.by_category": "Zawsze takie same kolory",
+    "menu.marker_color.by_cycle": "Według cyklu",
+    "menu.marker_color.by_category": "Według kategorii",
     "menu.marker_color.auto_orange_darkblue": "Automatycznie pomarańczowy/niebieski",
     "menu.weekly_item_description": "Znajdź wszystkie wymienione przedmioty i sprzedaj całą kolekcję madam Nazar, aby otrzymać nagrodę PD i RDO$.",
     "menu.show_weekly": "Pokaż kolekcję tygodniową",
@@ -1729,7 +1729,7 @@
     "menu.fme.time.minutes": "{minutes} minut",
     "menu.fme.cold_dead_hands": "",
     "menu.fme.condor_egg": "Jajo Kondora",
-    "menu.fme.day_of_reckoning": "",
+    "menu.fme.day_of_reckoning": "Sądny dzień",
     "menu.fme.dispatch_rider": "",
     "menu.fme.fishing_challenge": "Rybobranie",
     "menu.fme.fools_gold": "Złoto głupców",
@@ -1748,5 +1748,7 @@
     "menu.modal_fme_enabled_events_body": "Umożliwia wybranie zdarzeń, które mają być wyświetlane na mapie, lub na otrzymywanie powiadomień.",
     "menu.modal_fme_general_events_title": "Wydarzenia ogólne gry swobodnej",
     "menu.modal_fme_role_events_title": "Wydarzenia ról gry swobodnej",
-    "menu.close": "Zamknij"
+    "menu.close": "Zamknij",
+    "menu.translate_body": "Tłumaczenia są wykonywane przez społeczność dla społeczności.",
+    "menu.translate_link": "Pomóż nam, tłumacząc na Crowdin."
 }
