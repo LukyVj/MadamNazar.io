@@ -3,7 +3,7 @@
     src: url(../fonts/hapna.woff2) format("woff2"), url(../fonts/hapna.woff) format("woff"), url(../fonts/hapna.ttf) format("truetype");
     font-style: normal;
     font-weight: 400;
-    text-rendering: optimizeLegibility
+    text-rendering: optimizeLegibility;
 }
 
 @font-face {
@@ -11,7 +11,7 @@
     src: url(../fonts/RDRLino-Regular.woff2) format("woff2"), url(../fonts/RDRLino-Regular.woff) format("woff"), url(../fonts/RDRLino-Regular.ttf) format("truetype");
     font-style: normal;
     font-weight: 400;
-    text-rendering: optimizeLegibility
+    text-rendering: optimizeLegibility;
 }
 
 *,
@@ -36,7 +36,7 @@ body {
 }
 
 h1 {
-    font-size: 14px
+    font-size: 14px;
 }
 
 h2 {
@@ -97,7 +97,7 @@ select {
     padding: 10px;
     position: fixed;
     z-index: 9909;
-    display: none;
+    display: block;
     /* When the time comes, you gotta run and change this to block. This is a warning. */
 }
 
@@ -204,7 +204,7 @@ select {
     z-index: 990;
     text-align: center;
     cursor: pointer;
-    background-image: url(../images/menu_hover.png);
+    background-image: url(../images/menu_highlight.png);
     background-size: 100% 100%;
     background-repeat: no-repeat;
     color: #fff;
@@ -322,12 +322,14 @@ select {
 .marker-popup-links {
     text-align: center;
     margin: 6px 0 !important;
+    user-select: none;
 }
 
 .marker-popup-buttons {
     display: flex;
     justify-content: space-between;
     margin-top: 8px;
+    user-select: none;
 }
 
 .marker-popup-buttons small {
@@ -339,6 +341,7 @@ select {
 .marker-popup-pin-input-desc {
     border: none;
     width: 100%;
+    background-color: #222;
 }
 
 .marker-popup-pin-input-name {
@@ -399,7 +402,7 @@ select {
 }
 
 .input-file {
-    background-image: url(../images/menu_hover.png);
+    background-image: url(../images/menu_highlight.png);
     background-size: 100% 100%;
     background-repeat: no-repeat;
     border: none;
@@ -407,9 +410,11 @@ select {
     color: #f0f0f0;
     font-size: 14px;
     border-radius: 3px;
+    cursor: pointer;
 }
 
 .input-container {
+    position: relative;
     user-select: none;
     display: flex;
     justify-content: space-between;
@@ -454,6 +459,7 @@ select {
     border-radius: 3px;
     margin-left: 6px;
     text-overflow: ellipsis;
+    cursor: pointer;
 }
 
 .input-container-noflex .input-text {
@@ -465,7 +471,7 @@ select {
 }
 
 .input-text.input-cycle.random {
-    margin-right: 42px;
+    margin-right: 47px;
 }
 
 .issues-container a {
@@ -498,7 +504,8 @@ select {
     position: fixed;
     top: -1800px;
     left: 0;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     height: 100%;
     height: 100vh;
     color: #eee;
@@ -517,20 +524,14 @@ select {
 }
 
 .side-menu .menu-option {
+    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: start;
-    padding: 0 5px;
+    padding: 0;
     user-select: none;
     cursor: pointer;
     line-height: 36px;
-}
-
-.side-menu .menu-option:hover,
-.side-menu .menu-hidden .collectible-wrapper:hover {
-    background-image: url(../images/menu_hover.png);
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
 }
 
 .side-menu .disabled {
@@ -552,15 +553,15 @@ select {
 
 .side-menu .menu-option .icon {
     width: 35px;
-    margin-top: 6px;
-    margin-bottom: -3px;
+    margin: 6px 0 -3px 2px;
 }
 
 .side-menu .open-submenu {
-    min-width: 32px;
+    min-width: 42px;
     height: 38px;
     background: url(../images/arrow.png) center no-repeat;
-    margin: auto 0;
+    margin: auto 0 auto 5px;
+    padding: 0 5px 0 0;
 }
 
 .open-submenu.rotate {
@@ -578,6 +579,8 @@ select {
     max-height: 0;
     overflow: hidden;
     transition: max-height 250ms ease-out;
+    margin: 0px -10px;
+    padding: 0 10px;
 }
 
 .side-menu .menu-hidden.opened,
@@ -626,6 +629,7 @@ select {
 }
 
 .side-menu .collectible-wrapper {
+    position: relative;
     padding: 6px 12px;
     cursor: pointer;
     user-select: none;
@@ -633,8 +637,8 @@ select {
 
 .side-menu .collectible-icon {
     float: left;
-    height: 28px;
-    margin-right: 10px;
+    height: 24px;
+    margin-right: 6px;
 }
 
 .side-menu .collectible-icon.random-encounter {
@@ -679,8 +683,8 @@ select {
     width: 220px;
     margin: 0 calc(50% - 100px) 20px;
     z-index: 910;
-    color: #fff;
-    background-color: #333333;
+    color: #dadada;
+    background-color: #333;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     text-align: center;
     padding: 14px 8px;
@@ -689,7 +693,8 @@ select {
 }
 
 .lat-lng-container a {
-    color: #fff;
+    color: #dadada;
+    user-select: none;
 }
 
 .lat-lng-container #lat-lng-container-close-button {
@@ -761,14 +766,6 @@ a.wiki-page:visited {
     display: none;
 }
 
-.help-container {
-    height: 100%;
-    padding: 25px;
-    background: #000;
-    border: 1px solid #eee;
-    box-shadow: 0 0 10px 0 black;
-}
-
 .help-close {
     width: 15px;
     height: 15px;
@@ -787,8 +784,8 @@ a.wiki-page:visited {
 }
 
 .menu-option.clickable input {
-    margin: auto 10px auto auto;
-    max-width: 50px;
+    margin: auto 0 auto auto;
+    max-width: 47px;
     min-width: 40px;
     height: 30px;
     padding: 0 0 0 8px;
@@ -822,6 +819,10 @@ a.wiki-page:visited {
     display: inline-block;
     text-align: center;
     font-size: 15px;
+}
+
+.counter-number-weekly {
+    margin: 0 25px;
 }
 
 .counter-button {
@@ -860,7 +861,7 @@ a.wiki-page:visited {
 }
 
 .cycle-icon.random {
-    margin-right: 38px;
+    margin-right: 53px;
 }
 
 .marker-content-wrapper {
@@ -868,16 +869,20 @@ a.wiki-page:visited {
     align-items: center;
 }
 
+.marker-content-wrapper img {
+    user-select: none;
+}
+
 .marker-content-wrapper p {
     margin-bottom: 4px !important;
 }
 
 .marker-content-wrapper .unavailable-item {
-    color: #cc0000 !important;
+    color: #ff1010 !important;
 }
 
 .marker-content-wrapper .weekly-item {
-    color: #478200 !important;
+    color: #8bfd00 !important;
 }
 
 .marker-warning-wrapper {
@@ -894,8 +899,8 @@ a.wiki-page:visited {
 }
 
 .disable-cycle-changer-arrow {
-    cursor: default !important;
     opacity: .3;
+    cursor: default !important;
 }
 
 .collection-collected {
@@ -938,14 +943,15 @@ a.wiki-page:visited {
 
 /* Custom action button styling */
 
-.input-container.clickable,
-.input-container.clickable label {
+.input-container,
+.input-container label {
     cursor: pointer !important;
 }
 
-.input-container.clickable.disabled,
-.input-container.clickable.disabled label {
+.input-container.disabled,
+.input-container.disabled label {
     cursor: not-allowed !important;
+    pointer-events: none;
 }
 
 .input-action {
@@ -1004,25 +1010,16 @@ a.no-style:visited {
 }
 
 .leaflet-control-attribution {
-    background: white;
-    color: #333;
+    background: #333 !important;
+    color: #fff !important;
 }
 
 .leaflet-control-attribution a {
-    color: #333 !important;
-}
-
-.leaflet-dark-mode .leaflet-control-attribution {
-    background: #333;
-    color: white;
-}
-
-.leaflet-dark-mode .leaflet-control-attribution a {
-    color: white !important;
+    color: #fff !important;
 }
 
 .text-danger {
-    color: #f95050 !important
+    color: #f95050 !important;
 }
 
 .hidden {
@@ -1186,12 +1183,18 @@ a.no-style:visited {
     .input-container label {
         line-height: 38px;
     }
+
+    .input-checkbox-wrapper .input-checkbox+.input-checkbox-label,
+    .input-text,
+    .input-action {
+        margin-top: 5px;
+    }
 }
 
 @media (min-width: 1025px) {
     .side-menu {
-        width: 390px;
-        left: -390px;
+        width: 400px;
+        left: -400px;
         top: 0;
     }
 
@@ -1200,7 +1203,7 @@ a.no-style:visited {
     }
 
     .top-widget-menu-opened {
-        left: 395px;
+        left: 405px;
     }
 }
 
@@ -1225,7 +1228,7 @@ a.no-style:visited {
 
 .pathfinder-control {
     padding: 5px;
-    background: #fff
+    background: #333;
 }
 
 .pathfinder-btn {
@@ -1236,11 +1239,11 @@ a.no-style:visited {
     background: transparent;
     border: none;
     cursor: pointer;
-    color: #000;
+    color: #eee;
 }
 
 .pathfinder-btn:disabled {
-    color: #789;
+    color: rgb(160, 159, 159);
 }
 
 .pathfinder-btn-before {
@@ -1266,9 +1269,108 @@ a.no-style:visited {
     text-transform: uppercase;
 }
 
+/* Dark mode styling */
+/* Override Bootstrap && Leaflet buttons color styling */
+.btn.btn-info.remove-button,
+.save-button {
+    background-color: #008fbece;
+    border: 1px solid #15b4f3af;
+}
+
+.btn.btn-info.remove-button:hover,
+.save-button:hover {
+    background-color: #15b4f3af;
+}
+
+.remove-button,
+.btn.btn-danger {
+    background-color: #a50000ce;
+    border: 1px solid #bb0000ce;
+}
+
+.remove-button:hover,
+.btn.btn-danger:hover {
+    background-color: #bb0000ce;
+}
+
+.btn.btn-success {
+    background-color: #008800ce;
+    border: 1px solid #00aa00ce;
+}
+
+.btn.btn-success:hover {
+    background-color: #00aa00ce;
+}
+
+.leaflet-popup-content-wrapper {
+    background: #222;
+    color: #dadada;
+}
+
+.leaflet-container a:visited,
+.leaflet-container a {
+    color: #3db2ff;
+}
+
+.leaflet-container a:hover {
+    color: #3dc6fc;
+}
+
+.leaflet-bar a {
+    background-color: #333;
+}
+
+.leaflet-bar a:hover {
+    background-color: #444;
+}
+
+.leaflet-bar a,
+.leaflet-bar a:hover {
+    border-bottom: 1px solid #555;
+    color: #d4d4d4;
+}
+
+.leaflet-bar a.leaflet-disabled {
+    background-color: #555;
+    color: #d4d4d4 !important;
+}
+
+.leaflet-control-layers {
+    box-shadow: 0 1px 5px #111;
+    background: #333;
+    user-select: none;
+}
+
+.leaflet-control-layers-expanded {
+    color: #d4d4d4;
+    background: #333;
+}
+
+.leaflet-control-zoom {
+    background-color: #333;
+    color: #d4d4d4;
+}
+
+.leaflet-control-zoom a {
+    background-color: #333;
+}
+
+.leaflet-popup-tip {
+    background: #222;
+    color: #d4d4d4;
+}
+
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+    border: none;
+    border-radius: 4px;
+}
+
+.leaflet-control-layers-base label {
+    cursor: pointer;
+}
 
 /* Leaflet Marker styling */
-
 .leaflet-div-icon {
     width: 36px;
     height: 45px;
@@ -1344,14 +1446,14 @@ a.no-style:visited {
 #fme-container {
     position: absolute;
     left: 5px;
-    bottom: 25px;
+    bottom: 5px;
     z-index: 990;
     user-select: none;
     transition: all 200ms ease-out;
 }
 
 #fme-container.fme-menu-opened {
-    left: 395px;
+    left: 405px;
 }
 
 #fme-container .fme-card {
@@ -1421,5 +1523,42 @@ a.no-style:visited {
         width: 32px;
         height: auto;
         margin-right: 8px;
+    }
+}
+
+@media (min-width: 1025px) {
+
+    .settings-container .input-container:not(.disabled):after,
+    .side-menu .menu-option:after,
+    .side-menu .collectible-wrapper:after {
+        border-color: #d80419;
+        border-image-repeat: round;
+        border-image-slice: 10 10 10 10 fill;
+        border-image-source: url(../../assets/images/hover.png);
+        border-style: solid;
+        border-width: 10px;
+        content: "";
+        opacity: 0;
+        pointer-events: none;
+        position: absolute;
+        top: -5px;
+        right: -7px;
+        bottom: -5px;
+        left: -7px;
+        z-index: 10;
+    }
+
+    .side-menu .menu-option:after,
+    .side-menu .collectible-wrapper:after {
+        top: 1px;
+        right: 0px;
+        bottom: 1px;
+        left: 2px;
+    }
+
+    .settings-container .input-container:not(.disabled):hover:after,
+    .side-menu .menu-option:hover:after,
+    .side-menu .collectible-wrapper:hover:after {
+        opacity: 1;
     }
 }

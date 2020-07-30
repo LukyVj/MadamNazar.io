@@ -36,7 +36,8 @@ class Marker {
     this.subdata = ['egg', 'flower'].includes(this.category) ?
       this.itemId.replace(`${this.category}_`, '') : undefined;
     this.legacyItemId = this.subdata || this.text;
-    this.item = this.category === 'random' ? undefined : Item.items[this.itemId];
+    this.item = this.category === 'random' ? undefined : Item.items.find(item =>
+      item.itemId === this.itemId);
 
     /**
      * `._collectedKey` is the key for the `.isCollected` accessors
@@ -65,6 +66,16 @@ class Marker {
     this.primaryDescriptionKey = (() => {
       if (this.category === 'random') {
         return `${this.text}.desc`;
+      } else if (this.category === 'arrowhead') {
+        return "arrowhead_random.desc";
+      } else if (this.category === 'coin') {
+        return "coin_random.desc";
+      } else if (this.category === 'fossils_random') {
+        return "fossils_random.desc";
+      } else if (this.category === 'jewelry_random') {
+        return "jewelry_random.desc";
+      } else if (this.category === 'heirlooms_random') {
+        return "heirlooms_random.desc";
       } else {
         return `${this.markerId}.desc`;
       }
@@ -119,24 +130,46 @@ class Marker {
       return false;
     } else if (this.category === 'random') {
       return true;
-    } else if (InventorySettings.isEnabled) {
+    } else if (InventorySettings.isEnabled && this.item) {
       const stackName = (this.category === 'flower') ? 'flowersSoftStackSize' : 'stackSize';
       return this.item.amount < InventorySettings[stackName];
     } else {
       return true;
     }
   }
-  get isWeekly() {
-    return Collection.weeklyItems.includes(this.itemId);
-  }
   get isCurrent() {
     // Cycles might serve numbers instead of strings
     return this.cycleName == Cycles.categories[this.category];
   }
   get isVisible() {
+    if (
+      this.category === 'heirlooms_random' &&
+      !enabledCategories.includes('heirlooms')
+    ) return false;
+    if (
+      this.category === 'jewelry_random' &&
+      !enabledCategories.includes('bracelet') &&
+      !enabledCategories.includes('earring') &&
+      !enabledCategories.includes('necklace') &&
+      !enabledCategories.includes('ring')
+    ) return false;
+    if (
+      this.category === 'fossils_random' &&
+      !enabledCategories.includes('coastal') &&
+      !enabledCategories.includes('oceanic') &&
+      !enabledCategories.includes('megafauna')
+    ) return false;
+
     return (this.isCurrent || MapBase.showAllMarkers) &&
       uniqueSearchMarkers.includes(this) &&
-      enabledCategories.includes(this.category);
+      (
+        enabledCategories.includes(this.category) ||
+        (this.item && this.item.isWeekly() && enabledCategories.includes("weekly"))
+      );
+  }
+
+  toolAccepted() {
+    return Settings.toolType >= this.tool || Settings.toolType === -this.tool ? true : false;
   }
 
   colorUrls() {
@@ -151,10 +184,8 @@ class Marker {
     }
 
     let base;
-    if (this.isWeekly) {
+    if (this.item && this.item.isWeekly()) {
       base = 'green';
-    } else if (this.category === 'random') {
-      base = markerColor === 'by_category' && this.tool == 2 ? 'black' : 'lightgray';
     } else if (markerColor === 'by_category') {
       base = {
         flower: 'darkred',
@@ -173,9 +204,7 @@ class Marker {
         coin: 'lightred'
       } [this.category] || 'lightred';
     } else if (markerColor === 'by_cycle') {
-      base = ['blue', 'orange', 'purple', 'darkpurple', 'darkred',
-        'darkblue'
-      ][+this.cycleName - 1] || 'lightred';
+      base = ['blue', 'orange', 'purple', 'darkpurple', 'darkred', 'darkblue'][+this.cycleName - 1] || 'lightred';
     } else {
       base = markerColor;
     }
@@ -263,14 +292,15 @@ class Marker {
         snippet.find('[data-text="map.unknown_cycle_description"]').hide();
       }
     }
-    if (!this.isWeekly) snippet.find('[data-text="weekly.desc"]').hide();
-    if (this.tool != '-1') snippet.find('[data-text="map.item.unable"]').hide();
+    snippet
+      .find('[data-text="weekly.desc"]').toggle(this.item && this.item.isWeekly()).end()
+      .find('[data-text="map.item.unable"]').toggle(this.buggy).end()
     const toolImg = snippet.find('.tool-type');
-    if (this.tool == '0') {
+    if (!this.buggy && this.tool === 0) {
       toolImg.hide();
     } else {
-      toolImg.attr('src',
-        `assets/images/${{'-1': 'cross', 1: 'shovel', 2: 'magnet'}[this.tool]}.png`);
+      const imgName = this.buggy ? 'cross' : {1: 'shovel', 2: 'magnet'}[this.tool];
+      toolImg.attr('src', `assets/images/${imgName}.png`);
     }
     if (!Settings.isDebugEnabled) snippet.find('.popupContentDebug').hide();
     if (!this.video) snippet.find('[data-text="map.video"]').parent().hide();
@@ -279,7 +309,7 @@ class Marker {
     }
     const inventoryButtons = snippet.find('.marker-popup-buttons')
     if (InventorySettings.isEnabled && InventorySettings.isPopupsEnabled &&
-      this.category !== 'random') {
+      this.category !== 'random' && this.item) {
       inventoryButtons.find('small')
         .toggleClass('text-danger', this.item.amount >= InventorySettings.stackSize)
         .attr('data-item', this.text)
@@ -303,7 +333,7 @@ class Marker {
   }
   recreateLMarker(opacity = Settings.markerOpacity, markerSize = Settings.markerSize) {
     const icon = this.category !== 'random' ? this.category :
-      (this.tool == 1 ? 'shovel' : 'magnet');
+      (this.tool === 1 ? 'shovel' : 'magnet');
     const [bgUrl, contourUrl] = this.colorUrls();
     const aii = 'assets/images/icons';
     const snippet = $(`<div>
@@ -318,13 +348,13 @@ class Marker {
     Settings.isShadowsEnabled || snippet.find('.shadow').remove();
     {
       let detail = false;
-      if (this.tool == '-1') {
+      if (this.buggy) {
         detail = ['cross', 'crossed out'];
       } else if (['flower_agarita', 'flower_blood_flower'].includes(this.itemId)) {
         detail = ['time', 'timed'];
-      } else if (this.height == '1') {
+      } else if (this.height === 1) {
         detail = ['high', 'high ground'];
-      } else if (this.height == '-1') {
+      } else if (this.height === -1) {
         detail = ['low', 'underground/low ground'];
       }
       const extra = snippet.find('.overlay');
@@ -338,7 +368,7 @@ class Marker {
       icon: new L.DivIcon.DataMarkup({
         iconSize: [35 * markerSize, 45 * markerSize],
         iconAnchor: [17 * markerSize, 42 * markerSize],
-        popupAnchor: [0 * markerSize, -28 * markerSize],
+        popupAnchor: [1 * markerSize, -29 * markerSize],
         html: snippet[0],
         marker: this.text
       })
@@ -375,6 +405,20 @@ class Marker {
           proxy[settingName] = $(e.target.selectedOptions[0]).attr('data-text').split('.').pop();
           MapBase.addMarkers();
         });
+    });
+    MapBase.markers = [];
+    return Loader.promises['items'].consumeJson(data => {
+      $.each(data, (category, allCycles) => {
+        $.each(allCycles, (cycleName, markers) => {
+          markers.forEach(preliminaryMarker => {
+            const marker = new Marker(preliminaryMarker, cycleName, category);
+            MapBase.markers.push(marker);
+
+            if (!marker.item) return;
+            if (!marker.category.includes(['fossils_random', 'heirlooms_random', 'jewelry_random', 'random'])) marker.item.markers.push(marker);
+          });
+        });
+      });
     });
   }
 }

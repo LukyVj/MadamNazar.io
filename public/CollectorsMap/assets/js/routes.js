@@ -2,7 +2,7 @@
  * Created by Jean on 2019-10-09.
  */
 
-var Routes = {
+const Routes = {
   routesData: [],
   polylines: null,
   customRouteConnections: [],
@@ -45,13 +45,13 @@ var Routes = {
   },
 
   getCustomRoute: function () {
-    var customRoute = JSON.parse(localStorage.getItem("routes.customRoute"));
+    const customRoute = JSON.parse(localStorage.getItem("routes.customRoute"));
 
     if (customRoute) {
       Routes.loadCustomRoute(customRoute);
-      var itemsArray = customRoute.split(",");
+      const itemsArray = customRoute.split(",");
 
-      for (var item of itemsArray) {
+      for (const item of itemsArray) {
         if (!Routes.customRouteConnections.includes(item)) {
           Routes.addMarkerOnCustomRoute(item, true);
         }
@@ -61,12 +61,12 @@ var Routes = {
 
   loadCustomRoute: function (input) {
     try {
-      var connections = [];
+      let connections = [];
 
-      input = input.replace(/\r?\n|\r/g, '').replace(/\s/g, '').split(',');
+      const items = input.replace(/\r?\n|\r/g, '').replace(/\s/g, '').split(',');
 
-      $.each(input, function (key, value) {
-        var _marker = MapBase.markers.find(marker => marker.text == value && marker.isCurrent);
+      $.each(items, function (key, value) {
+        const _marker = MapBase.markers.find(marker => marker.text == value && marker.isCurrent);
         if (_marker) connections.push([_marker.lat, _marker.lng]);
       });
 
@@ -78,6 +78,10 @@ var Routes = {
         'color': '#9a3033'
       });
       MapBase.map.addLayer(Routes.polylines);
+
+      if (connections.length)
+        RouteSettings.customRoute = input;
+
     } catch (e) {
       alert(Language.get('routes.invalid'));
       console.error(e);
@@ -94,10 +98,10 @@ var Routes = {
         Routes.customRouteConnections.push(value);
       }
 
-      var connections = [];
+      let connections = [];
 
       $.each(Routes.customRouteConnections, function (key, item) {
-        var _marker = MapBase.markers.filter(marker => marker.text == item && marker.day == Cycles.categories[marker.category])[0];
+        const _marker = MapBase.markers.filter(marker => marker.text == item && marker.day == Cycles.categories[marker.category])[0];
         if (_marker != undefined)
           connections.push([_marker.lat, _marker.lng]);
       });
@@ -119,7 +123,7 @@ var Routes = {
   },
 
   importCustomRoute: function () {
-    var input = prompt(Language.get('routes.import_prompt'), "");
+    const input = prompt(Language.get('routes.import_prompt'), "");
 
     if (input == null || input == "") {
       alert(Language.get('routes.empty'));
@@ -134,7 +138,7 @@ var Routes = {
     //this needs to be in try catch because throw an error when is no route to remove
     try {
       MapBase.map.removeLayer(Routes.polylines);
-    } catch(e) {};
+    } catch (e) {};
   },
 
 
@@ -143,7 +147,10 @@ var Routes = {
    */
   // The point to start the path generator from, default is SW edge.
   startMarker: function () {
-    return { lat: RouteSettings.startMarkerLat, lng: RouteSettings.startMarkerLng };
+    return {
+      lat: RouteSettings.startMarkerLat,
+      lng: RouteSettings.startMarkerLng
+    };
   },
 
   // Needed to keep track of the previously drawn path so we can remove it later.
@@ -151,8 +158,8 @@ var Routes = {
 
   // Simple utility to get the distance between two markers in Leaflet.
   getDistance: function (marker1, marker2) {
-    var latlng1 = L.latLng([marker1.lat, marker1.lng]);
-    var latlng2 = L.latLng([marker2.lat, marker2.lng]);
+    const latlng1 = L.latLng([marker1.lat, marker1.lng]);
+    const latlng2 = L.latLng([marker2.lat, marker2.lng]);
 
     return MapBase.map.distance(latlng1, latlng2);
   },
@@ -182,12 +189,12 @@ var Routes = {
   // Find the nearest neighbor to the given marker.
   // Needs to have an array of the possible markers and currently chosen paths and the maximum distance a path can be.
   nearestNeighborTo: function (marker, possibleNeighbors, polylines, maxDistance) {
-    var resDistance = null;
-    for (var i = 0; i < possibleNeighbors.length; i++) {
-      var element = possibleNeighbors[i];
+    let resDistance = null;
+    for (let i = 0; i < possibleNeighbors.length; i++) {
+      const element = possibleNeighbors[i];
 
       // Calculate closest path.
-      var distance = Routes.getDistance(marker, element);
+      const distance = Routes.getDistance(marker, element);
 
       // Skip any distance over maxDistance.
       if (maxDistance != -1 && distance > maxDistance) continue;
@@ -196,9 +203,9 @@ var Routes = {
       if (Routes.isSameMarker(marker, element)) continue;
 
       // Skip existing paths in polylines.
-      var pathExists = false;
-      var markerNodeCount = 0;
-      var elementNodeCount = 0;
+      let pathExists = false;
+      let markerNodeCount = 0;
+      let elementNodeCount = 0;
 
       polylines.forEach((polyline) => {
         // Check if the path is already drawn to prevent looping paths.
@@ -258,36 +265,13 @@ var Routes = {
   },
 
   // Generate a path using a nearest neighbor algorithm.
-  // force: Whether the path should be generated with or without checking the restrictions.
   generatePath: function (force = false) {
-    if (!force) {
-      // Only run when an update is needed.
-      if (Routes.lastPolyline == null) return;
+    if (!force && (Routes.lastPolyline == null || !RouteSettings.autoUpdatePath)) return;
 
-      // Only run when the autoUpdatePath option is selected.
-      if (!RouteSettings.autoUpdatePath) return;
-    }
-
-    // Clean up before generating.
     Routes.clearPath(true);
 
-    // Setup variables.
-    var newMarkers = MapBase.markers.filter((marker) => {
-      if (!marker.isVisible) return false;
+    var newMarkers = MapBase.markers.filter(m => m.isVisible && m.toolAccepted());
 
-      var toolType = Settings.toolType;
-      var markerTool = parseInt(marker.tool);
-      if (toolType >= 0) {
-        if (toolType < markerTool) return false;
-      } else {
-        if (toolType == -1 && markerTool != 1) return false;
-        if (toolType == -2 && markerTool != 2) return false;
-      }
-
-      return true;
-    });
-
-    // Optionally ignore the already collected markers.
     if (RouteSettings.ignoreCollected) {
       newMarkers = newMarkers.filter(marker => marker.canCollect);
     }
@@ -303,20 +287,18 @@ var Routes = {
       }
     }
 
-    if (newMarkers.length <= 1) {
-      return;
-    }
+    if (newMarkers.length <= 1) return;
 
-    var polylines = [];
+    let polylines = [];
 
     // The starting point of the path.
-    var first = null;
+    let first = null;
 
     // Grab the nearest marker to the start of the path.
     first = Routes.nearestNeighborTo(Routes.startMarker(), newMarkers, polylines, -1);
 
     // The last marker from the loop.
-    var last = first.marker;
+    let last = first.marker;
 
     // Use path finder when enabled
     try {
@@ -330,8 +312,8 @@ var Routes = {
     }
 
     // Loop through all markers and pick the nearest neighbor to that marker.
-    for (var i = 0; i < newMarkers.length; i++) {
-      var current = Routes.nearestNeighborTo(last, newMarkers, polylines, RouteSettings.maxDistance);
+    for (let i = 0; i < newMarkers.length; i++) {
+      let current = Routes.nearestNeighborTo(last, newMarkers, polylines, RouteSettings.maxDistance);
       if (!current) break;
       current = current.marker;
 

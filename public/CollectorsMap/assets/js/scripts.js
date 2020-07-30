@@ -2,29 +2,26 @@
 - these statements have no requirements
 - code at multiple places depend on these
 */
-Object.defineProperty(String.prototype, 'includesOneOf', {
-  value: function (...elements) {
-    var include = false;
-    for (var str of elements) {
-      if (this.includes(str)) {
-        include = true;
-        break;
-      }
-    }
-    return include;
+
+Object.defineProperty(String.prototype, 'filename', {
+  value: function (extension) {
+    let s = this.replace(/\\/g, '/');
+    s = s.substring(s.lastIndexOf('/') + 1);
+    return extension ? s.replace(/[?#].+$/, '') : s.split('.')[0];
   }
 });
 
-var searchTerms = [];
-var uniqueSearchMarkers = [];
+let searchTerms = [];
+let uniqueSearchMarkers = [];
 
-var categories = [
-  'flower', 'bottle', 'arrowhead', 'egg', 'coin', 'heirlooms', 'bracelet',
-  'earring', 'necklace', 'ring', 'cups', 'pentacles', 'swords', 'wands', 'nazar',
-  'fast_travel', 'treasure', 'random', 'user_pins'
+const categories = [
+  'arrowhead', 'bottle', 'bracelet', 'coastal', 'coin', 'cups', 'earring', 'egg',
+  'fast_travel', 'flower', 'fossils_random', 'heirlooms_random', 'heirlooms',
+  'jewelry_random', 'megafauna', 'nazar', 'necklace', 'oceanic', 'pentacles',
+  'random', 'ring', 'swords', 'treasure', 'user_pins', 'wands', 'weekly'
 ];
 
-var enabledCategories = JSON.parse(localStorage.getItem("enabled-categories"));
+let enabledCategories = JSON.parse(localStorage.getItem("enabled-categories"));
 if (!enabledCategories) {
   const disabledCats = JSON.parse(localStorage.getItem("disabled-categories")) || ['random'];
   enabledCategories = categories.filter(item => !disabledCats.includes(item));
@@ -44,7 +41,7 @@ L.DivIcon.DataMarkup = L.DivIcon.extend({
 
 L.LayerGroup.include({
   getLayerById: function (id) {
-    for (var i in this._layers) {
+    for (const i in this._layers) {
       if (this._layers[i].id == id) {
         return this._layers[i];
       }
@@ -61,8 +58,7 @@ L.LayerGroup.include({
 $(function () {
   try {
     init();
-  }
-  catch (e) {
+  } catch (e) {
     if (getParameterByName('show-alert') == '1') {
       alert(e);
     }
@@ -78,7 +74,8 @@ function init() {
 
   Settings.language = Language.availableLanguages.includes(Settings.language) ? Settings.language : 'en';
 
-  // Item.items, Collection.collections, Collection.weekly*
+  Menu.init();
+  // Item.items (without .markers), Collection.collections, Collection.weekly*
   const itemsCollectionsWeekly = Item.init();
   itemsCollectionsWeekly.then(MapBase.loadOverlays);
   MapBase.mapInit(); // MapBase.map
@@ -86,24 +83,23 @@ function init() {
   Language.setMenuLanguage();
   Pins.addToMap();
   changeCursor();
-  const markers = MapBase.loadMarkers(); // MapBase.markers (without .lMarker)
+  // MapBase.markers (without .lMarker), Item.items[].markers
+  const markers = itemsCollectionsWeekly.then(Marker.init);
   const cycles = Promise.all([itemsCollectionsWeekly, markers]).then(Cycles.load);
   Inventory.init();
   MapBase.loadFastTravels();
   MadamNazar.loadMadamNazar();
   FME.init();
-  const treasureFinished = Treasure.init();
+  const treasures = Treasure.init();
   Promise.all([cycles, markers]).then(MapBase.runOncePostLoad);
   Routes.init();
-  // depends on MapBase, Treasure, Pins
-  Promise.all([treasureFinished, markers]).then(Menu.activateHandlers);
-  Marker.init();
+  Promise.all([itemsCollectionsWeekly, markers, cycles, treasures])
+    .then(Loader.resolveMapModelLoaded);
 
   if (Settings.isMenuOpened) $('.menu-toggle').click();
 
   $('.map-alert').toggle(!Settings.alertClosed);
 
-  $('#tools').val(Settings.toolType);
   $('#language').val(Settings.language);
   $('#marker-opacity').val(Settings.markerOpacity);
   $('#marker-size').val(Settings.markerSize);
@@ -118,13 +114,11 @@ function init() {
   $('#show-help').prop("checked", Settings.showHelp);
   $('#show-coordinates').prop("checked", Settings.isCoordsOnClickEnabled);
   $('#timestamps-24').prop("checked", Settings.isClock24Hour);
-  $('#sort-items-alphabetically').prop("checked", Settings.sortItemsAlphabetically);
   $('#enable-cycle-input').prop("checked", Settings.isCycleInputEnabled);
   $("#enable-right-click").prop('checked', Settings.isRightClickEnabled);
   $("#enable-debug").prop('checked', Settings.isDebugEnabled);
   $("#enable-cycle-changer").prop('checked', Settings.isCycleChangerEnabled);
 
-  $("#show-weekly").prop('checked', Settings.showWeeklySettings);
   $("#show-utilities").prop('checked', Settings.showUtilitiesSettings);
   $("#show-customization").prop('checked', Settings.showCustomizationSettings);
   $("#show-routes").prop('checked', Settings.showRoutesSettings);
@@ -137,7 +131,6 @@ function init() {
   $('.cycle-icon').toggleClass('hidden', Settings.isCycleInputEnabled);
   $('#cycle-changer-container').toggleClass('hidden', !(Settings.isCycleChangerEnabled));
 
-  $("#weekly-container").toggleClass('opened', Settings.showWeeklySettings);
   $("#utilities-container").toggleClass('opened', Settings.showUtilitiesSettings);
   $("#customization-container").toggleClass('opened', Settings.showCustomizationSettings);
   $("#routes-container").toggleClass('opened', Settings.showRoutesSettings);
@@ -161,16 +154,17 @@ function changeCursor() {
 }
 
 function updateTopWidget() {
-  $('#countdown').toggleClass('hidden', Settings.topWidgetState !== 0);
-  $('#time-in-game').toggleClass('hidden', Settings.topWidgetState !== 1);
-  $('#item-counter').toggleClass('hidden', Settings.topWidgetState !== 2);
-  $('#item-counter-percentage').toggleClass('hidden', Settings.topWidgetState !== 3);
+  const pElements = $('.top-widget > p');
+
+  [].forEach.call(pElements, (element, index) => {
+    $(element).toggleClass('hidden', Settings.topWidgetState !== index);
+  });
 }
 
 function getParameterByName(name, url) {
   if (!url) url = window.location.href;
   name = name.replace(/[\[\]]/g, '\\$&');
-  var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+  const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
     results = regex.exec(url);
   if (!results) return null;
   if (!results[2]) return '';
@@ -187,7 +181,7 @@ function setClipboardText(text) {
 }
 
 function downloadAsFile(filename, text) {
-  var element = document.createElement('a');
+  const element = document.createElement('a');
   element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
   element.setAttribute('download', filename);
 
@@ -213,7 +207,13 @@ function clockTick() {
   };
 
   $('#time-in-game').text(gameTime.toLocaleString(Settings.language, clockFormat));
-  $('#day-cycle').removeClass('hidden').attr('src', `./assets/images/${nightTime ? 'moon' : 'sun'}.png`);
+
+  // Preview mode can remove this.
+  if ($('#day-cycle').length) {
+    const file = $('#day-cycle').attr('src').filename();
+    if ((nightTime && file !== "moon") || (!nightTime && file !== "sun"))
+      $('#day-cycle').removeClass('hidden').attr('src', `./assets/images/${nightTime ? 'moon' : 'sun'}.png`);
+  }
 
   const cycleResetTime = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1);
   const delta = new Date(cycleResetTime - now);
@@ -247,10 +247,8 @@ setInterval(clockTick, 1000);
 - please move them out of here to their respective owners
 */
 $('.top-widget > p').on('click', function () {
-  $('.top-widget > p').toggleClass('hidden');
-
-  Settings.topWidgetState++;
-  Settings.topWidgetState %= 4;
+  const pElements = $('.top-widget > p').length;
+  Settings.topWidgetState = (Settings.topWidgetState + 1) % pElements;
   updateTopWidget();
 });
 
@@ -265,11 +263,6 @@ $("#show-all-markers").on("change", function () {
 
 $('#enable-right-click').on("change", function () {
   Settings.isRightClickEnabled = $("#enable-right-click").prop('checked');
-});
-
-$("#show-weekly").on("change", function () {
-  Settings.showWeeklySettings = $("#show-weekly").prop('checked');
-  $("#weekly-container").toggleClass('opened', Settings.showWeeklySettings);
 });
 
 $("#show-utilities").on("change", function () {
@@ -309,14 +302,13 @@ $('#enable-cycle-changer').on("change", function () {
   }
 });
 
-// ignore menu functions if clicks hit input fields embedded in active areas
-$('.menu-option.clickable input').on('click', function (e) {
-  e.stopPropagation();
+// “random” category still needs this (other collectibles have handlers in their class)
+$('.menu-option.clickable input').on('click', function (event) {
+  event.stopPropagation();
 });
 
-// change collection cycles
-$('.menu-option.clickable input').on('change', function (e) {
-  var el = $(e.target);
+$('.menu-option.clickable input').on('change', function (event) {
+  const el = $(event.target);
   Cycles.categories[el.attr("name")] = parseInt(el.val());
   MapBase.addMarkers();
   Menu.refreshMenu();
@@ -334,11 +326,6 @@ $("#clear-search").on("click", function () {
   $("#search").val('').trigger("input");
 });
 
-$("#tools").on("change", function () {
-  Settings.toolType = Number($("#tools").val());
-  MapBase.addMarkers();
-});
-
 $("#reset-markers").on("change", function () {
   Settings.resetMarkersDaily = $("#reset-markers").prop('checked');
 });
@@ -354,7 +341,7 @@ $("#clear-markers").on("click", function () {
 });
 
 $("#clear-inventory").on("click", function () {
-  Object.values(Item.items).forEach(item => item.amount = 0);
+  Item.items.forEach(item => item.amount = 0);
   Inventory.updateItemHighlights();
   Menu.refreshMenu();
   MapBase.addMarkers();
@@ -363,7 +350,7 @@ $("#clear-inventory").on("click", function () {
 $("#custom-routes").on("change", function () {
   RouteSettings.customRouteEnabled = $("#custom-routes").prop('checked');
   changeCursor();
-  var mapRoute = Routes.customRouteConnections.join(',');
+  const mapRoute = Routes.customRouteConnections.join(',');
   RouteSettings.customRoute = mapRoute;
 });
 
@@ -376,10 +363,6 @@ $('.map-alert').on('click', function () {
 
 $('.map-cycle-alert').on('click', function () {
   $('.map-cycle-alert').addClass('hidden');
-});
-
-$('.filter-alert').on('click', function () {
-  $('.filter-alert').addClass('hidden');
 });
 
 $('#show-coordinates').on('change', function () {
@@ -418,82 +401,10 @@ $("#enable-cycle-input").on("change", function () {
   $('.cycle-icon').toggleClass('hidden', Settings.isCycleInputEnabled);
 });
 
-//Open collection submenu
-$('.open-submenu').on('click', function (e) {
-  e.stopPropagation();
-  $(this).parent().parent().children('.menu-hidden').toggleClass('opened');
-  $(this).toggleClass('rotate');
-});
-
-$('.submenu-only').on('click', function (e) {
-  e.stopPropagation();
-  $(this).parent().children('.menu-hidden').toggleClass('opened');
-  $(this).children('.open-submenu').toggleClass('rotate');
-});
-
-// Sell collections on menu && collect all (add every item to the inventory from category)
-$('.menu-hidden .collection-sell, .menu-hidden .collection-collect-all').on('click', event => {
-  'use strict';
-  const $target = $(event.target);
-  const category = $target.parent().parent().attr('data-type');
-  const changeAmount = $target.is(".collection-sell") ? -1 : 1;
-
-  MapBase.markers.filter(m => m.category === category && m.isCurrent).forEach(marker => {
-    if (marker.itemNumber === 1) Inventory.changeMarkerAmount(marker.legacyItemId, changeAmount);
-
-    if (InventorySettings.autoEnableSoldItems && marker.item.amount === 0 && marker.isCollected) {
-      MapBase.removeItemFromMap(marker.cycleName, marker.text, marker.subdata, marker.category, true);
-    }
-  });
-});
-
-$('.weekly-item-listings .collection-sell').on('click', function (event) {
-  Collection.weeklyItems.forEach(weeklyItemId => {
-    const marker = MapBase.markers.find(m =>
-      m.legacyItemId === Item.items[weeklyItemId].legacyItemId && m.isCurrent);
-    if (marker.itemNumber === 1)
-      Inventory.changeMarkerAmount(marker.legacyItemId, -1);
-
-    if (InventorySettings.autoEnableSoldItems && marker.item.amount === 0 && marker.isCollected) {
-      MapBase.removeItemFromMap(marker.cycleName, marker.text, marker.subdata, marker.category, true);
-    }
-  });
-});
-
-// Reset collections on menu
-$('.collection-reset').on('click', function (e) {
-  var collectionType = $(this).parent().parent().data('type');
-
-  var getMarkers = MapBase.markers.filter(_m =>
-    !_m.canCollect && _m.category == collectionType && _m.day == Cycles.categories[_m.category]);
-
-  $.each(getMarkers, function (key, marker) {
-    MapBase.removeItemFromMap(marker.day, marker.text, marker.subdata, marker.category,
-      !InventorySettings.resetButtonUpdatesInventory);
-  });
-
-  $(this).removeClass('disabled');
-});
-
-// disable only collected items (one or more in the inventory)
-$('.disable-collected-items').on('click', function (e) {
-  'use strict';
-  const category = $(this).parent().parent().data('type');
-  MapBase.markers
-    .filter(m => m.category === category && m.isCurrent && m.canCollect)
-    .forEach(marker => {
-      if (marker.item && marker.item.amount > 0) {
-        $(`[data-type=${marker.legacyItemId}]`).addClass('disabled');
-        MapBase.removeItemFromMap(marker.cycleName,
-          marker.text, marker.subdata, marker.category, true);
-      };
-    });
-});
-
 // Remove item from map when using the menu
 $(document).on('click', '.collectible-wrapper[data-type]', function () {
-  var collectible = $(this).data('type');
-  var category = $(this).parent().data('type');
+  const collectible = $(this).data('type');
+  const category = $(this).parent().data('type');
 
   MapBase.removeItemFromMap(Cycles.categories[category], collectible, collectible, category, true);
 });
@@ -510,13 +421,11 @@ $('.menu-toggle').on('click', function () {
 
 $('#marker-cluster').on("change", function () {
   Settings.isMarkerClusterEnabled = $("#marker-cluster").prop('checked');
-  MapBase.map.removeLayer(Layers.itemMarkersLayer);
   MapBase.addMarkers();
 });
 
 $('#enable-marker-popups').on("change", function () {
   Settings.isPopupsEnabled = $("#enable-marker-popups").prop('checked');
-  MapBase.map.removeLayer(Layers.itemMarkersLayer);
   MapBase.addMarkers();
 });
 
@@ -527,7 +436,6 @@ $('#enable-marker-popups-hover').on("change", function () {
 $('#enable-marker-shadows').on("change", function () {
   Settings.isShadowsEnabled = $("#enable-marker-shadows").prop('checked');
   Treasure.onSettingsChanged();
-  MapBase.map.removeLayer(Layers.itemMarkersLayer);
   MapBase.addMarkers();
 });
 
@@ -538,11 +446,6 @@ $('#enable-dclick-zoom').on("change", function () {
   } else {
     MapBase.map.doubleClickZoom.disable();
   }
-});
-
-$('#sort-items-alphabetically').on("change", function () {
-  Settings.sortItemsAlphabetically = $("#sort-items-alphabetically").prop('checked');
-  Menu.refreshMenu();
 });
 
 $('#pins-place-mode').on("change", function () {
@@ -569,8 +472,8 @@ $('#pins-export').on("click", function () {
 
 $('#pins-import').on('click', function () {
   try {
-    var file = $('#pins-import-file').prop('files')[0];
-    var fallback = false;
+    const file = $('#pins-import-file').prop('files')[0];
+    let fallback = false;
 
     if (!file) {
       alert(Language.get('alerts.file_not_found'));
@@ -586,10 +489,10 @@ $('#pins-import').on('click', function () {
     }
 
     if (fallback) {
-      var reader = new FileReader();
+      const reader = new FileReader();
 
       reader.addEventListener('loadend', (e) => {
-        var text = e.srcElement.result;
+        const text = e.srcElement.result;
         Pins.importPins(text);
       });
 
@@ -605,12 +508,9 @@ $('#enable-inventory').on("change", function () {
   InventorySettings.isEnabled = $("#enable-inventory").prop('checked');
 
   MapBase.addMarkers();
-  Menu.refreshWeeklyItems();
   Menu.refreshTotalInventoryValue();
 
-  $('#weekly-container .collection-value, .collection-sell, .counter, .counter-number').toggle(InventorySettings.isEnabled);
   $('#inventory-container').toggleClass("opened", InventorySettings.isEnabled);
-  $('.collection-value-bottom').toggleClass('hidden', !InventorySettings.isEnabled);
 });
 
 $('#enable-inventory-popups').on("change", function () {
@@ -625,7 +525,6 @@ $('#reset-inventory-daily').on("change", function () {
 
 $('#enable-additional-inventory-options').on("change", function () {
   InventorySettings.enableAdvancedInventoryOptions = $("#enable-additional-inventory-options").prop('checked');
-  $('.collection-value-bottom').toggleClass('hidden', !InventorySettings.enableAdvancedInventoryOptions);
 });
 
 $('#highlight_low_amount_items').on("change", function () {
@@ -646,27 +545,24 @@ $('#auto-enable-sold-items').on("change", function () {
   InventorySettings.autoEnableSoldItems = $('#auto-enable-sold-items').prop('checked');
 });
 
-$('#weekly-container .collection-value, .collection-sell, .counter, .counter-number').toggle(InventorySettings.isEnabled);
-
 $('#inventory-stack').on("change", function () {
-  var inputValue = parseInt($('#inventory-stack').val());
+  let inputValue = parseInt($('#inventory-stack').val());
   inputValue = !isNaN(inputValue) ? inputValue : 10;
   InventorySettings.stackSize = inputValue;
 });
 
 $('#soft-flowers-inventory-stack').on("change", function () {
-  var inputValue = parseInt($('#soft-flowers-inventory-stack').val());
+  let inputValue = parseInt($('#soft-flowers-inventory-stack').val());
   inputValue = !isNaN(inputValue) ? inputValue : 10;
   InventorySettings.flowersSoftStackSize = inputValue;
 });
 
 $('#cookie-export').on("click", function () {
   try {
-    var settings = localStorage;
+    let settings = localStorage;
 
     // Remove irrelevant properties (permanently from localStorage):
     delete settings.randid;
-    delete settings['inventory'];
 
     // Remove irrelevant properties (from COPY of localStorage, only to do not export them):
     settings = $.extend(true, {}, localStorage);
@@ -676,8 +572,8 @@ $('#cookie-export').on("click", function () {
     // Set file version
     settings.version = 2;
 
-    var settingsJson = JSON.stringify(settings, null, 4);
-    var exportDate = new Date().toISOUTCDateString();
+    const settingsJson = JSON.stringify(settings, null, 4);
+    const exportDate = new Date().toISOUTCDateString();
 
     downloadAsFile(`collectible-map-settings-(${exportDate}).json`, settingsJson);
   } catch (error) {
@@ -705,9 +601,9 @@ function setSettings(settings) {
 
 $('#cookie-import').on('click', function () {
   try {
-    var settings = null;
-    var file = $('#cookie-import-file').prop('files')[0];
-    var fallback = false;
+    let settings = null;
+    const file = $('#cookie-import-file').prop('files')[0];
+    let fallback = false;
 
     if (!file) {
       alert(Language.get('alerts.file_not_found'));
@@ -731,10 +627,10 @@ $('#cookie-import').on('click', function () {
     }
 
     if (fallback) {
-      var reader = new FileReader();
+      const reader = new FileReader();
 
       reader.addEventListener('loadend', (e) => {
-        var text = e.srcElement.result;
+        const text = e.srcElement.result;
 
         try {
           settings = JSON.parse(text);
@@ -776,16 +672,16 @@ $('#generate-route-auto-update').on("change", function () {
 });
 
 $('#generate-route-distance').on("change", function () {
-  var inputValue = parseInt($('#generate-route-distance').val());
+  let inputValue = parseInt($('#generate-route-distance').val());
   inputValue = !isNaN(inputValue) && inputValue > 0 ? inputValue : 25;
   RouteSettings.maxDistance = inputValue;
   Routes.generatePath();
 });
 
 $('#generate-route-start').on("change", function () {
-  var inputValue = $('#generate-route-start').val();
-  var startLat = null;
-  var startLng = null;
+  let inputValue = $('#generate-route-start').val();
+  let startLat = null;
+  let startLng = null;
 
   $('#generate-route-start-lat').parent().hide();
   $('#generate-route-start-lng').parent().hide();
@@ -829,14 +725,14 @@ $('#generate-route-start').on("change", function () {
 });
 
 $('#generate-route-start-lat').on("change", function () {
-  var inputValue = parseFloat($('#generate-route-start-lat').val());
+  let inputValue = parseFloat($('#generate-route-start-lat').val());
   inputValue = !isNaN(inputValue) ? inputValue : -119.9063;
   RouteSettings.startMarkerLat = inputValue;
   Routes.generatePath();
 });
 
 $('#generate-route-start-lng').on("change", function () {
-  var inputValue = parseFloat($('#generate-route-start-lng').val());
+  let inputValue = parseFloat($('#generate-route-start-lng').val());
   inputValue = !isNaN(inputValue) ? inputValue : 8.0313;
   RouteSettings.startMarkerLng = inputValue;
   Routes.generatePath();
@@ -874,26 +770,13 @@ $('#generate-route-railroad-weight').on("change", function () {
   Routes.generatePath();
 });
 
-var defaultHelpTimeout;
-$('[data-help]').hover(function (e) {
-  var attr = $(this).attr('data-help');
-  clearTimeout(defaultHelpTimeout);
-  $('#help-container p').attr('data-text', `help.${attr}`).text(Language.get(`help.${attr}`));
-}, function () {
-  defaultHelpTimeout = setTimeout(function () {
-    $('#help-container p').attr('data-text', `help.default`).text(Language.get(`help.default`));
-  }, 100);
-});
-
 $('#show-help').on("change", function () {
   Settings.showHelp = $("#show-help").prop('checked');
   $("#help-container").toggle(Settings.showHelp);
 });
 
-// Disable annoying menu on right mouse click
-$('*').on('contextmenu', function (e) {
-  if (!Settings.isRightClickEnabled)
-    e.preventDefault();
+$(document).on('contextmenu', function (e) {
+  if (!Settings.isRightClickEnabled) e.preventDefault();
 });
 
 $('#delete-all-settings').on('click', function () {
