@@ -7,6 +7,7 @@ const MapBase = {
   maxZoom: 7,
   map: null,
   overlays: [],
+  lootTables: [],
   fastTravelData: [],
   // see building interiors in overlays; might not be rotated right
   // (you also have to load overlays_beta.json instead of overlays.json in loader.js)
@@ -16,6 +17,7 @@ const MapBase = {
   updateLoopAvailable: true,
   requestLoopCancel: false,
   showAllMarkers: false,
+  filtersData: [],
 
   mapInit: function () {
     'use strict';
@@ -163,6 +165,13 @@ const MapBase = {
     });
   },
 
+  loadFilters: function () {
+    return Loader.promises['filters'].consumeJson(data => {
+      MapBase.filtersData = data;
+      console.info('%c[Filters] Loaded!', 'color: #bada55; background: #242424');
+    });
+  },
+
   setMapBackground: function () {
     'use strict';
     MapBase.isDarkMode = ['map.layers.dark', 'map.layers.black'].includes(Settings.baseLayer) ? true : false;
@@ -209,24 +218,7 @@ const MapBase = {
     'use strict';
     uniqueSearchMarkers = MapBase.markers;
 
-    // Reset markers daily.
-    const date = new Date().toISOUTCDateString();
-
-    if (localStorage.getItem('main.date') === null || date != localStorage.getItem('main.date')) {
-      MapBase.markers.forEach(marker => {
-        if (Settings.resetMarkersDaily || marker.category === 'random') {
-          marker.isCollected = false;
-        }
-        if (InventorySettings.resetInventoryDaily && marker.category !== 'random') {
-          marker.item.amount = 0;
-        }
-      });
-      Inventory.updateItemHighlights();
-      Menu.refreshMenu();
-      MapBase.runOnDayChange();
-    }
-
-    localStorage.setItem('main.date', date);
+    MapBase.resetMarkersDaily();
 
     // Preview mode.
     const previewParam = getParameterByName('q');
@@ -253,8 +245,6 @@ const MapBase = {
       return;
     }
 
-    MapBase.addMarkers(true);
-
     // Do search via URL.
     const searchParam = getParameterByName('search');
     if (searchParam) {
@@ -277,6 +267,30 @@ const MapBase = {
 
       setTimeout(() => goTo.lMarker && goTo.lMarker.openPopup(), 3000);
     }
+  },
+
+  resetMarkersDaily: function () {
+    const date = new Date().toISOUTCDateString();
+    const randomCategories = ['random', 'fossils_random', 'heirlooms_random', 'jewelry_random', 'coin', 'arrowhead'];
+
+    if (localStorage.getItem('main.date') === null || date != localStorage.getItem('main.date')) {
+      MapBase.markers.forEach(marker => {
+        // reset daily all random categories
+        if (Settings.resetMarkersDaily || randomCategories.includes(marker.category)) {
+          marker.isCollected = false;
+        }
+
+        if (InventorySettings.resetInventoryDaily && marker.category !== 'random') {
+          marker.item.amount = 0;
+        }
+      });
+      Inventory.updateItemHighlights();
+      Routes.clearCustomRoutes();
+      Menu.refreshMenu();
+    }
+
+    localStorage.setItem('main.date', date);
+    MapBase.addMarkers(true);
   },
 
   onSearch: function (searchString) {
@@ -373,7 +387,7 @@ const MapBase = {
     const subdataCategoryIsDisabled =
       (text == subdata && !$(`[data-type=${subdata}]`).hasClass('disabled'));
 
-    $.each(markers, function (key, marker) {
+      $.each(markers, function (key, marker) {      
       if (text != subdata && marker.text != text) return;
 
       let changeAmount = 0;
@@ -387,7 +401,6 @@ const MapBase = {
           changeAmount = -1;
         }
       }
-
       Inventory.changeMarkerAmount(marker.legacyItemId, changeAmount, skipInventory);
 
       if (!InventorySettings.isEnabled) {
@@ -431,7 +444,7 @@ const MapBase = {
   },
 
   gameToMap: function (lat, lng, name = "Debug Marker") {
-    MapBase.game2Map({
+    return MapBase.game2Map({
       x: lat,
       y: lng,
       z: name
@@ -439,7 +452,7 @@ const MapBase = {
   },
 
   game2Map: function ({ x, y, z }) {
-    MapBase.debugMarker((0.01552 * y + -63.6), (0.01552 * x + 111.29), z);
+    return MapBase.debugMarker((0.01552 * y + -63.6), (0.01552 * x + 111.29), z);
   },
 
   highlightImportantItem: function (text, category = '') {
@@ -526,6 +539,13 @@ const MapBase = {
     }
   },
 
+  loadLootTable: function () {
+    return Loader.promises['loot'].consumeJson(data => {
+      MapBase.lootTables = data;
+      console.info('%c[Loot Tables] Loaded!', 'color: #bada55; background: #242424');
+    });
+  },
+
   debugMarker: function (lat, long, name = 'Debug Marker', markerSize = Settings.markerSize) {
     const shadow = Settings.isShadowsEnabled ?
       '<img class="shadow" width="' + 35 * markerSize + '" height="' + 16 * markerSize + '" src="./assets/images/markers-shadow.png" alt="Shadow">' : '';
@@ -545,7 +565,10 @@ const MapBase = {
     marker.bindPopup(`<h1>${name}</h1><p>Lat.: ${lat}<br>Long.: ${long}</p>`, {
       minWidth: 300
     });
+
     Layers.itemMarkersLayer.addLayer(marker);
+
+    return { lat, long, name };
   },
 
   addCoordsOnMap: function (coords) {
@@ -572,7 +595,7 @@ const MapBase = {
 
   runOnDayChange: function () {
     // put here all functions that needs to be executed on day change
-    Routes.clearCustomRoutes(true);
+    MapBase.resetMarkersDaily();
   },
 
   yieldingLoop: function (count, chunksize, callback, finished) {
