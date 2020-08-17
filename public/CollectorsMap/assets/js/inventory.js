@@ -33,6 +33,8 @@ const Inventory = {
       return;
     }
     Collection.collections.forEach(collection => {
+      if (['arrowhead', 'coin', 'fossils_random', 'heirlooms_random', 'jewelry_random'].includes(collection.category)) return;
+
       const contourImg = $(`[data-marker*=${collection.category}] img.marker-contour`);
       contourImg.removeClass(function (index, className) {
         return (className.match(/highlight-low-amount-items-\S+/gm) || []).join(' ');
@@ -70,7 +72,7 @@ const Inventory = {
   changeMarkerAmount: function (legacyItemId, changeAmount, skipInventory = false) {
     const sameItemMarkers = MapBase.markers.filter(marker => marker.legacyItemId === legacyItemId);
 
-    const item = sameItemMarkers[0].item;
+    const item = Item.items.find(i => i.legacyItemId === legacyItemId);
     if (item && (!skipInventory || skipInventory && InventorySettings.isMenuUpdateEnabled)) {
       item.amount += changeAmount;
     }

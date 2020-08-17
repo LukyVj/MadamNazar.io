@@ -21,6 +21,11 @@ const categories = [
   'random', 'ring', 'swords', 'treasure', 'user_pins', 'wands', 'weekly'
 ];
 
+const parentCategories = { 
+  jewelry_random: ['bracelet', 'earring', 'necklace', 'ring'],
+  fossils_random: ['coastal', 'megafauna', 'oceanic']
+ };
+
 let enabledCategories = JSON.parse(localStorage.getItem("enabled-categories"));
 if (!enabledCategories) {
   const disabledCats = JSON.parse(localStorage.getItem("disabled-categories")) || ['random'];
@@ -49,6 +54,15 @@ L.LayerGroup.include({
   }
 });
 
+// Check if an array contains another array. Used to enable random categories set (jewerly & fossils)
+Array.prototype.arrayContains = function (sub) {
+  var self = this;
+  var result = sub.filter(function(item) {
+    return self.indexOf(item) > -1;
+  });
+  return sub.length === result.length;
+}
+
 /*
 - DOM will be ready, all scripts will be loaded (all loaded via DOM script elements)
 - everything in this file here will be executed
@@ -76,6 +90,7 @@ function init() {
 
   Menu.init();
   // Item.items (without .markers), Collection.collections, Collection.weekly*
+  const lootTables = MapBase.loadLootTable();
   const itemsCollectionsWeekly = Item.init();
   itemsCollectionsWeekly.then(MapBase.loadOverlays);
   MapBase.mapInit(); // MapBase.map
@@ -84,10 +99,11 @@ function init() {
   Pins.addToMap();
   changeCursor();
   // MapBase.markers (without .lMarker), Item.items[].markers
-  const markers = itemsCollectionsWeekly.then(Marker.init);
+  const markers = Promise.all([itemsCollectionsWeekly, lootTables]).then(Marker.init);
   const cycles = Promise.all([itemsCollectionsWeekly, markers]).then(Cycles.load);
   Inventory.init();
   MapBase.loadFastTravels();
+  MapBase.loadFilters();
   MadamNazar.loadMadamNazar();
   FME.init();
   const treasures = Treasure.init();
@@ -316,6 +332,7 @@ $('.menu-option.clickable input').on('change', function (event) {
 
 $("#search").on("input", function () {
   MapBase.onSearch($('#search').val());
+  $("#filter-type").val('none');
 });
 
 $("#copy-search-link").on("click", function () {
@@ -561,6 +578,9 @@ $('#cookie-export').on("click", function () {
   try {
     let settings = localStorage;
 
+    const exportDate = new Date().toISOUTCDateString();
+    localStorage.setItem('main.date', exportDate);
+
     // Remove irrelevant properties (permanently from localStorage):
     delete settings.randid;
 
@@ -573,7 +593,6 @@ $('#cookie-export').on("click", function () {
     settings.version = 2;
 
     const settingsJson = JSON.stringify(settings, null, 4);
-    const exportDate = new Date().toISOUTCDateString();
 
     downloadAsFile(`collectible-map-settings-(${exportDate}).json`, settingsJson);
   } catch (error) {
@@ -815,3 +834,90 @@ $('#open-clear-routes-modal').on('click', function () {
 $('#open-delete-all-settings-modal').on('click', function () {
   $('#delete-all-settings-modal').modal();
 });
+
+function formatLootTableLevel(table, level = 0) {
+  var result = $("<div>");
+
+  if (!table.items) {
+    var item = $(`<div class="loot-table-item"><span data-text="${table.name}.name"></span><span class="rate">${table.rate}%</span></div>`);
+    result.append(item);
+  } else {
+    var title = $(`<span class="loot-table-title level-${(level + 1)}">`);
+
+    if (table.rate) {
+      title.append($(`<h5 data-text="menu.${table.name}">`));
+      title.append($(`<h5 class="rate">`).text(table.rate + "%"));
+    } else {
+      title.append($(`<h4 data-text="menu.${table.name}">`));
+    }
+
+    var wrapper = $(`<div class="loot-table-wrapper level-${(level + 1)}">`);
+    table.items.forEach(item => {
+      wrapper.append(formatLootTableLevel(item, (level + 1)));
+    });
+
+    result.append(title, wrapper);
+  }
+
+  return result.children();
+}
+
+$('#loot-table-modal').on('show.bs.modal', function (event) {
+  // Get related loot table.
+  var button = $(event.relatedTarget);
+  var table = button.attr('data-loot-table');
+
+  // Format loot table.
+  var modal = $(this);
+  var lootTables = MapBase.lootTables[table];
+  var wrapper = $('<div class="loot-tables-wrapper">');
+
+  lootTables.forEach(lootTable => {
+    wrapper.append(formatLootTableLevel(lootTable));
+  })
+
+  const translatedContent = Language.translateDom(wrapper)[0];
+  modal.find('.modal-body').html(translatedContent);
+});
+
+function filterMapMarkers() {
+  uniqueSearchMarkers = [];
+
+  const filterMarkers = function (array) {
+    MapBase.filtersData[Settings.filterType] = MapBase.markers.filter(marker => array.includes(marker.itemId));
+    MapBase.filtersData[Settings.filterType].forEach(marker => {
+      if (!enabledCategories.includes(marker.category))
+        enabledCategories.push(marker.category);
+      uniqueSearchMarkers.push(marker);
+    });
+  }
+
+  if (Settings.filterType === 'none') {
+    if ($("#search").val())
+      MapBase.onSearch($("#search").val());
+    else
+      uniqueSearchMarkers = MapBase.markers;
+  }
+  else if (['moonshiner', 'naturalist'].includes(Settings.filterType)) {
+    Object.values(MapBase.filtersData[Settings.filterType]).filter(filterItems =>
+      filterItems.some(item =>
+        MapBase.markers.find(_m => {
+          if (_m.itemId === item)
+            uniqueSearchMarkers.push(_m);
+          if (!enabledCategories.includes(_m.category))
+            enabledCategories.push(_m.category);
+        })
+      )
+    );
+  }
+  else if (Settings.filterType === 'weekly') {
+    let weeklyItems = [];
+    $.each(Weekly.current.items, (index, item) => weeklyItems.push(item.itemId));
+    filterMarkers(weeklyItems);
+  }
+  else if (Settings.filterType === 'important') {
+    filterMarkers(MapBase.importantItems);
+  }
+
+  MapBase.addMarkers();
+}

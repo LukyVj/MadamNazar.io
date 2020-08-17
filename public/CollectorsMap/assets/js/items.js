@@ -107,7 +107,7 @@ class Weekly extends BaseCollection {
     </div>
     `)
       .translate()
-      .insertBefore('.links-container')
+      .insertBefore('.links-container');
     this.$menuEntry[0].rdoCollection = this;
     this.$listParent = this.$menuEntry.find('.weekly-item-listings');
     this.items.forEach(item => item._insertWeeklyMenuElement(this.$listParent));
@@ -136,6 +136,7 @@ class Weekly extends BaseCollection {
       })();
       weeklyCheckbox.on("change", () => {
         Settings.showWeeklySettings = weeklyCheckbox.prop('checked');
+        MapBase.addMarkers();
       })
     });
   }
@@ -396,10 +397,9 @@ class Item extends BaseItem {
   _insertMenuElement() {
     this.$menuButton = $(`
       <div class="collectible-wrapper" data-type="${this.legacyItemId}"
-        data-help="${['flower_agarita', 'flower_blood_flower'].includes(this.itemId) ?
-          'item_night_only' : 'item'}">
-        <img class='collectible-icon' src="assets/images/icons/game/${this.itemId}.png"
-          alt='Set icon'>
+        data-help="${['flower_agarita', 'flower_blood_flower'].includes(this.itemId) ? 'item_night_only' : 'item'}">
+        <img class="collectible-icon" src="assets/images/icons/game/${this.itemId}.png" alt="Set icon">
+        <img class="collectible-icon random-spot" src="assets/images/icons/random_overlay.png" alt="Random set icon">
         <span class="collectible-text">
           <p class="collectible" data-text="${this.itemTranslationKey}"></p>
           <span class="counter">
@@ -461,11 +461,16 @@ class Item extends BaseItem {
           return 'item';
         }
       })
-      .toggleClass('not-found', buggy)
       .toggleClass('disabled', currentMarkers.every(marker => !marker.canCollect))
       .toggleClass('weekly-item', this.isWeekly())
       .find('.counter')
       .toggle(InventorySettings.isEnabled)
+      .end()
+      .find('.collectible-icon.random-spot')
+      .toggle(buggy)
+      .end()
+      .find('.counter-number')
+      .toggleClass('not-found', buggy)
       .end();
 
     return buggy;

@@ -2,7 +2,12 @@ class Menu {
   static init() {
     this._warnings = new Set();
 
-    SettingProxy.addSetting(Settings, 'toolType', { default: 3 });
+    SettingProxy.addSetting(Settings, 'toolType', {
+      default: 3
+    });
+    SettingProxy.addSetting(Settings, 'filterType', {
+      default: 'none'
+    });
     Loader.mapModelLoaded.then(this.activateHandlers.bind(this));
   }
 
@@ -11,9 +16,9 @@ class Menu {
     this._warnings[method](warning);
     $('.filter-alert')
       .toggle(this._warnings.size > 0)
-      .attr('data-text', this._warnings.size > 1 ? 'map.has_multi_filter_alert':
+      .attr('data-text', this._warnings.size > 1 ? 'map.has_multi_filter_alert' :
         this._warnings.values().next().value)
-      .translate()
+      .translate();
   }
 
   static reorderMenu(menu) {
@@ -101,8 +106,34 @@ class Menu {
 
         if (category && toEnable) {
           enabledCategories.push(category);
+
+          if (enabledCategories.arrayContains(parentCategories['jewelry_random']) && parentCategories['jewelry_random'].includes(category)) {
+            enabledCategories.push('jewelry_random');
+          } else if (enabledCategories.arrayContains(parentCategories['fossils_random']) && parentCategories['fossils_random'].includes(category)) {
+            enabledCategories.push('fossils_random');
+          } else if (category == 'heirlooms') {
+            enabledCategories.push('heirlooms_random');
+          }
+
+          if (Weekly.current.items.every(item => enabledCategories.includes(item.category)) && !enabledCategories.includes('weekly')) {
+            enabledCategories.push('weekly');
+          }
+
         } else if (category) { // disable
           enabledCategories = enabledCategories.filter(cat => cat !== category);
+
+          if (!enabledCategories.arrayContains(parentCategories['jewelry_random'])) {
+            enabledCategories = enabledCategories.filter(cat => cat !== 'jewelry_random');
+          } else if (!enabledCategories.arrayContains(parentCategories['fossils_random'])) {
+            enabledCategories = enabledCategories.filter(cat => cat !== 'fossils_random');
+          } else if (category == 'heirlooms') {
+            enabledCategories = enabledCategories.filter(cat => cat !== 'heirlooms_random');
+          }
+
+          if (Weekly.current.items.reduce((acc, item) => acc + +(item.category == category), 0)) {
+            enabledCategories = enabledCategories.filter(cat => cat !== 'weekly');
+          }
+
         } else {
           enabledCategories = toEnable ? categories : [];
         }
@@ -129,16 +160,27 @@ class Menu {
         if (help.contains(target)) return;
         const helpTransId = $(target).closest('[data-help]').attr('data-help') || 'default';
         $helpParagraph.html(Language.get(`help.${helpTransId}`));
-      })
+      });
 
     SettingProxy.addListener(Settings, 'toolType', () =>
       this.toggleFilterWarning('map.has_tool_filter_alert', Settings.toolType !== 3))();
-    $("#tools")
-      .on("change", function () {
+    $('#tools')
+      .on('change', function () {
         Settings.toolType = +$(this).val();
         MapBase.addMarkers();
       })
-      .val(Settings.toolType)
+      .val(Settings.toolType);
+
+    SettingProxy.addListener(Settings, 'filterType', () =>
+      this.toggleFilterWarning('map.has_filter_type_alert', Settings.filterType !== 'none'))();
+    $('#filter-type')
+      .on('change', function () {
+        Settings.filterType = $(this).val();
+        filterMapMarkers();
+      })
+      .val(Settings.filterType)
+      .triggerHandler('change');
+
     $('.filter-alert').on('click', function () {
       $(this).hide();
     });

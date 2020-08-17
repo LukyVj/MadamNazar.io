@@ -39,6 +39,8 @@ class Marker {
     this.item = this.category === 'random' ? undefined : Item.items.find(item =>
       item.itemId === this.itemId);
 
+    this.isRandomizedItem = ['arrowhead', 'coin', 'fossils_random', 'heirlooms_random', 'jewelry_random', 'random'].includes(this.category);
+
     /**
      * `._collectedKey` is the key for the `.isCollected` accessors
      * - the data they represent are best described as “legacy non-sense”, if I’m allowed to say
@@ -66,17 +68,7 @@ class Marker {
     this.primaryDescriptionKey = (() => {
       if (this.category === 'random') {
         return `${this.text}.desc`;
-      } else if (this.category === 'arrowhead') {
-        return "arrowhead_random.desc";
-      } else if (this.category === 'coin') {
-        return "coin_random.desc";
-      } else if (this.category === 'fossils_random') {
-        return "fossils_random.desc";
-      } else if (this.category === 'jewelry_random') {
-        return "jewelry_random.desc";
-      } else if (this.category === 'heirlooms_random') {
-        return "heirlooms_random.desc";
-      } else {
+      }  else {
         return `${this.markerId}.desc`;
       }
     })();
@@ -89,6 +81,16 @@ class Marker {
     this.secondaryDescriptionKey = (() => {
       if (this.category === 'random') {
         return 'map.random_spot.desc';
+      } else if (this.category === 'arrowhead') {
+        return "arrowhead_random.desc";
+      } else if (this.category === 'coin') {
+        return "coin_random.desc";
+      } else if (this.category === 'fossils_random') {
+        return "fossils_random.desc";
+      } else if (this.category === 'jewelry_random') {
+        return "jewelry_random.desc";
+      } else if (this.category === 'heirlooms_random') {
+        return "heirlooms_random.desc";
       }
 
       switch (this.itemId) {
@@ -184,24 +186,32 @@ class Marker {
     }
 
     let base;
-    if (this.item && this.item.isWeekly()) {
+    if (this.item && this.item.isWeekly() && Settings.showWeeklySettings) {
       base = 'green';
     } else if (markerColor === 'by_category') {
       base = {
-        flower: 'darkred',
+        arrowhead: 'purple',
+        bottle: 'brown',
+        coin: 'darkorange',
+        egg: 'white',
+        flower: 'lightdarkred',
+        fossils_random: 'darkgreen',
+
         cups: 'blue',
         swords: 'blue',
         wands: 'blue',
-        pentacles: 'blue',
-        bracelet: 'beige',
-        necklace: 'orange',
-        ring: 'orange',
-        earring: 'orange',
-        bottle: 'cadetblue',
-        egg: 'white',
-        arrowhead: 'darkpurple',
-        heirlooms: 'purple',
-        coin: 'lightred'
+        pentacles: 'blue',        
+        
+        jewelry_random: 'yellow',
+        bracelet: 'yellow',
+        necklace: 'yellow',
+        ring: 'yellow',
+        earring: 'yellow',
+        
+        heirlooms: 'pink',
+        heirlooms_random: 'pink',
+
+        random: this.tool === 2 ? 'lightgray' : 'lightgray',
       } [this.category] || 'lightred';
     } else if (markerColor === 'by_cycle') {
       base = ['blue', 'orange', 'purple', 'darkpurple', 'darkred', 'darkblue'][+this.cycleName - 1] || 'lightred';
@@ -255,6 +265,7 @@ class Marker {
       </span>
       <p class='marker-popup-links'>
         <a href="" data-text="map.copy_link"></a>
+        <span>| <a href="" data-text="map.view_loot" data-toggle="modal" data-target="#loot-table-modal" data-loot-table="${this.category}"></a></span>
         <span>| <a href="${this.video}" target="_blank" data-text="map.video"></a></span>
         <span>| <a href="" data-text="map.mark_important"></a></span>
       </p>
@@ -303,8 +314,10 @@ class Marker {
       toolImg.attr('src', `assets/images/${imgName}.png`);
     }
     if (!Settings.isDebugEnabled) snippet.find('.popupContentDebug').hide();
+    if (!this.isRandomizedItem) snippet.find('[data-text="map.view_loot"]').parent().hide();
     if (!this.video) snippet.find('[data-text="map.video"]').parent().hide();
-    if (['flower_agarita', 'flower_blood_flower'].includes(this.itemId)) {
+    if (['flower_agarita', 'flower_blood_flower'].includes(this.itemId) ||
+    ['random', 'fossils_random', 'heirlooms_random', 'jewelry_random', 'coin', 'arrowhead'].includes(this.category)) {
       snippet.find('[data-text="map.mark_important"]').parent().hide();
     }
     const inventoryButtons = snippet.find('.marker-popup-buttons')
