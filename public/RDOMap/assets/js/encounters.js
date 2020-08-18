@@ -1,4 +1,5 @@
 var Encounters = {
+  data: null,
   markers: [],
   updateLoopAvailable: true,
   requestLoopCancel: false,
@@ -6,6 +7,7 @@ var Encounters = {
   load: function () {
     $.getJSON('data/encounters.json?nocache=' + nocache)
       .done(function (data) {
+        Encounters.data = data;
         Encounters.set(data);
       });
     console.info('%c[Encounters] Loaded!', 'color: #bada55; background: #242424');
@@ -17,8 +19,6 @@ var Encounters = {
         Encounters.markers.push(new Marker(marker.text, marker.x, marker.y, _category, marker.type));
       });
     });
-
-    Encounters.addToMap();
   },
 
   updateMarkerContent: function (marker) {
@@ -113,6 +113,8 @@ var Encounters = {
       case "duel":
       case "fame_seeker":
       case "kidnapped":
+      case "beggar":
+      case "crashed_wagon":
         return "lightgray";
       case "dog_encounter":
       case "egg_encounter":
@@ -127,6 +129,10 @@ var Encounters = {
       case "moonshiner_roadblock":
       case "moonshiner_sabotage":
         return "darkpurple";
+      case "stalking_hunter":
+      case "slumped_hunter":
+      case "suspension_trap":
+        return "darkgreen";
       default:
         return "lightred";
     }

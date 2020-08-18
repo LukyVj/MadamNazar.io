@@ -24,7 +24,8 @@ var categories = [
   'hogtied_lawman', 'duel', 'moonshiner_camp', 'moonshiner_destroy', 'moonshiner_roadblock',
   'moonshiner_sabotage', 'nazar', 'plants', 'rescue', 'rival_collector', 'runaway_wagon',
   'shops', 'sightseeing', 'trains', 'treasure', 'treasure_hunter', 'tree_map', 'user_pins',
-  'wounded_animal', 'camps', 'animal_attack', 'kidnapped'
+  'wounded_animal', 'camps', 'animal_attack', 'kidnapped', 'discoverables', 'legendary_animals',
+  'beggar', 'stalking_hunter', 'slumped_hunter', 'crashed_wagon', 'suspension_trap'
 ];
 
 var categoriesDisabledByDefault = [
@@ -32,7 +33,8 @@ var categoriesDisabledByDefault = [
   'grave_robber', 'hogtied_lawman', 'duel', 'moonshiner_camp', 'moonshiner_destroy',
   'moonshiner_roadblock', 'moonshiner_sabotage', 'rescue', 'rival_collector', 'runaway_wagon',
   'sightseeing', 'treasure_hunter', 'tree_map', 'wounded_animal', 'camps', 'animal_attack',
-  'kidnapped'
+  'kidnapped', 'discoverables', 'beggar', 'stalking_hunter', 'slumped_hunter', 'crashed_wagon',
+  'suspension_trap'
 ];
 
 var plants = [
@@ -239,6 +241,11 @@ function setMapBackground(mapIndex) {
       $('#map').css('background-color', '#3d3d3d');
       MapBase.isDarkMode = true;
       break;
+
+    case 3:
+      $('#map').css('background-color', '#000');
+        MapBase.isDarkMode = true;
+        break;
   }
   MapBase.setOverlays();
   $.cookie('map-layer', mapIndex, { expires: 999 });
@@ -309,42 +316,6 @@ function clockTick() {
   $('.day-cycle').css('background', `url(assets/images/${nightTime ? 'moon' : 'sun'}.png)`);
 
   if (!enabledCategories.includes('hideouts')) return;
-
-  $('[data-category*="hideouts"]').each(function () {
-    var time = $(this).data('time') + '';
-    if (time === null || time == '') return;
-
-    var hour = gameTime.getHours();
-    if (hour >= 5 && hour < 8) {
-      // 1) 05 - 08: Sunrise
-      if (time.indexOf("1") >= 0) {
-        $(this).css('filter', 'drop-shadow(0 0 .5rem #fff) drop-shadow(0 0 .25rem #fff)');
-      } else {
-        $(this).css('filter', 'none');
-      }
-    } else if (hour >= 8 && hour < 17) {
-      // 2) 08 - 17: Day
-      if (time.indexOf("2") >= 0) {
-        $(this).css('filter', 'drop-shadow(0 0 .5rem #fff) drop-shadow(0 0 .25rem #fff)');
-      } else {
-        $(this).css('filter', 'none');
-      }
-    } else if (hour >= 17 && hour < 20) {
-      // 3) 17 - 20: Sunset
-      if (time.indexOf("3") >= 0) {
-        $(this).css('filter', 'drop-shadow(0 0 .5rem #fff) drop-shadow(0 0 .25rem #fff)');
-      } else {
-        $(this).css('filter', 'none');
-      }
-    } else if (hour >= 20 || hour < 5) {
-      // 4) 20 - 05: Night
-      if (time.indexOf("4") >= 0) {
-        $(this).css('filter', 'drop-shadow(0 0 .5rem #fff) drop-shadow(0 0 .25rem #fff)');
-      } else {
-        $(this).css('filter', 'none');
-      }
-    }
-  });
 }
 
 setInterval(clockTick, 1000);
@@ -453,9 +424,10 @@ $("#marker-opacity").on("change", function () {
 
 $("#overlay-opacity").on("change", function () {
   var parsed = parseFloat($("#overlay-opacity").val());
-  Settings.overlayOpacity = parsed ? parsed : 0.5;
+  Settings.overlayOpacity = !isNaN(parsed) ? parsed : 0.5;
   $.cookie('overlay-opacity', Settings.overlayOpacity, { expires: 999 });
   MapBase.setOverlays(parsed);
+  Legendary.addToMap();
 });
 
 //Change & save marker size
@@ -465,6 +437,15 @@ $("#marker-size").on("change", function () {
   $.cookie('marker-size', Settings.markerSize, { expires: 999 });
   MapBase.addMarkers();
   Treasures.set();
+  Legendary.set();
+});
+
+$("#tooltip").on("change", function () {
+  var parsed = parseInt($("#tooltip").val());
+  Settings.toolTip = parsed ? parsed : 0;
+  $.cookie('tooltip-enabled', Settings.toolTip, { expires: 999 });
+
+  Menu.refreshMenu();
 });
 
 // Toggle visibility of FME cards.
@@ -498,13 +479,14 @@ $('.clickable').on('click', function (e) {
       return value != menu.data('type');
     });
   }
-
   $.cookie('disabled-categories', categoriesDisabledByDefault.join(','), { expires: 999 });
 
   if (menu.data('type') == 'treasure')
     Treasures.addToMap();
   else if (menu.data('type') == 'user_pins')
     Pins.addToMap();
+  else if (menu.data('type') == 'legendary_animals')
+    Legendary.addToMap();    
   else
     MapBase.addMarkers();
 });
@@ -548,11 +530,29 @@ $(document).on('click', '.collectible-wrapper[data-type]', function () {
   var category = menu.parent().data('type');
 
   if (typeof collectible === 'undefined') return;
-
+  
   $('[data-type=' + collectible + ']').toggleClass('disabled');
   var isDisabled = $('[data-type=' + collectible + ']').hasClass('disabled');
 
-  if (category == 'plants') {
+  if (category == 'encounters') {
+    if (isDisabled) {
+      enabledCategories = $.grep(enabledCategories, function (value) {
+        return value != collectible;
+      });
+
+      categoriesDisabledByDefault.push(collectible);
+    } else {
+      enabledCategories.push(collectible);
+
+      categoriesDisabledByDefault = $.grep(categoriesDisabledByDefault, function (value) {
+        return value != collectible;
+      });
+    }
+
+    $.cookie('disabled-categories', categoriesDisabledByDefault.join(','), { expires: 999 });
+
+    Encounters.addToMap();
+  } else if (category == 'plants') {
     if (isDisabled) {
       enabledPlants = $.grep(enabledPlants, function (value) {
         return value != collectible;
@@ -863,9 +863,6 @@ L.DivIcon.DataMarkup = L.DivIcon.extend({
 
     if (this.options.category)
       img.dataset.category = this.options.category;
-
-    if (this.options.time)
-      img.dataset.time = this.options.time;
   }
 });
 
@@ -916,13 +913,15 @@ $('#open-delete-all-settings-modal').on('click', function () {
 
 $(function () {
   init();
+  Heatmap.load();
   MapBase.loadFastTravels();
   MapBase.loadShops();
   MapBase.loadCamps();
   MadamNazar.loadMadamNazar();
   Treasures.load();
+  Legendary.load();
   Encounters.load();
-  Heatmap.load();
   MapBase.loadMarkers();
+  MapBase.loadDiscoverables();
   FME.init();
 });
