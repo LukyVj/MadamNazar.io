@@ -9,26 +9,77 @@ var Menu = {
     }).appendTo(menu);
   },
 
+  refreshEncounters: function () {
+    $('.menu-hidden[data-type=encounters]').children('.collectible-wrapper').remove();
+
+    Object.keys(Encounters.data).forEach(function (element) {
+      var collectibleTitle = Language.get(`menu.${element}`);
+      var collectibleElement = $('<div>').addClass('collectible-wrapper').attr('data-help', 'item').attr('data-tippy-content', collectibleTitle).attr('data-type', element);
+      var collectibleTextElement = $('<p>').addClass('collectible').text(collectibleTitle);
+      var collectibleImage = $('<img>').attr('src', `./assets/images/icons/${element}.png`).addClass('collectible-icon');
+
+      if (!enabledCategories.includes(element))
+        collectibleElement.addClass('disabled');
+
+      $('.menu-hidden[data-type=encounters]').append(collectibleElement.append(collectibleImage).append(collectibleTextElement));
+    });
+
+    if(Settings.toolTip == 1)
+      tippy('[data-tippy-content]', {theme: 'rdr2-theme'});
+  },
+
+
   refreshTreasures: function () {
     $('.menu-hidden[data-type=treasure]').children('.collectible-wrapper').remove();
 
     Treasures.data.filter(function (item) {
-      var collectibleElement = $('<div>').addClass('collectible-wrapper').attr('data-help', 'item').attr('data-type', item.text);
-      var collectibleTextElement = $('<p>').addClass('collectible').text(Language.get(item.text));
+      var collectibleTitle = Language.get(item.text);
+      var collectibleElement = $('<div>').addClass('collectible-wrapper').attr('data-help', 'item').attr('data-tippy-content', collectibleTitle).attr('data-type', item.text);
+      var collectibleTextElement = $('<p>').addClass('collectible').text(collectibleTitle);
 
       if (!Treasures.enabledTreasures.includes(item.text))
         collectibleElement.addClass('disabled');
 
       $('.menu-hidden[data-type=treasure]').append(collectibleElement.append(collectibleTextElement));
     });
+
+    Menu.reorderMenu('.menu-hidden[data-type=treasure]');
+    if(Settings.toolTip == 1)
+      tippy('[data-tippy-content]', {theme: 'rdr2-theme'});
+  },
+
+  refreshLegendaries: function () {
+    $('.menu-hidden[data-type=legendary_animals]').children('.collectible-wrapper').remove();
+
+    Legendary.data.filter(function (item) {
+
+      if(Legendary.notReleased.includes(item.text) && !Settings.isDebugEnabled)
+        return;
+
+      var collectibleTitle = Language.get(item.text);
+      var collectibleElement = $('<div>').addClass('collectible-wrapper').attr('data-help', 'item').attr('data-tippy-content', collectibleTitle).attr('data-type', item.text);
+      var collectibleTextElement = $('<p>').addClass('collectible').text(collectibleTitle);
+
+      collectibleElement.addClass(Legendary.notReleased.includes(item.text) ? 'not-found' : Legendary.psExclusive.includes(item.text) ? 'ps-exclusive' : '');
+
+      if (!Legendary.enabledLegendaries.includes(item.text))
+        collectibleElement.addClass('disabled');
+
+      $('.menu-hidden[data-type=legendary_animals]').append(collectibleElement.append(collectibleTextElement));
+    });
+
+    Menu.reorderMenu('.menu-hidden[data-type=legendary_animals]');
+    if(Settings.toolTip == 1)
+      tippy('[data-tippy-content]', {theme: 'rdr2-theme'});
   },
 
   refreshShops: function () {
     $('.menu-hidden[data-type=shop]').children('.collectible-wrapper').remove();
 
     Object.keys(MapBase.shopData).forEach(function (element) {
-      var collectibleElement = $('<div>').addClass('collectible-wrapper').attr('data-help', 'item').attr('data-type', element);
-      var collectibleTextElement = $('<p>').addClass('collectible').text(Language.get(`map.shops.${element}.name`));
+      var collectibleTitle = Language.get(`map.shops.${element}.name`);
+      var collectibleElement = $('<div>').addClass('collectible-wrapper').attr('data-help', 'item').attr('data-tippy-content', collectibleTitle).attr('data-type', element);
+      var collectibleTextElement = $('<p>').addClass('collectible').text(collectibleTitle);
       var collectibleImage = $('<img>').attr('src', `./assets/images/icons/${element}.png`).addClass('collectible-icon');
 
       if (!enabledShops.includes(element))
@@ -42,8 +93,9 @@ var Menu = {
     $('.menu-hidden[data-type=camp]').children('.collectible-wrapper').remove();
 
     Object.keys(MapBase.campData).forEach(function (element) {
-      var collectibleElement = $('<div>').addClass('collectible-wrapper').attr('data-help', 'item').attr('data-type', element);
-      var collectibleTextElement = $('<p>').addClass('collectible').text(Language.get(`map.camps.${element}.name`));
+      var collectibleTitle = Language.get(`map.camps.${element}.name`);
+      var collectibleElement = $('<div>').addClass('collectible-wrapper').attr('data-help', 'item').attr('data-tippy-content', collectibleTitle).attr('data-type', element);
+      var collectibleTextElement = $('<p>').addClass('collectible').text(collectibleTitle);
 
       if (!enabledCamps.includes(element))
         collectibleElement.addClass('disabled');
@@ -121,7 +173,7 @@ Menu.refreshMenu = function () {
       collectibleText = marker.text;
     }
 
-    var collectibleElement = $('<div>').addClass('collectible-wrapper').attr('data-help', 'item').attr('data-type', collectibleText);
+    var collectibleElement = $('<div>').addClass('collectible-wrapper').attr('data-help', 'item').attr('data-tippy-content', collectibleTitle).attr('data-type', collectibleText);
     var collectibleTextWrapperElement = $('<span>').addClass('collectible-text');
     var collectibleTextElement = $('<p>').addClass('collectible').text(collectibleTitle);
 
@@ -167,9 +219,11 @@ Menu.refreshMenu = function () {
     $(`.menu-hidden[data-type=${marker.category}]`).append(collectibleElement.append(collectibleImage).append(collectibleTextWrapperElement.append(collectibleTextElement)));
   });
 
+  Menu.refreshEncounters();
   Menu.refreshTreasures();
   Menu.refreshShops();
   Menu.refreshCamps();
+  Menu.refreshLegendaries();
 
   $.each(categoriesDisabledByDefault, function (key, value) {
     if (value.length > 0) {
@@ -183,7 +237,6 @@ Menu.refreshMenu = function () {
     }
   });
 
-  Menu.reorderMenu('#random_encounters');
   Menu.reorderMenu('.menu-hidden[data-type=animals]');
   Menu.reorderMenu('.menu-hidden[data-type=birds]');
   Menu.reorderMenu('.menu-hidden[data-type=fish]');
@@ -191,8 +244,12 @@ Menu.refreshMenu = function () {
   Menu.reorderMenu('.menu-hidden[data-type=shops]');
   Menu.reorderMenu('.menu-hidden[data-type=camps]');
   Menu.reorderMenu('.menu-hidden[data-type=treasure]');
-  Menu.reorderMenu('.menu-hidden[data-type=random_encounters]');
+  Menu.reorderMenu('.menu-hidden[data-type=legendary_animals]');
+  Menu.reorderMenu('.menu-hidden[data-type=encounters]');
   Menu.reorderMenu('.menu-hidden[data-type=moonshiner_missions]');
+
+  if(Settings.toolTip == 1)
+    tippy('[data-tippy-content]', {theme: 'rdr2-theme'});
 };
 
 Menu.showAll = function () {
@@ -206,6 +263,7 @@ Menu.showAll = function () {
   MapBase.addMarkers();
   Treasures.addToMap();
   Encounters.addToMap();
+  Legendary.addToMap();
 };
 
 Menu.hideAll = function () {
@@ -219,6 +277,7 @@ Menu.hideAll = function () {
   MapBase.addMarkers();
   Treasures.addToMap();
   Encounters.addToMap();
+  Legendary.addToMap();
   Heatmap.removeHeatmap(true);
 };
 

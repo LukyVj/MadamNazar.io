@@ -8,6 +8,7 @@ var MapBase = {
   map: null,
   overlays: [],
   markers: [],
+  discoverables: [],
   importantItems: [],
   isDarkMode: false,
   fastTravelData: null,
@@ -35,7 +36,12 @@ var MapBase = {
         noWrap: true,
         bounds: L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176)),
         attribution: '<a href="https://github.com/TDLCTV" target="_blank">TDLCTV</a>'
-      })
+      }),
+      L.tileLayer((isLocalHost() ? '' : 'https://jeanropke.b-cdn.net/') + 'assets/maps/black/{z}/{x}_{y}.jpg', {
+        noWrap: true,
+        bounds: L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176)),
+        attribution: '<a href="https://github.com/AdamNortonUK" target="_blank">AdamNortonUK</a>'
+      }),
     ];
 
     Heatmap.initLayer();
@@ -100,8 +106,8 @@ var MapBase = {
 
     MapBase.map.addControl(
       L.control.attribution({
-        position: 'bottomleft',
-        prefix: '<span data-text="map.attribution_prefix">Tiles provided by</span>'
+        position: 'bottomright',
+        prefix: '<a target="_blank" href="https://github.com/jeanropke/RDOMap/blob/master/CONTRIBUTORS.md" data-text="map.attribution_prefix">RDO Map Contributors</a>'
       })
     );
 
@@ -112,7 +118,8 @@ var MapBase = {
     var baseMapsLayers = {
       'map.layers.default': mapLayers[0],
       'map.layers.detailed': mapLayers[1],
-      'map.layers.dark': mapLayers[2]
+      'map.layers.dark': mapLayers[2],
+      'map.layers.black': mapLayers[3]
     };
 
     L.control.layers(baseMapsLayers).addTo(MapBase.map);
@@ -126,6 +133,9 @@ var MapBase = {
           break;
         case 'map.layers.dark':
           mapIndex = 2;
+          break;
+        case 'map.layers.black':
+          mapIndex = 3;
           break;
         case 'map.layers.detailed':
         default:
@@ -229,9 +239,6 @@ var MapBase = {
   },
 
   setMarkers: function (data) {
-    if (Settings.isDebugEnabled)
-      console.log(`Categories disabled: ${categoriesDisabledByDefault}`);
-
     $.each(data, function (_category, _markers) {
       $.each(_markers, function (_key, marker) {
         if (Array.isArray(marker)) {
@@ -239,42 +246,29 @@ var MapBase = {
             MapBase.markers.push(new Marker(marker.text || _key, submarker.lat, submarker.lng, _category, _key, null, submarker.size));
           });
         } else {
-          MapBase.markers.push(new Marker(marker.text || _category, marker.lat, marker.lng, _category, null, marker.time, marker.size));
+          MapBase.markers.push(new Marker(marker.text || _category, marker.lat, marker.lng, _category, null, marker.size));
         }
       });
     });
     uniqueSearchMarkers = MapBase.markers;
 
     MapBase.addMarkers(true);
+  },
 
-    // Do search via URL.
-    var searchParam = getParameterByName('search');
-    if (searchParam != null && searchParam) {
-      $('#search').val(searchParam);
-      MapBase.onSearch(searchParam);
-    }
+  loadDiscoverables: function () {
+    if (!Settings.isDebugEnabled) return;
+    $.getJSON('data/discoverables.json?nocache=' + nocache)
+      .done(function (data) {
+        MapBase.setDiscoverables(data);
+      });
+  },
 
-    // Navigate to marker via URL.
-    var markerParam = getParameterByName('m');
-    if (markerParam != null && markerParam != '') {
-      var goTo = MapBase.markers.filter(_m => _m.text == markerParam)[0];
+  setDiscoverables: function (data) {
+    $.each(data, function (_key, marker) {
+      MapBase.discoverables.push(new Marker(marker.name, marker.lat, marker.lng, "discoverables", null, [marker.width, marker.height]));
+    });
 
-      //if a marker is passed on url, check if is valid
-      if (goTo === undefined || goTo === null) return;
-
-      //set map view with marker lat & lng
-      MapBase.map.setView([goTo.lat, goTo.lng], 6);
-
-      //check if marker category is enabled, if not, enable it
-      if (Layers.itemMarkersLayer.getLayerById(goTo.text) == null) {
-        enabledCategories.push(goTo.category);
-        MapBase.addMarkers();
-        $(`[data-type="${goTo.category}"]`).removeClass('disabled');
-      }
-
-      //open marker popup
-      Layers.itemMarkersLayer.getLayerById(goTo.text).openPopup();
-    }
+    MapBase.addMarkers(true);
   },
 
   onSearch: function (searchString) {
@@ -309,14 +303,80 @@ var MapBase = {
   },
 
   addMarkers: function (refreshMenu = false) {
+    // Do search via URL.
+    var quickParam = getParameterByName('q');
+    if (refreshMenu && quickParam != null && quickParam) {
+      $('.menu-toggle').remove();
+      $('.clock-container').remove();
+      $('.fme-container').remove();
+      $('.side-menu').removeClass('menu-opened');
+      $('.leaflet-top.leaflet-right, .leaflet-control-zoom').remove();
+
+      if (categories.indexOf(quickParam) !== -1) {
+        enabledCategories = [quickParam];
+      } else if (plants.indexOf(quickParam) !== -1) {
+        enabledCategories = ["plants"];
+        enabledPlants = [quickParam];
+      } else if (shops.indexOf(quickParam) !== -1) {
+        enabledCategories = ["shops"];
+        enabledShops = [quickParam];
+      } else if (camps.indexOf(quickParam) !== -1) {
+        enabledCategories = ["camps"];
+        enabledCamps = [quickParam];
+      } else if (Treasures.treasures.indexOf(quickParam) !== -1) {
+        enabledCategories = ["treasure"];
+        Treasures.enabledTreasures = [quickParam];
+        Treasures.addToMap(true);
+      } else if (Legendary.legendaries.indexOf(quickParam) !== -1) {
+        enabledCategories = ["legendary_animals"];
+        Legendary.enabledLegendaries = [quickParam];
+        Legendary.addToMap(true);
+      } else {
+        enabledCategories = [];
+
+        if (Heatmap.state !== 2) {
+          // A bit sloppy, but it works.
+          setTimeout(() => {
+            MapBase.addMarkers(refreshMenu);
+          }, 50);
+          return;
+        }
+
+        if (Heatmap.data.animals.hasOwnProperty(quickParam)) {
+          Heatmap.setHeatmap(quickParam, "animals");
+        } else if (Heatmap.data.birds.hasOwnProperty(quickParam)) {
+          Heatmap.setHeatmap(quickParam, "birds");
+        } else if (Heatmap.data.fish.hasOwnProperty(quickParam)) {
+          Heatmap.setHeatmap(quickParam, "fish");
+        }
+      }
+    }
+
+    if (Settings.isDebugEnabled)
+      console.log(`Categories disabled: ${categoriesDisabledByDefault}`);
+
     Layers.plantsLayer.addTo(MapBase.map);
+    Layers.discoverablesLayer.addTo(MapBase.map);
+
+    MapBase.map.on('zoom', function () {
+      if (MapBase.map.getZoom() > 5)
+        return Layers.discoverablesLayer.addTo(MapBase.map);
+
+      return Layers.discoverablesLayer.removeFrom(MapBase.map);
+    });
 
     if (Layers.itemMarkersLayer != null)
       Layers.itemMarkersLayer.clearLayers();
     if (Layers.plantsLayer != null)
       Layers.plantsLayer.clearLayers();
+    if (Layers.discoverablesLayer != null)
+      Layers.discoverablesLayer.clearLayers();
     if (Layers.miscLayer != null)
       Layers.miscLayer.clearLayers();
+    if (Layers.legendaryLayers != null)
+      Layers.legendaryLayers.clearLayers();
+    if (Layers.legendaryLayers != null)
+      Layers.legendaryLayers.clearLayers();
 
     var opacity = Settings.markerOpacity;
 
@@ -347,6 +407,26 @@ var MapBase = {
       });
     }
 
+    if (MapBase.discoverables.length > 0) {
+      var discoverableMarkersInst = [];
+      MapBase.yieldingLoop(MapBase.discoverables.length, 25, function (i) {
+        var marker = MapBase.discoverables[i];
+        marker.isVisible = false;
+        var markerInst = MapBase.createDiscoverableMarker(marker, opacity);
+        if (typeof markerInst == 'undefined') return;
+        discoverableMarkersInst.push(markerInst);
+      }, function () {
+        try {
+          Layers.discoverablesLayer.addLayers(discoverableMarkersInst);
+        } catch (error) {
+          // 
+        }
+
+        if (MapBase.map.getZoom() <= 5)
+          Layers.discoverablesLayer.removeFrom(MapBase.map);
+      });
+    }
+
     Layers.itemMarkersLayer.addTo(MapBase.map);
     Layers.pinsLayer.addTo(MapBase.map);
 
@@ -357,24 +437,41 @@ var MapBase = {
     Treasures.addToMap();
     Encounters.addToMap();
     MadamNazar.addMadamNazar();
+    Legendary.addToMap();
 
     if (refreshMenu)
       Menu.refreshMenu();
   },
 
   removeItemFromMap: function (text, subdata, category) {
+
     if (category == 'treasure') {
       if (Treasures.enabledTreasures.includes(text))
         Treasures.enabledTreasures = $.grep(Treasures.enabledTreasures, function (treasure) {
           return treasure !== text;
         });
-      else
+      else {
         Treasures.enabledTreasures.push(text);
+      }
 
       $(`[data-type=${text}]`).toggleClass('disabled');
 
       Treasures.addToMap();
       Treasures.save();
+    }
+    else if (category == 'legendary_animals') {
+      if (Legendary.enabledLegendaries.includes(text))
+        Legendary.enabledLegendaries = $.grep(Legendary.enabledLegendaries, function (animal) {
+          return animal !== text;
+        });
+      else {
+        Legendary.enabledLegendaries.push(text);
+      }
+
+      $(`[data-type=${text}]`).toggleClass('disabled');
+
+      Legendary.addToMap();
+      Legendary.save();
     }
   },
 
@@ -402,24 +499,6 @@ var MapBase = {
 
   updateMarkerContent: function (marker) {
     var popupContent = marker.description;
-
-    if (marker.category == 'hideouts') {
-      var time = marker.time + '';
-      var timeString = '';
-
-      if (time.indexOf("1") >= 0)
-        timeString += Language.get('map.hideouts.desc.sunrise') + ', ';
-      if (time.indexOf("2") >= 0)
-        timeString += Language.get('map.hideouts.desc.day') + ', ';
-      if (time.indexOf("3") >= 0)
-        timeString += Language.get('map.hideouts.desc.sunset') + ', ';
-      if (time.indexOf("4") >= 0)
-        timeString += Language.get('map.hideouts.desc.night') + ', ';
-
-      timeString = timeString.substring(0, timeString.length - 2);
-
-      popupContent = Language.get(`map.hideouts.desc`).replace('{times}', timeString);
-    }
 
     // TODO: Fix later. :-)
     // var shareText = `<a href="javascript:void(0)" onclick="setClipboardText('https://jeanropke.github.io/RDOMap/?m=${marker.text}')">${Language.get('map.copy_link')}</a>`;
@@ -467,8 +546,7 @@ var MapBase = {
           ${shadow}
         `,
         marker: marker.text,
-        category: marker.category,
-        time: marker.time
+        category: marker.category
       })
     });
 
@@ -504,6 +582,32 @@ var MapBase = {
       minWidth: 300,
       maxWidth: 400
     });
+
+    return tempMarker;
+  },
+
+  createDiscoverableMarker: function (marker, opacity = 1) {
+    if (!enabledCategories.includes('discoverables')) return;
+
+    var overlay = `assets/overlays/${(MapBase.isDarkMode ? 'dark' : 'normal')}/discoveries/${marker.text}.png?nocache=${nocache}`;
+    var tempMarker = L.marker([marker.lat, marker.lng], {
+      opacity: opacity,
+      icon: new L.divIcon({
+        iconUrl: overlay,
+        iconSize: [marker.size[0], marker.size[1]],
+        iconAnchor: [marker.size[0] / 2, marker.size[1] / 2],
+        popupAnchor: [0, 0]
+      })
+    });
+
+    marker.isVisible = true;
+    tempMarker.id = marker.text;
+
+    // Maybe at some point make these display the text.
+    // tempMarker.bindPopup(`<h1>${marker.title}</h1>`, {
+    //   minWidth: 300,
+    //   maxWidth: 400
+    // });
 
     return tempMarker;
   },
@@ -579,8 +683,10 @@ var MapBase = {
               `
             })
           });
-
-          marker.bindPopup(`<h1>${Language.get(`map.shops.${category}.name`)}</h1><p>${Language.get(`map.shops.${value.text}.desc`)} ${Language.get(`map.shops.${category}.desc`)}</p>`);
+          marker.bindPopup(`
+          <h1>${Language.get(`map.shops.${category}.name`)}</h1>
+          <p>${Language.get(`map.shops.${category}.desc`)}</p>
+          `);
 
           Layers.itemMarkersLayer.addLayer(marker);
         });
