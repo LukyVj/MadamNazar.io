@@ -218,8 +218,6 @@ const MapBase = {
     'use strict';
     uniqueSearchMarkers = MapBase.markers;
 
-    MapBase.resetMarkersDaily();
-
     // Preview mode.
     const previewParam = getParameterByName('q');
     if (previewParam) {
@@ -231,19 +229,31 @@ const MapBase = {
       $('.leaflet-top.leaflet-right, .leaflet-control-zoom').remove();
 
       const isValidCategory = categories.includes(previewParam);
-
-      if (isValidCategory)
+      if (isValidCategory) {
         enabledCategories = [previewParam];
-      else
+        if (previewParam === "heirlooms") enabledCategories.push("heirlooms_random");
+        if (previewParam === "ring" || previewParam === "earring" || previewParam === "bracelet" || previewParam === "necklace") enabledCategories.push("jewelry_random");
+        if (previewParam === "coastal" || previewParam === "megafauna" || previewParam === "oceanic") enabledCategories.push("fossils_random");
+
+        MapBase.addMarkers();
+      } else {
         enabledCategories = [];
-
-      MapBase.addMarkers(false, true);
-
-      if (!isValidCategory)
+        MapBase.addMarkers(false, true);
+        $('#search').val(previewParam);
         MapBase.onSearch(previewParam);
 
+        // Zoom in if there's only one specific item.
+        // Only do this here, as earring cycle 1 has 1 item, and we don't want that to zoom.
+        const visibleItems = MapBase.markers.filter(m => m.isVisible);
+        if (visibleItems.length === 1)
+          MapBase.map.setView([visibleItems[0].lat, visibleItems[0].lng], 6);
+      }
+
+      // Don't need to do anything else, just exit.
       return;
     }
+
+    MapBase.resetMarkersDaily();
 
     // Do search via URL.
     const searchParam = getParameterByName('search');
@@ -313,9 +323,9 @@ const MapBase = {
       $.each(searchTerms, function (id, term) {
 
         searchMarkers = searchMarkers.concat(MapBase.markers.filter(_marker =>
-          Language.get(_marker.itemTranslationKey).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(term.toLowerCase()) ||
+          _marker.itemId === term ||
           _marker.itemNumberStr === term ||
-          _marker.itemId === term
+          Language.get(_marker.itemTranslationKey).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(term.toLowerCase())
         ));
 
         $.each(searchMarkers, function (i, el) {
@@ -331,11 +341,11 @@ const MapBase = {
     MapBase.addMarkers();
   },
 
-  addMarkers: function (refreshMenu = false, inPreview = false) {
+  addMarkers: function (refreshMenu = false) {
     if (!MapBase.updateLoopAvailable) {
       MapBase.requestLoopCancel = true;
       setTimeout(() => {
-        MapBase.addMarkers(refreshMenu, inPreview);
+        MapBase.addMarkers(refreshMenu);
       }, 0);
       return;
     }
@@ -348,7 +358,7 @@ const MapBase = {
       25,
       function (i) {
         if (MapBase.requestLoopCancel) return;
-        MapBase.addMarkerOnMap(MapBase.markers[i], inPreview);
+        MapBase.addMarkerOnMap(MapBase.markers[i]);
       },
       function () {
         MapBase.updateLoopAvailable = true;
@@ -387,7 +397,7 @@ const MapBase = {
     const subdataCategoryIsDisabled =
       (text == subdata && !$(`[data-type=${subdata}]`).hasClass('disabled'));
 
-      $.each(markers, function (key, marker) {      
+    $.each(markers, function (key, marker) {
       if (text != subdata && marker.text != text) return;
 
       let changeAmount = 0;
