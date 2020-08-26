@@ -2,7 +2,7 @@ export const WEBSITE_NAME = "MadamNazar.io";
 export const TWITTER_URL = "https://twitter.com/MadamNazarIO";
 export const TWITTER_NAME = "@MadamNazarIO";
 export const PATREON_URL = "https://support-madamnazario.surge.sh/";
-export const DISCORD_URL = "https://discord.gg/2WZaTj9";
+export const DISCORD_URL = "https://discord.gg/ZYj3G9h";
 
 export const DEV_API =
   "https://madam-nazar-location-api-2.herokuapp.com/v2/today";
