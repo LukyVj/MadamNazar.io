@@ -455,5 +455,23 @@
 		{ "text": "suspension_trap_rio_bravo_01", "x": "-98.7481", "y": "57.6594" },
 		{ "text": "suspension_trap_rio_bravo_02", "x": "-120.2618", "y": "55.7095" },
 		{ "text": "suspension_trap_macfarlane_01", "x": "-126.4617", "y": "29.7396" }
+	],
+	"poacher_hideout": [
+		{ "text": "naturalist_hideout_poachers_dilapidated_church", "x": "-103.6587", "y": "24.8048" },
+		{ "text": "naturalist_hideout_poachers_gill_landing", "x": "-73.9163", "y": "116.6566" },
+		{ "text": "naturalist_hideout_poachers_jorges_gap", "x": "-106.6407", "y": "47.0497" },
+		{ "text": "naturalist_hideout_poachers_owanjila", "x": "-65.3134", "y": "74.0001" },
+		{ "text": "naturalist_hideout_poachers_scratching_post", "x": "-121.6218", "y": "20.6053" },
+		{ "text": "naturalist_hideout_poachers_window_rock", "x": "-40.5900", "y": "108.9418" },
+		{ "text": "naturalist_hideout_poachers_trappers", "x": "-68.1365", "y": "143.9139" },
+		{ "text": "naturalist_hideout_poachers_bluewater", "x": "-70.0221", "y": "149.8978" },
+		{ "text": "naturalist_hideout_poachers_dakota", "x": "-47.3470", "y": "100.5117" },
+		{ "text": "naturalist_hideout_poachers_eris", "x": "-70.7514", "y": "133.5843" },
+		{ "text": "naturalist_hideout_poachers_tower", "x": "-52.4753", "y": "142.5321" },
+		{ "text": "naturalist_hideout_poachers_little_creek", "x": "-50.7758", "y": "73.2676" },
+		{ "text": "naturalist_hideout_poachers_manteca_falls", "x": "-106.6610", "y": "85.9766" },
+		{ "text": "naturalist_hideout_poachers_riggs", "x": "-76.6896", "y": "93.2510" },
+		{ "text": "naturalist_hideout_poachers_upper_montana", "x": "-78.4215", "y": "80.4018" },
+		{ "text": "naturalist_hideout_poachers_west_grizzlies", "x": "-46.5102", "y": "93.1804" }
 	]
 }

@@ -1,36 +1,31 @@
 class Marker {
-  constructor(text, lat, lng, category, subdata, size) {
+  constructor(text, lat, lng, category, subdata, size, time) {
     this.text = text;
     this.lat = lat;
     this.lng = lng;
     this.category = category;
     this.subdata = subdata;
     this.size = size;
+    this.time = time;
     this.title = (() => {
-      switch (category) {
+      switch (this.category) {
         case 'plants':
-          return Language.get(`map.plants.${this.text}.name`);
         case 'hideouts':
-          return Language.get(`map.hideouts.${this.text}.name`);
         case 'daily_locations':
-          return Language.get(`map.daily_locations.${this.text}.name`);
+          return Language.get(`map.${this.category}.${this.text}.name`);
         default:
           return Language.get(`map.${this.text}.name`);
       }
     })();
     this.description = (() => {
-      switch (category) {
+      switch (this.category) {
         case 'plants':
-          return Language.get(`map.plants.${this.text}.desc`);
-        case 'hideouts':
-          return ''; // hideouts does not have description (yet)
-        case 'daily_locations':
-          return Language.get(`map.daily_locations.${this.text}.desc`);
+          return Language.get(`map.plants.desc`).replace(/{plant}/, this.title);
         default:
-          return Language.get(`map.${this.text}.desc`);
+          return Language.get(`map.${this.category}.desc`);
       }
     })();
-    this.isVisible = enabledCategories.includes(category);
+    this.isVisible = enabledCategories.includes(this.category);
     this.isCollected = false;
     this.canCollect = !this.isCollected;
   }

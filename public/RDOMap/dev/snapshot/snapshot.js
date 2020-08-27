@@ -242,6 +242,28 @@ const camps = [
     { "name": "talltrees", "type": "long", "url": "http://localhost/rdo/?q=talltrees" },
 ];
 
+const gfh = [
+    { "name": "aberdeen_pig_farmers", "type": "long", "url": "http://localhost/rdo/?q=aberdeen_pig_farmers" },
+    { "name": "alden", "type": "long", "url": "http://localhost/rdo/?q=alden" },
+    { "name": "anthony_foreman", "type": "long", "url": "http://localhost/rdo/?q=anthony_foreman" },
+    { "name": "black_belle", "type": "long", "url": "http://localhost/rdo/?q=black_belle" },
+    { "name": "bonnie", "type": "long", "url": "http://localhost/rdo/?q=bonnie" },
+    { "name": "flaco_hernandez", "type": "long", "url": "http://localhost/rdo/?q=flaco_hernandez" },
+    { "name": "hector", "type": "long", "url": "http://localhost/rdo/?q=hector" },
+    { "name": "joe", "type": "long", "url": "http://localhost/rdo/?q=joe" },
+    { "name": "josiah_trelawny", "type": "long", "url": "http://localhost/rdo/?q=josiah_trelawny" },
+    { "name": "langton", "type": "long", "url": "http://localhost/rdo/?q=langton" },
+    { "name": "mamma_watson", "type": "long", "url": "http://localhost/rdo/?q=mamma_watson" },
+    { "name": "sadie_adler", "type": "long", "url": "http://localhost/rdo/?q=sadie_adler" },
+    { "name": "sean_macquire", "type": "long", "url": "http://localhost/rdo/?q=sean_macquire" },
+    { "name": "shaky", "type": "long", "url": "http://localhost/rdo/?q=shaky" },
+    { "name": "sheriff_freeman", "type": "long", "url": "http://localhost/rdo/?q=sheriff_freeman" },
+    { "name": "the_boy", "type": "long", "url": "http://localhost/rdo/?q=the_boy" },
+    { "name": "thomas_skiff_captain", "type": "long", "url": "http://localhost/rdo/?q=thomas_skiff_captain" },
+    { "name": "wallace_train_clerk", "type": "long", "url": "http://localhost/rdo/?q=wallace_train_clerk" },
+    { "name": "war_vet", "type": "long", "url": "http://localhost/rdo/?q=war_vet" },
+];
+
 const misc = [
     { "name": "ambush", "type": "long", "url": "http://localhost/rdo/?q=ambush" },
     { "name": "animal_attack", "type": "long", "url": "http://localhost/rdo/?q=animal_attack" },
@@ -943,6 +965,21 @@ const collectableIndividual = [
     { "name": "wands_two_6", "type": "short", "url": "http://localhost/?q=wands_two&cycles=6" },
 ];
 
+const nazar = [
+    { "name": "nazar_1", "type": "short", "url": "http://localhost/?q=nazar&cycles=1" },
+    { "name": "nazar_2", "type": "short", "url": "http://localhost/?q=nazar&cycles=2" },
+    { "name": "nazar_3", "type": "short", "url": "http://localhost/?q=nazar&cycles=3" },
+    { "name": "nazar_4", "type": "short", "url": "http://localhost/?q=nazar&cycles=4" },
+    { "name": "nazar_5", "type": "short", "url": "http://localhost/?q=nazar&cycles=5" },
+    { "name": "nazar_6", "type": "short", "url": "http://localhost/?q=nazar&cycles=6" },
+    { "name": "nazar_7", "type": "short", "url": "http://localhost/?q=nazar&cycles=7" },
+    { "name": "nazar_8", "type": "short", "url": "http://localhost/?q=nazar&cycles=8" },
+    { "name": "nazar_9", "type": "short", "url": "http://localhost/?q=nazar&cycles=9" },
+    { "name": "nazar_10", "type": "short", "url": "http://localhost/?q=nazar&cycles=10" },
+    { "name": "nazar_11", "type": "short", "url": "http://localhost/?q=nazar&cycles=11" },
+    { "name": "nazar_12", "type": "short", "url": "http://localhost/?q=nazar&cycles=12" },
+]
+
 let sites = [];
 
 [1, 2, 3, 4, 5, 6].forEach(i => {
@@ -962,7 +999,9 @@ sites = sites.concat(treasures);
 sites = sites.concat(plants);
 sites = sites.concat(shops);
 sites = sites.concat(camps);
+sites = sites.concat(gfh);
 sites = sites.concat(misc);
+sites = sites.concat(nazar);
 
 const bar = new ProgressBar('[:bar] :current/:total (:percent)', {
     complete: '=',
