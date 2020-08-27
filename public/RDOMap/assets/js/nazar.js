@@ -17,15 +17,15 @@ var MadamNazar = {
   currentDate: null,
 
   loadMadamNazar: function () {
-    var _nazarParam = getParameterByName('nazar');
-    if (_nazarParam < MadamNazar.possibleLocations.length && _nazarParam) {
+    var _nazarParam = getParameterByName('cycles');
+    if (_nazarParam && _nazarParam > 0 && _nazarParam <= MadamNazar.possibleLocations.length) {
       MadamNazar.currentLocation = _nazarParam;
       MadamNazar.currentDate = '';
       MadamNazar.addMadamNazar();
     } else {
       $.getJSON('https://pepegapi.jeanropke.net/rdo/nazar')
         .done(function (nazar) {
-          MadamNazar.currentLocation = nazar.nazar_id - 1;
+          MadamNazar.currentLocation = nazar.nazar_id;
           MadamNazar.currentDate = new Date(nazar.date).toLocaleString(Settings.language, {
             day: "2-digit", month: "long", year: "numeric"
           });
@@ -40,7 +40,7 @@ var MadamNazar = {
       return;
 
     var shadow = Settings.isShadowsEnabled ? '<img class="shadow" width="' + 35 * Settings.markerSize + '" height="' + 16 * Settings.markerSize + '" src="./assets/images/markers-shadow.png" alt="Shadow">' : '';
-    var marker = L.marker([MadamNazar.possibleLocations[MadamNazar.currentLocation].x, MadamNazar.possibleLocations[MadamNazar.currentLocation].y], {
+    var marker = L.marker([MadamNazar.possibleLocations[MadamNazar.currentLocation - 1].x, MadamNazar.possibleLocations[MadamNazar.currentLocation - 1].y], {
       icon: L.divIcon({
         iconSize: [35 * Settings.markerSize, 45 * Settings.markerSize],
         iconAnchor: [17 * Settings.markerSize, 42 * Settings.markerSize],
@@ -53,7 +53,7 @@ var MadamNazar = {
       })
     });
 
-    marker.bindPopup(`<h1>${Language.get('menu.madam_nazar')} - ${MadamNazar.currentDate}</h1><p style="text-align: center;">${Language.get('map.madam_nazar.desc').replace('{link}', '<a href="https://twitter.com/MadamNazarIO" target="_blank">@MadamNazarIO</a>')}</p>`, { minWidth: 300 });
+    marker.bindPopup(`<h1>${Language.get('menu.madam_nazar')} - ${MadamNazar.currentDate || "#" + MadamNazar.currentLocation}</h1><p style="text-align: center;">${Language.get('map.madam_nazar.desc').replace('{link}', '<a href="https://twitter.com/MadamNazarIO" target="_blank">@MadamNazarIO</a>')}</p>`, { minWidth: 300 });
     Layers.itemMarkersLayer.addLayer(marker);
   }
 };

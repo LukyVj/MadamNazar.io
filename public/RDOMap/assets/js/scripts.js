@@ -1,3 +1,11 @@
+Object.defineProperty(String.prototype, 'filename', {
+  value: function (extension) {
+    let s = this.replace(/\\/g, '/');
+    s = s.substring(s.lastIndexOf('/') + 1);
+    return extension ? s.replace(/[?#].+$/, '') : s.split('.')[0];
+  }
+});
+
 Object.defineProperty(String.prototype, 'includesOneOf', {
   value: function (...elements) {
     var include = false;
@@ -25,7 +33,8 @@ var categories = [
   'moonshiner_sabotage', 'nazar', 'plants', 'rescue', 'rival_collector', 'runaway_wagon',
   'shops', 'sightseeing', 'trains', 'treasure', 'treasure_hunter', 'tree_map', 'user_pins',
   'wounded_animal', 'camps', 'animal_attack', 'kidnapped', 'discoverables', 'legendary_animals',
-  'beggar', 'stalking_hunter', 'slumped_hunter', 'crashed_wagon', 'suspension_trap'
+  'beggar', 'stalking_hunter', 'slumped_hunter', 'crashed_wagon', 'suspension_trap', 'gfh',
+  'poacher_hideout'
 ];
 
 var categoriesDisabledByDefault = [
@@ -34,7 +43,7 @@ var categoriesDisabledByDefault = [
   'moonshiner_roadblock', 'moonshiner_sabotage', 'rescue', 'rival_collector', 'runaway_wagon',
   'sightseeing', 'treasure_hunter', 'tree_map', 'wounded_animal', 'camps', 'animal_attack',
   'kidnapped', 'discoverables', 'beggar', 'stalking_hunter', 'slumped_hunter', 'crashed_wagon',
-  'suspension_trap'
+  'suspension_trap', 'gfh', 'poacher_hideout'
 ];
 
 var plants = [
@@ -49,12 +58,12 @@ var plantsDisabledByDefault = plants;
 
 var shops = [
   'barber', 'butcher', 'doctor', 'fence', 'general_store', 'gunsmith', 'honor', 'photo_studio',
-  'post_office', 'saloon', 'stable', 'tackle', 'tailor'
+  'post_office', 'saloon', 'stable', 'tackle', 'tailor', 'musician', 'trapper', 'harriet'
 ];
 
 var shopsDisabledByDefault = [
   'barber', 'butcher', 'doctor', 'fence', 'general_store', 'gunsmith', 'honor', 'photo_studio',
-  'stable', 'tackle', 'tailor'
+  'stable', 'tackle', 'tailor', 'musician'
 ];
 
 var camps = [
@@ -64,10 +73,19 @@ var camps = [
 
 var campsDisabledByDefault = camps;
 
+var gfh = [
+  'aberdeen_pig_farmers', 'alden', 'anthony_foreman', 'black_belle', 'bonnie', 'flaco_hernandez',
+  'hector', 'joe', 'josiah_trelawny', 'langton', 'mamma_watson', 'sadie_adler', 'sean_macquire',
+  'shaky', 'sheriff_freeman', 'the_boy', 'thomas_skiff_captain', 'wallace_train_clerk', 'war_vet'
+];
+
+var gfhDisabledByDefault = [];
+
 var enabledCategories = categories;
 var enabledPlants = plants;
 var enabledShops = shops;
 var enabledCamps = camps;
+var enabledGfh = gfh;
 var categoryButtons = $(".clickable[data-type]");
 
 var date;
@@ -123,6 +141,13 @@ function init() {
     return campsDisabledByDefault.indexOf(item) === -1;
   });
 
+  if (typeof $.cookie('disabled-gfh') !== 'undefined')
+    gfhDisabledByDefault = $.cookie('disabled-gfh').split(',');
+
+  enabledGfh = enabledGfh.filter(function (item) {
+    return gfhDisabledByDefault.indexOf(item) === -1;
+  });
+
   if ($.cookie('map-layer') === undefined || isNaN(parseInt($.cookie('map-layer'))))
     $.cookie('map-layer', 0, { expires: 999 });
 
@@ -172,11 +197,6 @@ function init() {
     $.cookie('overlay-opacity', '0.5', { expires: 999 });
   }
 
-  if ($.cookie('fme-display') === undefined) {
-    FME.display = 3;
-    $.cookie('fme-display', '3', { expires: 999 });
-  }
-
   if ($.cookie('timestamps-24') === undefined) {
     Settings.display24HoursTimestamps = false;
     $.cookie('timestamps-24', 'false', { expires: 999 });
@@ -195,7 +215,6 @@ function init() {
 
   $('#language').val(Settings.language);
   $('#marker-opacity').val(Settings.markerOpacity);
-  $('#fme-display').val(FME.display);
   $('#marker-size').val(Settings.markerSize);
   $('#overlay-opacity').val(Settings.overlayOpacity);
 
@@ -244,8 +263,8 @@ function setMapBackground(mapIndex) {
 
     case 3:
       $('#map').css('background-color', '#000');
-        MapBase.isDarkMode = true;
-        break;
+      MapBase.isDarkMode = true;
+      break;
   }
   MapBase.setOverlays();
   $.cookie('map-layer', mapIndex, { expires: 999 });
@@ -316,6 +335,16 @@ function clockTick() {
   $('.day-cycle').css('background', `url(assets/images/${nightTime ? 'moon' : 'sun'}.png)`);
 
   if (!enabledCategories.includes('hideouts')) return;
+
+  $('[data-category*="hideouts"]').each(function () {
+    var time = $(this).data('time') + '';
+    if (time === null || time == '') return;
+    if (time.split(",").includes(gameHour + "")) {
+      $(this).css('filter', 'drop-shadow(0 0 .5rem #fff) drop-shadow(0 0 .25rem #fff)');
+    } else {
+      $(this).css('filter', 'none');
+    }
+  });
 }
 
 setInterval(clockTick, 1000);
@@ -448,14 +477,6 @@ $("#tooltip").on("change", function () {
   Menu.refreshMenu();
 });
 
-// Toggle visibility of FME cards.
-$("#fme-display").on("change", function () {
-  var parsed = parseInt($("#fme-display").val());
-  FME.display = !isNaN(parsed) ? parsed : 3;
-  $.cookie('fme-display', FME.display, { expires: 999 });
-  FME.update();
-});
-
 //Disable & enable collection category
 $('.clickable').on('click', function (e) {
   e.stopPropagation();
@@ -486,7 +507,7 @@ $('.clickable').on('click', function (e) {
   else if (menu.data('type') == 'user_pins')
     Pins.addToMap();
   else if (menu.data('type') == 'legendary_animals')
-    Legendary.addToMap();    
+    Legendary.addToMap();
   else
     MapBase.addMarkers();
 });
@@ -530,7 +551,7 @@ $(document).on('click', '.collectible-wrapper[data-type]', function () {
   var category = menu.parent().data('type');
 
   if (typeof collectible === 'undefined') return;
-  
+
   $('[data-type=' + collectible + ']').toggleClass('disabled');
   var isDisabled = $('[data-type=' + collectible + ']').hasClass('disabled');
 
@@ -606,6 +627,24 @@ $(document).on('click', '.collectible-wrapper[data-type]', function () {
     $.cookie('disabled-camps', campsDisabledByDefault.join(','), { expires: 999 });
 
     MapBase.addMarkers();
+  } else if (category == 'gfh') {
+    if (isDisabled) {
+      enabledGfh = $.grep(enabledGfh, function (value) {
+        return value != collectible;
+      });
+
+      gfhDisabledByDefault.push(collectible);
+    } else {
+      enabledGfh.push(collectible);
+
+      gfhDisabledByDefault = $.grep(gfhDisabledByDefault, function (value) {
+        return value != collectible;
+      });
+    }
+
+    $.cookie('disabled-gfh', gfhDisabledByDefault.join(','), { expires: 999 });
+
+    MapBase.addMarkers();
   } else {
     MapBase.removeItemFromMap(collectible, collectible, category, true);
   }
@@ -616,17 +655,20 @@ $(document).on('click', '.collectible-wrapper[data-type]', function () {
 $('.menu-toggle').on('click', function () {
   $('.side-menu').toggleClass('menu-opened');
 
-  if ($('.side-menu').hasClass('menu-opened')) {
+  var isOpen = $('.side-menu').hasClass('menu-opened');
+
+  if (isOpen) {
     $('.menu-toggle').text('X');
     $.cookie('menu-opened', '1');
   } else {
     $('.menu-toggle').text('>');
     $.cookie('menu-opened', '0');
   }
-  $('.timer-container').toggleClass('timer-menu-opened');
-  $('.counter-container').toggleClass('counter-menu-opened');
-  $('.clock-container').toggleClass('timer-menu-opened');
-  $('.fme-container').toggleClass('fme-menu-opened');
+
+  $('.timer-container').toggleClass('timer-menu-opened', isOpen);
+  $('.counter-container').toggleClass('counter-menu-opened', isOpen);
+  $('.clock-container').toggleClass('timer-menu-opened', isOpen);
+  $('#fme-container').toggleClass('fme-menu-opened', isOpen);
 });
 //Enable & disable markers cluster
 $('#marker-cluster').on("change", function () {
@@ -863,6 +905,19 @@ L.DivIcon.DataMarkup = L.DivIcon.extend({
 
     if (this.options.category)
       img.dataset.category = this.options.category;
+
+    if (this.options.time) {
+      var from = parseInt(this.options.time[0]);
+      var to = parseInt(this.options.time[1]);
+
+      // Add all valid hours to the marker to be able to simply `.includes()` it later.
+      // Could also check `if X between start and end`, might be slightly better. ¯\_(ツ)_/¯
+      var times = [];
+      for (let index = from; index != to; (index != 23) ? index++ : index = 0)
+        times.push(index);
+
+      img.dataset.time = times;
+    }
   }
 });
 
@@ -917,6 +972,7 @@ $(function () {
   MapBase.loadFastTravels();
   MapBase.loadShops();
   MapBase.loadCamps();
+  MapBase.loadGfh();
   MadamNazar.loadMadamNazar();
   Treasures.load();
   Legendary.load();

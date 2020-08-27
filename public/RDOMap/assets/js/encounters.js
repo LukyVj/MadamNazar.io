@@ -128,6 +128,7 @@ var Encounters = {
       case "moonshiner_destroy":
       case "moonshiner_roadblock":
       case "moonshiner_sabotage":
+      case "poacher_hideout":
         return "darkpurple";
       case "stalking_hunter":
       case "slumped_hunter":
