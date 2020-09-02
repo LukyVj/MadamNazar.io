@@ -16,13 +16,32 @@ var Encounters = {
   set: function (data) {
     $.each(data, function (_category, _markers) {
       $.each(_markers, function (key, marker) {
-        Encounters.markers.push(new Marker(marker.text, marker.x, marker.y, _category, marker.type));
+        Encounters.markers.push(new Marker(marker.text, marker.x, marker.y, _category, marker.type, null, marker.time));
       });
     });
   },
 
   updateMarkerContent: function (marker) {
-    var popupContent = marker.description;
+    var popupContent = Language.get(`map.${marker.category}.desc`);
+
+    if (marker.time) {
+      const clockFormat = {
+        timeZone: 'UTC',
+        hour: 'numeric',
+        minute: '2-digit',
+        hourCycle: Settings.display24HoursTimestamps ? 'h23' : 'h12',
+      };
+      
+      var startDate = new Date();
+      startDate.setHours(marker.time[0]);
+      startDate.setMinutes(0);
+      startDate = startDate.toLocaleTimeString(Settings.language, {hour: '2-digit', minute:'2-digit'});
+      var endDate = new Date();
+      endDate.setHours(marker.time[1]);
+      endDate.setMinutes(0);
+      endDate = endDate.toLocaleTimeString(Settings.language, {hour: '2-digit', minute:'2-digit'});
+      popupContent = `<strong>${Language.get(`map.timed_event`).replace("{start}", startDate).replace("{end}", endDate)}</strong><br>` + popupContent;
+    }
 
     // TODO: Fix later. :-)
     // var shareText = `<a href="javascript:void(0)" onclick="setClipboardText('https://jeanropke.github.io/RDOMap/?m=${marker.text}')">${Language.get('map.copy_link')}</a>`;
@@ -38,7 +57,7 @@ var Encounters = {
 
     return `<h1>${title}</h1>
         <span class="marker-content-wrapper">
-        <p>${Language.get(`map.${marker.category}.desc`)}</p>
+        <p>${popupContent}</p>
         </span>
         ${linksElement.prop('outerHTML')}
         ${Settings.isDebugEnabled ? debugDisplayLatLng.prop('outerHTML') : ''}

@@ -224,6 +224,9 @@ const shops = [
     { "name": "stable", "type": "long", "url": "http://localhost/rdo/?q=stable" },
     { "name": "tackle", "type": "long", "url": "http://localhost/rdo/?q=tackle" },
     { "name": "tailor", "type": "long", "url": "http://localhost/rdo/?q=tailor" },
+    { "name": "musician", "type": "long", "url": "http://localhost/rdo/?q=musician" },
+    { "name": "trapper", "type": "long", "url": "http://localhost/rdo/?q=trapper" },
+    { "name": "harriet", "type": "long", "url": "http://localhost/rdo/?q=harriet" },
 ];
 
 const camps = [
@@ -288,6 +291,7 @@ const misc = [
     { "name": "moonshiner_destroy", "type": "long", "url": "http://localhost/rdo/?q=moonshiner_destroy" },
     { "name": "moonshiner_roadblock", "type": "long", "url": "http://localhost/rdo/?q=moonshiner_roadblock" },
     { "name": "moonshiner_sabotage", "type": "long", "url": "http://localhost/rdo/?q=moonshiner_sabotage" },
+    { "name": "poacher_hideout", "type": "long", "url": "http://localhost/rdo/?q=poacher_hideout" },
     { "name": "rescue", "type": "long", "url": "http://localhost/rdo/?q=rescue" },
     { "name": "rival_collector", "type": "long", "url": "http://localhost/rdo/?q=rival_collector" },
     { "name": "runaway_wagon", "type": "long", "url": "http://localhost/rdo/?q=runaway_wagon" },
