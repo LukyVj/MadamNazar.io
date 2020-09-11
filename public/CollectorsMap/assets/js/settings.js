@@ -169,6 +169,8 @@ Object.entries({
   showRoutesSettings: { default: true },
   showUtilitiesSettings: { default: true },
   topWidgetState: { default: 0 },
+  nazarCustomLocation: { default: 0 },
+  nazarDate: { default: "" },
 }).forEach(([name, config]) => SettingProxy.addSetting(Settings, name, config));
 
 // Inventory settings

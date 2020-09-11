@@ -34,7 +34,7 @@ var categories = [
   'shops', 'sightseeing', 'trains', 'treasure', 'treasure_hunter', 'tree_map', 'user_pins',
   'wounded_animal', 'camps', 'animal_attack', 'kidnapped', 'discoverables', 'legendary_animals',
   'beggar', 'stalking_hunter', 'slumped_hunter', 'crashed_wagon', 'suspension_trap', 'gfh',
-  'poacher_hideout'
+  'poacher_hideout', 'harrietum'
 ];
 
 var categoriesDisabledByDefault = [

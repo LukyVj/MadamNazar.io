@@ -25,6 +25,7 @@ These are the people that provided the locations of the different items on the m
 - Madam Nazar location by the [MadamNazar.io API](https://madamnazar.io/).
 - Sightseeing locations by [Impossible_Phase](https://reddit.com/u/Impossible_Phase).
 - Legendary Animal locations by [Senexis](https://github.com/Senexis), alloc8or and [IronJeff80](https://github.com/IronJeff80).
+- Harrietum Officianalis locations by [Senexis](https://github.com/Senexis).
 
 ## Assets credits
 These are the people that provided assets for the map.

@@ -135,6 +135,7 @@ const MapBase = {
     $("#overlay-opacity").on("change", function () {
       Settings.overlayOpacity = Number($("#overlay-opacity").val());
       MapBase.setOverlays();
+      Legendary.onSettingsChanged();
     });
 
     MapBase.map.on('click', function (e) {
@@ -276,6 +277,14 @@ const MapBase = {
 
       setTimeout(() => goTo.lMarker && goTo.lMarker.openPopup(), 3000);
     }
+
+    // Delete custom Nazar position from settings when she change location
+    const nazarDate = new Date(Date.now() - 21600000).toISOUTCDateString();
+    if (Settings.nazarDate != nazarDate) {
+      $('#nazar-position').val(0);
+      Settings.nazarCustomLocation = 0;
+      Settings.nazarDate = "";
+    }
   },
 
   resetMarkersDaily: function () {
@@ -394,7 +403,7 @@ const MapBase = {
     if (markers == null) return;
 
     const subdataCategoryIsDisabled =
-      (text == subdata && !$(`[data-type=${subdata}]`).hasClass('disabled'));
+      (text == subdata && !$(`[data-type=${subdata}] .collectible-text p`).hasClass('disabled'));
 
     $.each(markers, function (key, marker) {
       if (text != subdata && marker.text != text) return;
@@ -415,13 +424,13 @@ const MapBase = {
       if (!InventorySettings.isEnabled) {
         if (marker.isCollected && marker.isCurrent) {
           $(`[data-marker=${marker.text}]`).css('opacity', Settings.markerOpacity / 3);
-          $(`[data-type=${marker.legacyItemId}]`).addClass('disabled');
+          $(`[data-type=${marker.legacyItemId}] .collectible-text p`).addClass('disabled');
         } else {
           $(`[data-marker=${marker.text}]`).css('opacity', Settings.markerOpacity);
-          $(`[data-type=${marker.legacyItemId}]`).removeClass('disabled');
+          $(`[data-type=${marker.legacyItemId}] .collectible-text p`).removeClass('disabled');
         }
         if (marker.isCurrent && ['egg', 'flower'].includes(marker.category)) {
-          $(`[data-type=${marker.legacyItemId}]`).toggleClass('disabled',
+          $(`[data-type=${marker.legacyItemId}] .collectible-text p`).toggleClass('disabled',
             markers.every(m => !m.canCollect));
         }
       }

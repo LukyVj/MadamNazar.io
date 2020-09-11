@@ -497,6 +497,8 @@ var MapBase = {
         return "lightgray";
       case "camps":
         return "blue";
+      case "harrietum": 
+        return "orange";
       default:
         return "red";
     }
