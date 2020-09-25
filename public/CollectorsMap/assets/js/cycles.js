@@ -29,6 +29,7 @@ const Cycles = {
     const selectedDay = Cycles.getFreshSelectedDay();
     const selectedDayStr = selectedDay.toISOUTCDateString();
     const cycleIndex = Cycles.data.findIndex(element => element.date === selectedDayStr);
+    let fallback = null;
 
     $('div>span.cycle-date').toggleClass('not-found', Cycles.offset !== 0);
 
@@ -36,10 +37,22 @@ const Cycles = {
       // either -1 (not found) or 0 (first day) for which there is no yesterday
       console.error('[Cycles] Cycle not found: ' + selectedDayStr);
       $('.map-cycle-alert').removeClass('hidden');
-      return;
+      
+      fallback = {
+        arrowhead: 1,
+        bottle: 1,
+        coin: 1,
+        egg: 1,
+        flower: 1,
+        heirlooms: 1,
+        lost_jewelry: 1,
+        random: 1,
+        tarot_cards: 1,
+        fossils: 1,
+      }
     }
 
-    const _data = Cycles.data[cycleIndex];
+    const _data = fallback || Cycles.data[cycleIndex];
     Cycles.yesterday = Cycles.data[cycleIndex - 1];
     Cycles.selectedDay = selectedDay;
     Cycles.categories.flower = _data.flower;
@@ -76,9 +89,9 @@ const Cycles = {
 
     if (param.includes(',')) {
       const _cycles = param.split(',');
-      if (_cycles.length == 9) {
+      if (_cycles.length === 9) {
         if (_cycles.some(isNaN) || _cycles.some((e) => e < 1 || e > 6)) {
-          console.warn('Cycles parameters invalid');
+          console.warn('Cycles parameters invalid for items.');
         } else {
           Cycles.categories.flower = _cycles[0];
           Cycles.categories.cups,
@@ -97,17 +110,15 @@ const Cycles = {
           Cycles.categories.random = _cycles[8];
         }
       } else {
-        console.warn('Cycles parameters invalid');
+        console.warn('Cycles parameters invalid for items.');
       }
-    }
-
-    if (!isNaN(param) && param > 0 && param < 7) {
+    } else if (!isNaN(param) && param > 0 && param < 7) {
       for (const key in Cycles.categories) {
         if (Cycles.categories.hasOwnProperty(key))
           Cycles.categories[key] = param;
       }
     } else {
-      console.warn('Cycles parameters invalid');
+      console.warn('Cycles parameters invalid for items.');
     }
   },
 
@@ -123,11 +134,7 @@ const Cycles = {
   setLocaleDate: function () {
     'use strict';
     if (Cycles.selectedDay === undefined) return;
-    const options = {
-      timeZone: "UTC",
-      day: "2-digit",
-      month: "long"
-    };
+    const options = { timeZone: "UTC", day: "2-digit", month: "long" };
     $('.cycle-date').text(Cycles.selectedDay.toLocaleString(Settings.language, options));
   },
 
