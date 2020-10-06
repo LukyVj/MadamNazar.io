@@ -21,7 +21,7 @@ class Loader {
     constructor(name, url) {
         const queryString = {};
         if (!url.startsWith('http')) queryString.nocache = nocache;
-        if (['cycles', 'weekly'].includes(name)) queryString.date = new Date().toISOUTCDateString();
+        if (['cycles'].includes(name)) queryString.date = new Date().toISOUTCDateString();
         this._json = $.getJSON(url, queryString);
     }
     // allow garbage collection of loaded data after use
@@ -34,7 +34,8 @@ class Loader {
 
 const urls = [
     'data/items_value.json',
-    'https://jeanropke.github.io/RDR2CollectorsMap/data/weekly.json',
+    'https://pepegapi.jeanropke.net/v2/rdo/weekly',
+    'https://jeanropke.github.io/RDR2CollectorsMap/data/weekly_sets.json',
     'https://jeanropke.github.io/RDR2CollectorsMap/data/cycles.json',
     'data/overlays.json',
     'data/items.json',

@@ -232,7 +232,6 @@ const MapBase = {
       const isValidCategory = categories.includes(previewParam);
       if (isValidCategory) {
         enabledCategories = [previewParam];
-        if (previewParam === "heirlooms") enabledCategories.push("heirlooms_random");
         if (previewParam === "ring" || previewParam === "earring" || previewParam === "bracelet" || previewParam === "necklace") enabledCategories.push("jewelry_random");
         if (previewParam === "coastal" || previewParam === "megafauna" || previewParam === "oceanic") enabledCategories.push("fossils_random");
 
@@ -289,7 +288,7 @@ const MapBase = {
 
   resetMarkersDaily: function () {
     const date = new Date().toISOUTCDateString();
-    const randomCategories = ['random', 'fossils_random', 'heirlooms_random', 'jewelry_random', 'coin', 'arrowhead'];
+    const randomCategories = ['random', 'fossils_random', 'jewelry_random', 'coin', 'arrowhead'];
 
     if (localStorage.getItem('main.date') === null || date != localStorage.getItem('main.date')) {
       MapBase.markers.forEach(marker => {
@@ -472,17 +471,20 @@ const MapBase = {
   },
 
   highlightImportantItem: function (text, category = '') {
+    const randomCategories = ['arrowhead', 'coin', 'fossils_random', 'jewelry_random', 'random'];
     if (category == 'flower' || category == 'egg')
       text = text.replace(/_\d/, '');
 
     const textMenu = text.replace(/egg_|flower_/, '');
-    $(`[data-type=${textMenu}]`).toggleClass('highlight-important-items-menu');
+
+    if (!randomCategories.includes(category))
+      $(`[data-type=${textMenu}]`).toggleClass('highlight-important-items-menu');
 
     $.each($(`[data-marker*=${text}]`), function (key, marker) {
       let markerData = null;
 
-      if (category !== 'random' && category !== '')
-        markerData = $(this).data('marker').replace(/_\d/, '');
+      if (!randomCategories.includes(category))
+        markerData = $(this).data('marker').replace(/\B_\d$/, '');
       else
         markerData = $(this).data('marker');
 
@@ -512,7 +514,7 @@ const MapBase = {
       MapBase.importantItems = JSON.parse(localStorage.getItem('importantItems')) || [];
 
     $.each(MapBase.importantItems, function (key, item) {
-      if (item.includes('random_item_'))
+      if (item.includes('random'))
         $(`[data-marker=${item}]`).addClass('highlight-items');
       else
         $(`[data-marker*=${item}]`).addClass('highlight-items');
