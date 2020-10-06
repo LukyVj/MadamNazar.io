@@ -19,196 +19,56 @@ Object.defineProperty(String.prototype, 'includesOneOf', {
   }
 });
 
-Object.defineProperty(Date.prototype, 'toISOUTCDateString', {
-  value: function () { return this.toISOString().split('T')[0]; },
+Object.defineProperty(Number.prototype, 'mod', {
+  value: function (num) {
+    return ((this % num) + num) % num;
+  }
 });
 
-var searchTerms = [];
-var uniqueSearchMarkers = [];
 
-var categories = [
-  'ambush', 'boats', 'campfires', 'daily_locations', 'defend_campsite', 'dog_encounter',
-  'egg_encounter', 'escort', 'fame_seeker', 'fast_travel', 'grave_robber', 'hideouts',
-  'hogtied_lawman', 'duel', 'moonshiner_camp', 'moonshiner_destroy', 'moonshiner_roadblock',
-  'moonshiner_sabotage', 'nazar', 'plants', 'rescue', 'rival_collector', 'runaway_wagon',
-  'shops', 'sightseeing', 'trains', 'treasure', 'treasure_hunter', 'tree_map', 'user_pins',
-  'wounded_animal', 'camps', 'animal_attack', 'kidnapped', 'discoverables', 'legendary_animals',
-  'beggar', 'stalking_hunter', 'slumped_hunter', 'crashed_wagon', 'suspension_trap', 'gfh',
-  'poacher_hideout', 'harrietum'
-];
-
-var categoriesDisabledByDefault = [
-  'ambush', 'daily_locations', 'dog_encounter', 'egg_encounter', 'escort', 'fame_seeker',
-  'grave_robber', 'hogtied_lawman', 'duel', 'moonshiner_camp', 'moonshiner_destroy',
-  'moonshiner_roadblock', 'moonshiner_sabotage', 'rescue', 'rival_collector', 'runaway_wagon',
-  'sightseeing', 'treasure_hunter', 'tree_map', 'wounded_animal', 'camps', 'animal_attack',
-  'kidnapped', 'discoverables', 'beggar', 'stalking_hunter', 'slumped_hunter', 'crashed_wagon',
-  'suspension_trap', 'gfh', 'poacher_hideout'
-];
-
-var plants = [
-  'alaskan_ginseng', 'american_ginseng', 'bay_bolete', 'black_berry', 'black_currant', 'burdock_root',
-  'chanterelles', 'common_bulrush', 'creeping_thyme', 'desert_sage', 'english_mace', 'evergreen_huckleberry',
-  'golden_currant', 'hummingbird_sage', 'milkweed', 'parasol_mushroom', 'oleander_sage', 'oregano',
-  'prairie_poppy', 'red_raspberry', 'rams_head', 'red_sage', 'indian_tobacco', 'vanilla_flower',
-  'violet_snowdrop', 'wild_carrots', 'wild_feverfew', 'wild_mint', 'wintergreen_berry', 'yarrow'
-];
-
-var plantsDisabledByDefault = plants;
-
-var shops = [
-  'barber', 'butcher', 'doctor', 'fence', 'general_store', 'gunsmith', 'honor', 'photo_studio',
-  'post_office', 'saloon', 'stable', 'tackle', 'tailor', 'musician', 'trapper', 'harriet'
-];
-
-var shopsDisabledByDefault = [
-  'barber', 'butcher', 'doctor', 'fence', 'general_store', 'gunsmith', 'honor', 'photo_studio',
-  'stable', 'tackle', 'tailor', 'musician'
-];
-
-var camps = [
-  'bayounwa', 'bigvalley', 'chollasprings', 'cumberland', 'gaptooth', 'greatplains', 'grizzlies',
-  'heartlands', 'hennigans', 'riobravo', 'roanoke', 'scarlett', 'talltrees'
-];
-
-var campsDisabledByDefault = camps;
-
-var gfh = [
-  'aberdeen_pig_farmers', 'alden', 'anthony_foreman', 'black_belle', 'bonnie', 'flaco_hernandez',
-  'hector', 'joe', 'josiah_trelawny', 'langton', 'mamma_watson', 'sadie_adler', 'sean_macquire',
-  'shaky', 'sheriff_freeman', 'the_boy', 'thomas_skiff_captain', 'wallace_train_clerk', 'war_vet'
-];
-
-var gfhDisabledByDefault = [];
-
-var enabledCategories = categories;
-var enabledPlants = plants;
-var enabledShops = shops;
-var enabledCamps = camps;
-var enabledGfh = gfh;
-var categoryButtons = $(".clickable[data-type]");
-
-var date;
-
-var debugMarkersArray = [];
-var tempCollectedMarkers = "";
+$(function () {
+  try {
+    init();
+  } catch (e) {
+    if (getParameterByName('show-alert') == '1') {
+      alert(e);
+    }
+    console.error(e);
+  }
+});
 
 function init() {
-  //sometimes, cookies are saved in the wrong order
-  var cookiesList = [];
-  $.each($.cookie(), function (key, value) {
-    if (key.startsWith('removed-items')) {
-      cookiesList.push(key);
-    }
-  });
-  cookiesList.sort();
-  $.each(cookiesList, function (key, value) {
-    tempCollectedMarkers += $.cookie(value);
+
+  const navLang = navigator.language;
+  SettingProxy.addSetting(Settings, 'language', {
+    default: Language.availableLanguages.includes(navLang) ? navLang : 'en',
   });
 
-  if (typeof $.cookie('alert-closed-1') == 'undefined') {
-    $('.map-alert').show();
-  }
-  else {
-    $('.map-alert').hide();
-  }
-
-  if (typeof $.cookie('disabled-categories') !== 'undefined')
-    categoriesDisabledByDefault = $.cookie('disabled-categories').split(',');
-
-  enabledCategories = enabledCategories.filter(function (item) {
-    return categoriesDisabledByDefault.indexOf(item) === -1;
-  });
-
-  if (typeof $.cookie('disabled-plants') !== 'undefined')
-    plantsDisabledByDefault = $.cookie('disabled-plants').split(',');
-
-  enabledPlants = enabledPlants.filter(function (item) {
-    return plantsDisabledByDefault.indexOf(item) === -1;
-  });
-
-  if (typeof $.cookie('disabled-shops') !== 'undefined')
-    shopsDisabledByDefault = $.cookie('disabled-shops').split(',');
-
-  enabledShops = enabledShops.filter(function (item) {
-    return shopsDisabledByDefault.indexOf(item) === -1;
-  });
-
-  if (typeof $.cookie('disabled-camps') !== 'undefined')
-    campsDisabledByDefault = $.cookie('disabled-camps').split(',');
-
-  enabledCamps = enabledCamps.filter(function (item) {
-    return campsDisabledByDefault.indexOf(item) === -1;
-  });
-
-  if (typeof $.cookie('disabled-gfh') !== 'undefined')
-    gfhDisabledByDefault = $.cookie('disabled-gfh').split(',');
-
-  enabledGfh = enabledGfh.filter(function (item) {
-    return gfhDisabledByDefault.indexOf(item) === -1;
-  });
-
-  if ($.cookie('map-layer') === undefined || isNaN(parseInt($.cookie('map-layer'))))
-    $.cookie('map-layer', 0, { expires: 999 });
-
-  if (!Language.availableLanguages.includes(Settings.language)) {
-    Settings.language = 'en';
-    $.cookie('language', Settings.language, { expires: 999 });
-    $('#language').val(Settings.language);
-  }
-
-  if ($.cookie('remove-markers-daily') === undefined) {
-    Settings.resetMarkersDaily = true;
-    $.cookie('remove-markers-daily', '1', { expires: 999 });
-  }
-
-  if ($.cookie('marker-cluster') === undefined) {
-    Settings.markerCluster = true;
-    $.cookie('marker-cluster', '1', { expires: 999 });
-  }
-
-  if ($.cookie('enable-marker-shadows') === undefined) {
-    Settings.isShadowsEnabled = true;
-    $.cookie('enable-marker-shadows', '1', { expires: 999 });
-  }
-
-  if ($.cookie('enable-dclick-zoom') === undefined) {
-    Settings.isDoubleClickZoomEnabled = true;
-    $.cookie('enable-dclick-zoom', '1', { expires: 999 });
-  }
-
-  if ($.cookie('show-help') === undefined) {
-    Settings.showHelp = true;
-    $.cookie('show-help', '1', { expires: 999 });
-  }
-
-  if ($.cookie('marker-opacity') === undefined) {
-    Settings.markerOpacity = 1;
-    $.cookie('marker-opacity', '1', { expires: 999 });
-  }
-
-  if ($.cookie('marker-size') === undefined) {
-    Settings.markerSize = 1;
-    $.cookie('marker-size', '1', { expires: 999 });
-  }
-
-  if ($.cookie('overlay-opacity') === undefined) {
-    Settings.overlayOpacity = 0.5;
-    $.cookie('overlay-opacity', '0.5', { expires: 999 });
-  }
-
-  if ($.cookie('timestamps-24') === undefined) {
-    Settings.display24HoursTimestamps = false;
-    $.cookie('timestamps-24', 'false', { expires: 999 });
-  }
-
+  Menu.init();
   MapBase.init();
-  MapBase.setOverlays(Settings.overlayOpacity);
-
   Language.init();
   Language.setMenuLanguage();
 
-  setMapBackground($.cookie('map-layer'));
+  changeCursor();
+  Pins.init();
+  Dailies.init();
+
+  const animals = AnimalCollection.init();
+  const locations = Location.init();
+  const encounters = Encounter.init();
+  const treasures = Treasure.init();
+  const plants = PlantsCollection.init();
+  const camps = Camp.init();
+  const shops = Shop.init();
+  const gfh = GunForHire.init();
+  const nazar = MadamNazar.init();
+  const legendary = Legendary.init();
+  const discoverables = Discoverable.init();
+  const overlays = Overlay.init();
+  FME.init()
+
+  Promise.all([animals, locations, encounters, treasures, plants, camps, shops, gfh, nazar, legendary, discoverables, overlays])
+    .then(() => { Loader.resolveMapModelLoaded(); MapBase.runOncePostLoad(); });
 
   if (Settings.isMenuOpened)
     $('.menu-toggle').click();
@@ -216,73 +76,34 @@ function init() {
   $('#language').val(Settings.language);
   $('#marker-opacity').val(Settings.markerOpacity);
   $('#marker-size').val(Settings.markerSize);
-  $('#overlay-opacity').val(Settings.overlayOpacity);
-
-  $('#reset-markers').prop("checked", Settings.resetMarkersDaily);
-  $('#marker-cluster').prop("checked", Settings.markerCluster);
-  $('#enable-marker-shadows').prop("checked", Settings.isShadowsEnabled);
+  $('#marker-cluster').prop("checked", Settings.isMarkerClusterEnabled);
+  $('#tooltip').prop("checked", Settings.showTooltips);
   $('#enable-marker-popups-hover').prop("checked", Settings.isPopupsHoverEnabled);
+  $('#enable-marker-shadows').prop("checked", Settings.isShadowsEnabled);
   $('#enable-dclick-zoom').prop("checked", Settings.isDoubleClickZoomEnabled);
-  $('#pins-place-mode').prop("checked", Settings.isPinsPlacingEnabled);
-  $('#pins-edit-mode').prop("checked", Settings.isPinsEditingEnabled);
   $('#show-help').prop("checked", Settings.showHelp);
-  $('#show-coordinates').prop("checked", Settings.isCoordsEnabled);
-  $('#timestamps-24').prop("checked", Settings.display24HoursTimestamps);
-  $('#sort-items-alphabetically').prop("checked", Settings.sortItemsAlphabetically);
-  $("#enable-right-click").prop('checked', $.cookie('right-click') != null);
-  $("#enable-debug").prop('checked', $.cookie('debug') != null);
-  $("#enable-cycle-changer").prop('checked', $.cookie('cycle-changer-enabled') != null);
+  $('#timestamps-24').prop("checked", Settings.isClock24Hour);
+  $('#show-dailies').prop("checked", Settings.showDailies);
+  $('#show-coordinates').prop("checked", Settings.isCoordsOnClickEnabled);
+
+  $('#enable-debug').prop("checked", Settings.isDebugEnabled);
+  $('#enable-right-click').prop("checked", Settings.isRightClickEnabled);
 
   $("#help-container").toggle(Settings.showHelp);
-
-  Pins.addToMap();
-  changeCursor();
+  $('.daily-challenges').toggle(Settings.showDailies);
 }
 
 function isLocalHost() {
   return location.hostname === "localhost" || location.hostname === "127.0.0.1";
 }
 
-function setMapBackground(mapIndex) {
-  switch (parseInt(mapIndex)) {
-    default:
-    case 0:
-      $('#map').css('background-color', '#d2b790');
-      MapBase.isDarkMode = false;
-      break;
-
-    case 1:
-      $('#map').css('background-color', '#d2b790');
-      MapBase.isDarkMode = false;
-      break;
-
-    case 2:
-      $('#map').css('background-color', '#3d3d3d');
-      MapBase.isDarkMode = true;
-      break;
-
-    case 3:
-      $('#map').css('background-color', '#000');
-      MapBase.isDarkMode = true;
-      break;
-  }
-  MapBase.setOverlays();
-  $.cookie('map-layer', mapIndex, { expires: 999 });
-}
-
 function changeCursor() {
-  if (Settings.isCoordsEnabled)
+  if (Settings.isCoordsOnClickEnabled)
     $('.leaflet-grab').css('cursor', 'pointer');
   else {
     $('.leaflet-grab').css('cursor', 'grab');
     $('.lat-lng-container').css('display', 'none');
   }
-}
-
-function addZeroToNumber(number) {
-  if (number < 10)
-    number = '0' + number;
-  return number;
 }
 
 function getParameterByName(name, url) {
@@ -293,16 +114,6 @@ function getParameterByName(name, url) {
   if (!results) return null;
   if (!results[2]) return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
-}
-
-//Copy text to clipboard
-function setClipboardText(text) {
-  var el = document.createElement('textarea');
-  el.value = text;
-  document.body.appendChild(el);
-  el.select();
-  document.execCommand('copy');
-  document.body.removeChild(el);
 }
 
 // Simple download function
@@ -320,6 +131,7 @@ function downloadAsFile(filename, text) {
 }
 
 function clockTick() {
+  'use strict';
   const now = new Date();
   const gameTime = new Date(now * 30);
   const gameHour = gameTime.getUTCHours();
@@ -328,16 +140,15 @@ function clockTick() {
     timeZone: 'UTC',
     hour: 'numeric',
     minute: '2-digit',
-    hourCycle: Settings.display24HoursTimestamps ? 'h23' : 'h12',
+    hourCycle: Settings.isClock24Hour ? 'h23' : 'h12',
   };
 
   $('#time-in-game').text(gameTime.toLocaleString(Settings.language, clockFormat));
+
   $('.day-cycle').css('background', `url(assets/images/${nightTime ? 'moon' : 'sun'}.png)`);
 
-  if (!enabledCategories.includes('hideouts')) return;
-
-  $('[data-category*="hideouts"]').each(function () {
-    var time = $(this).data('time') + '';
+  $('.leaflet-marker-icon[data-marker="hideouts"]').each(function () {
+    let time = $(this).data('time') + '';
     if (time === null || time == '') return;
     if (time.split(",").includes(gameHour + "")) {
       $(this).css('filter', 'drop-shadow(0 0 .5rem #fff) drop-shadow(0 0 .25rem #fff)');
@@ -349,39 +160,17 @@ function clockTick() {
 
 setInterval(clockTick, 1000);
 
-/**
- * jQuery triggers
- */
-
-//Toggle debug container
 $("#toggle-debug").on("click", function () {
   $("#debug-container").toggleClass('opened');
 });
 
-//Show all markers on map
+//TODO: re-implement this function
 $("#show-all-markers").on("change", function () {
   Settings.showAllMarkers = $("#show-all-markers").prop('checked');
-  MapBase.addMarkers();
 });
 
-// Give me back my right-click
 $('#enable-right-click').on("change", function () {
-  if ($("#enable-right-click").prop('checked')) {
-    $.cookie('right-click', '1', { expires: 999 });
-  } else {
-    $.removeCookie('right-click');
-  }
-});
-
-// :-)
-$('#enable-debug').on("change", function () {
-  if ($("#enable-debug").prop('checked')) {
-    Settings.isDebugEnabled = true;
-    $.cookie('debug', '1', { expires: 999 });
-  } else {
-    Settings.isDebugEnabled = false;
-    $.removeCookie('debug');
-  }
+  Settings.isRightClickEnabled = $("#enable-right-click").prop('checked');
 });
 
 //Disable menu category when click on input
@@ -389,146 +178,125 @@ $('.menu-option.clickable input, #submit-new-herb').on('click', function (e) {
   e.stopPropagation();
 });
 
-//Search system on menu
-$("#search").on("input", function () {
-  MapBase.onSearch($('#search').val());
+$('#language').on('change', function () {
+  Settings.language = $("#language").val();
+
+  Language.setMenuLanguage();
+  Treasure.onLanguageChanged();
+  Dailies.onLanguageChanged();
+
+  //WIP: update markers without reload page
+  Camp.locations.forEach(camp => camp.onLanguageChanged());
+  Encounter.locations.forEach(encounter => encounter.onLanguageChanged());
+  GunForHire.locations.forEach(gfh => gfh.onLanguageChanged());
+  Location.locations.forEach(location => location.onLanguageChanged());
+  Shop.locations.forEach(shop => shop.onLanguageChanged());
+  MadamNazar.addMadamNazar();
 });
 
-$("#copy-search-link").on("click", function () {
-  setClipboardText(`http://jeanropke.github.io/RDOMap/?search=${$('#search').val()}`);
+$('#marker-size').on('change', function () {
+  Settings.markerSize = Number($('#marker-size').val());
+  Treasure.onSettingsChanged();
+  Camp.locations.forEach(camp => camp.reinitMarker());
+  Encounter.locations.forEach(encounter => encounter.reinitMarker());
+  GunForHire.locations.forEach(gfh => gfh.reinitMarker());
+  Location.locations.forEach(location => location.reinitMarker());
+  Shop.locations.forEach(shop => shop.reinitMarker());
+  MadamNazar.addMadamNazar();
+  Pins.loadPins();
 });
 
-//Change & save markers reset daily or manually
-$("#reset-markers").on("change", function () {
-  Settings.resetMarkersDaily = $("#reset-markers").prop('checked');
-  $.cookie('remove-markers-daily', Settings.resetMarkersDaily ? '1' : '0', { expires: 999 });
+$('#marker-opacity').on('change', function () {
+  Settings.markerOpacity = Number($("#marker-opacity").val());
+  Treasure.onSettingsChanged();
+  Camp.locations.forEach(camp => camp.reinitMarker());
+  Encounter.locations.forEach(encounter => encounter.reinitMarker());
+  GunForHire.locations.forEach(gfh => gfh.reinitMarker());
+  Location.locations.forEach(location => location.reinitMarker());
+  Shop.locations.forEach(shop => shop.reinitMarker());
+  MadamNazar.addMadamNazar();
+  Pins.loadPins();
 });
 
-$("#clear-markers").on("click", function () {
-  $.each(MapBase.markers, function (key, value) {
-    value.isCollected = false;
-    value.canCollect = true;
-  });
-
-  Menu.refreshMenu();
-  MapBase.addMarkers();
+$('#overlay-opacity').on('change', function () {
+  Settings.overlayOpacity = Number($("#overlay-opacity").val());
+  Legendary.onSettingsChanged();
+  Overlay.onSettingsChanged();
 });
 
-//When map-alert is clicked
-$('.map-alert').on('click', function () {
-  $.cookie('alert-closed-1', 'true', { expires: 999 });
-  $('.map-alert').hide();
+$('#tooltip').on('change', function () {
+  Settings.showTooltips = $("#tooltip").prop('checked');
+
+  if (Settings.showTooltips)
+    Menu.tippyInstances = tippy('[data-tippy-content]', { theme: 'rdr2-theme' });
+  else {
+    Menu.tippyInstances.forEach(instance => instance.destroy());
+    Menu.tippyInstances = [];
+  }
 });
 
-//Enable & disable show coordinates on menu
-$('#show-coordinates').on('change', function () {
-  Settings.isCoordsEnabled = $("#show-coordinates").prop('checked');
-  $.cookie('coords-enabled', Settings.isCoordsEnabled ? '1' : '0', { expires: 999 });
+$('#marker-cluster').on("change", function () {
+  Settings.isMarkerClusterEnabled = $("#marker-cluster").prop('checked');
 
-  changeCursor();
+  Layers.oms.clearMarkers();
+
+  Camp.locations.forEach(camp => camp.reinitMarker());
+  Encounter.locations.forEach(encounter => encounter.reinitMarker());
+  GunForHire.locations.forEach(gfh => gfh.reinitMarker());
+  Location.locations.forEach(location => location.reinitMarker());
+  Shop.locations.forEach(shop => shop.reinitMarker());
+  MadamNazar.addMadamNazar();
+  Pins.loadPins();
+});
+
+$('#enable-marker-popups-hover').on("change", function () {
+  Settings.isPopupsHoverEnabled = $("#enable-marker-popups-hover").prop('checked');
+});
+
+$('#enable-marker-shadows').on("change", function () {
+  Settings.isShadowsEnabled = $("#enable-marker-shadows").prop('checked');
+  Treasure.onSettingsChanged();
+  Camp.locations.forEach(camp => camp.reinitMarker());
+  Encounter.locations.forEach(encounter => encounter.reinitMarker());
+  GunForHire.locations.forEach(gfh => gfh.reinitMarker());
+  Location.locations.forEach(location => location.reinitMarker());
+  Pins.loadPins();
+  MadamNazar.addMadamNazar();
+  Shop.locations.forEach(shop => shop.reinitMarker());
+});
+
+$('#enable-dclick-zoom').on("change", function () {
+  Settings.isDoubleClickZoomEnabled = $("#enable-dclick-zoom").prop('checked');
+  if (Settings.isDoubleClickZoomEnabled) {
+    MapBase.map.doubleClickZoom.enable();
+  } else {
+    MapBase.map.doubleClickZoom.disable();
+  }
+});
+
+$('#show-help').on("change", function () {
+  Settings.showHelp = $("#show-help").prop('checked');
+  $("#help-container").toggle(Settings.showHelp);
 });
 
 $('#timestamps-24').on('change', function () {
-  Settings.display24HoursTimestamps = $("#timestamps-24").prop('checked');
-  $.cookie('timestamps-24', Settings.display24HoursTimestamps ? '1' : '0', { expires: 999 });
+  Settings.isClock24Hour = $("#timestamps-24").prop('checked');
   clockTick();
+  $("#language").triggerHandler('change');
 });
 
-//Change & save language option
-$("#language").on("change", function () {
-  Settings.language = $("#language").val();
-  $.cookie('language', Settings.language, { expires: 999 });
-  Language.setMenuLanguage();
-  MapBase.addMarkers();
-  Menu.refreshMenu();
+$('#show-dailies').on('change', function () {
+  Settings.showDailies = $("#show-dailies").prop('checked');
+  $('.daily-challenges').toggle(Settings.showDailies);
 });
 
-//Change & save overlay opacity
-$("#marker-opacity").on("change", function () {
-  var parsed = parseFloat($("#marker-opacity").val());
-  Settings.markerOpacity = parsed ? parsed : 1;
-  $.cookie('marker-opacity', Settings.markerOpacity, { expires: 999 });
-  MapBase.addMarkers();
+$('#show-coordinates').on('change', function () {
+  Settings.isCoordsOnClickEnabled = $("#show-coordinates").prop('checked');
+  changeCursor();
 });
 
-$("#overlay-opacity").on("change", function () {
-  var parsed = parseFloat($("#overlay-opacity").val());
-  Settings.overlayOpacity = !isNaN(parsed) ? parsed : 0.5;
-  $.cookie('overlay-opacity', Settings.overlayOpacity, { expires: 999 });
-  MapBase.setOverlays(parsed);
-  Legendary.addToMap();
-});
-
-//Change & save marker size
-$("#marker-size").on("change", function () {
-  var parsed = parseFloat($("#marker-size").val());
-  Settings.markerSize = parsed ? parsed : 1;
-  $.cookie('marker-size', Settings.markerSize, { expires: 999 });
-  MapBase.addMarkers();
-  Treasures.set();
-  Legendary.set();
-});
-
-$("#tooltip").on("change", function () {
-  var parsed = parseInt($("#tooltip").val());
-  Settings.toolTip = parsed ? parsed : 0;
-  $.cookie('tooltip-enabled', Settings.toolTip, { expires: 999 });
-
-  Menu.refreshMenu();
-});
-
-//Disable & enable collection category
-$('.clickable').on('click', function (e) {
-  e.stopPropagation();
-
-  var menu = $(this);
-  if (menu.data('type') === undefined) return;
-
-  $('[data-type=' + menu.data('type') + ']').toggleClass('disabled');
-  var isDisabled = menu.hasClass('disabled');
-
-  if (isDisabled) {
-    enabledCategories = $.grep(enabledCategories, function (value) {
-      return value != menu.data('type');
-    });
-
-    categoriesDisabledByDefault.push(menu.data('type'));
-  } else {
-    enabledCategories.push(menu.data('type'));
-
-    categoriesDisabledByDefault = $.grep(categoriesDisabledByDefault, function (value) {
-      return value != menu.data('type');
-    });
-  }
-  $.cookie('disabled-categories', categoriesDisabledByDefault.join(','), { expires: 999 });
-
-  if (menu.data('type') == 'treasure')
-    Treasures.addToMap();
-  else if (menu.data('type') == 'user_pins')
-    Pins.addToMap();
-  else if (menu.data('type') == 'legendary_animals')
-    Legendary.addToMap();
-  else
-    MapBase.addMarkers();
-});
-
-//Disable & enable collection category
-$(document).on('click', '.animal-wrapper[data-type]', function (e) {
-  e.stopPropagation();
-
-  var menu = $(this);
-
-  $('.menu-hidden .animal-wrapper').each(function (key, value) {
-    if (menu.data('type') != $(value).data('type'))
-      $(value).children('span').addClass('disabled');
-  });
-
-  menu.children('span').toggleClass('disabled');
-  if (menu.children('span').hasClass('disabled')) {
-    Heatmap.removeHeatmap();
-  } else {
-    Heatmap.setHeatmap(menu.data('type'), menu.parent().data('type'));
-  }
+$('#enable-debug').on("change", function () {
+  Settings.isDebugEnabled = $("#enable-debug").prop('checked');
 });
 
 //Open collection submenu
@@ -544,231 +312,87 @@ $('.submenu-only').on('click', function (e) {
   $(this).children('.open-submenu').toggleClass('rotate');
 });
 
-//Remove item from map when using the menu
-$(document).on('click', '.collectible-wrapper[data-type]', function () {
-  var menu = $(this);
-  var collectible = menu.data('type');
-  var category = menu.parent().data('type');
-
-  if (typeof collectible === 'undefined') return;
-
-  $('[data-type=' + collectible + ']').toggleClass('disabled');
-  var isDisabled = $('[data-type=' + collectible + ']').hasClass('disabled');
-
-  if (category == 'encounters') {
-    if (isDisabled) {
-      enabledCategories = $.grep(enabledCategories, function (value) {
-        return value != collectible;
-      });
-
-      categoriesDisabledByDefault.push(collectible);
-    } else {
-      enabledCategories.push(collectible);
-
-      categoriesDisabledByDefault = $.grep(categoriesDisabledByDefault, function (value) {
-        return value != collectible;
-      });
-    }
-
-    $.cookie('disabled-categories', categoriesDisabledByDefault.join(','), { expires: 999 });
-
-    Encounters.addToMap();
-  } else if (category == 'plants') {
-    if (isDisabled) {
-      enabledPlants = $.grep(enabledPlants, function (value) {
-        return value != collectible;
-      });
-
-      plantsDisabledByDefault.push(collectible);
-    } else {
-      enabledPlants.push(collectible);
-
-      plantsDisabledByDefault = $.grep(plantsDisabledByDefault, function (value) {
-        return value != collectible;
-      });
-    }
-
-    $.cookie('disabled-plants', plantsDisabledByDefault.join(','), { expires: 999 });
-
-    MapBase.addMarkers();
-  } else if (category == 'shops') {
-    if (isDisabled) {
-      enabledShops = $.grep(enabledShops, function (value) {
-        return value != collectible;
-      });
-
-      shopsDisabledByDefault.push(collectible);
-    } else {
-      enabledShops.push(collectible);
-
-      shopsDisabledByDefault = $.grep(shopsDisabledByDefault, function (value) {
-        return value != collectible;
-      });
-    }
-
-    $.cookie('disabled-shops', shopsDisabledByDefault.join(','), { expires: 999 });
-
-    MapBase.addMarkers();
-  } else if (category == 'camps') {
-    if (isDisabled) {
-      enabledCamps = $.grep(enabledCamps, function (value) {
-        return value != collectible;
-      });
-
-      campsDisabledByDefault.push(collectible);
-    } else {
-      enabledCamps.push(collectible);
-
-      campsDisabledByDefault = $.grep(campsDisabledByDefault, function (value) {
-        return value != collectible;
-      });
-    }
-
-    $.cookie('disabled-camps', campsDisabledByDefault.join(','), { expires: 999 });
-
-    MapBase.addMarkers();
-  } else if (category == 'gfh') {
-    if (isDisabled) {
-      enabledGfh = $.grep(enabledGfh, function (value) {
-        return value != collectible;
-      });
-
-      gfhDisabledByDefault.push(collectible);
-    } else {
-      enabledGfh.push(collectible);
-
-      gfhDisabledByDefault = $.grep(gfhDisabledByDefault, function (value) {
-        return value != collectible;
-      });
-    }
-
-    $.cookie('disabled-gfh', gfhDisabledByDefault.join(','), { expires: 999 });
-
-    MapBase.addMarkers();
-  } else {
-    MapBase.removeItemFromMap(collectible, collectible, category, true);
-  }
-
-});
-
 //Open & close side menu
 $('.menu-toggle').on('click', function () {
   $('.side-menu').toggleClass('menu-opened');
-
-  var isOpen = $('.side-menu').hasClass('menu-opened');
-
-  if (isOpen) {
-    $('.menu-toggle').text('X');
-    $.cookie('menu-opened', '1');
-  } else {
-    $('.menu-toggle').text('>');
-    $.cookie('menu-opened', '0');
-  }
-
-  $('.timer-container').toggleClass('timer-menu-opened', isOpen);
-  $('.counter-container').toggleClass('counter-menu-opened', isOpen);
-  $('.clock-container').toggleClass('timer-menu-opened', isOpen);
-  $('#fme-container').toggleClass('fme-menu-opened', isOpen);
-});
-//Enable & disable markers cluster
-$('#marker-cluster').on("change", function () {
-  Settings.markerCluster = $("#marker-cluster").prop('checked');
-  $.cookie('marker-cluster', Settings.markerCluster ? '1' : '0', { expires: 999 });
-
-  MapBase.map.removeLayer(Layers.itemMarkersLayer);
-  MapBase.addMarkers();
+  Settings.isMenuOpened = $('.side-menu').hasClass('menu-opened');
+  $('.menu-toggle').text(Settings.isMenuOpened ? 'X' : '>');
+  $('.top-widget').toggleClass('top-widget-menu-opened', Settings.isMenuOpened);
+  $('#fme-container').toggleClass('fme-menu-opened', Settings.isMenuOpened);
 });
 
-$('#enable-marker-popups-hover').on("change", function () {
-  Settings.isPopupsHoverEnabled = $("#enable-marker-popups-hover").prop('checked');
-  $.cookie('enable-marker-popups-hover', Settings.isPopupsHoverEnabled ? '1' : '0', { expires: 999 });
+$('#sync-map-to-dailies').on('click', function () {
+  SynchronizeDailies.init();
 });
 
-$('#enable-marker-shadows').on("change", function () {
-  Settings.isShadowsEnabled = $("#enable-marker-shadows").prop('checked');
-  $.cookie('enable-marker-shadows', Settings.isShadowsEnabled ? '1' : '0', { expires: 999 });
-
-  MapBase.map.removeLayer(Layers.itemMarkersLayer);
-  MapBase.addMarkers();
+$(document).on('contextmenu', function (e) {
+  if (!Settings.isRightClickEnabled) e.preventDefault();
 });
 
-$('#enable-dclick-zoom').on("change", function () {
-  Settings.isDoubleClickZoomEnabled = $("#enable-dclick-zoom").prop('checked');
-  $.cookie('enable-dclick-zoom', Settings.isDoubleClickZoomEnabled ? '1' : '0', { expires: 999 });
+$('#delete-all-settings').on('click', function () {
+  $.each(localStorage, function (key) {
+    localStorage.removeItem(key);
+  });
 
-  if (Settings.isDoubleClickZoomEnabled) {
-    MapBase.map.doubleClickZoom.enable();
-  } else {
-    MapBase.map.doubleClickZoom.disable();
-  }
+  location.reload(true);
 });
+
+// converts string 'hours:minutes' to time 12/24 hours
+function convertToTime(hours = '00', minutes = '00') {
+  return Settings.isClock24Hour
+    ? `${hours}:${minutes}`
+    : `${+hours % 12 || 12}:${minutes}${+hours >= 12 ? 'PM' : 'AM'}`;
+}
 
 /**
- * User Pins
+ * Modals
  */
-
-$('#pins-place-mode').on("change", function () {
-  Settings.isPinsPlacingEnabled = $("#pins-place-mode").prop('checked');
-  $.cookie('pins-place-enabled', Settings.isPinsPlacingEnabled ? '1' : '0', { expires: 999 });
+$('#open-clear-important-items-modal').on('click', function () {
+  $('#clear-important-items-modal').modal();
 });
 
-$('#pins-edit-mode').on("change", function () {
-  Settings.isPinsEditingEnabled = $("#pins-edit-mode").prop('checked');
-  $.cookie('pins-edit-enabled', Settings.isPinsEditingEnabled ? '1' : '0', { expires: 999 });
-
-  Pins.addToMap();
+$('#open-delete-all-settings-modal').on('click', function () {
+  $('#delete-all-settings-modal').modal();
 });
 
-$('#pins-place-new').on("click", function () {
-  Pins.addPinToCenter();
-});
-
-$('#pins-export').on("click", function () {
-  try {
-    Pins.exportPins();
-  } catch (error) {
-    console.error(error);
-    alert(Language.get('alerts.feature_not_supported'));
-  }
-});
-
-$('#pins-import').on('click', function () {
-  try {
-    var file = $('#pins-import-file').prop('files')[0];
-    var fallback = false;
-
-    if (!file) {
-      alert(Language.get('alerts.file_not_found'));
-      return;
-    }
-
-    try {
-      file.text().then((text) => {
-        Pins.importPins(text);
-      });
-    } catch (error) {
-      fallback = true;
-    }
-
-    if (fallback) {
-      var reader = new FileReader();
-
-      reader.addEventListener('loadend', (e) => {
-        var text = e.srcElement.result;
-        Pins.importPins(text);
-      });
-
-      reader.readAsText(file);
-    }
-  } catch (error) {
-    console.error(error);
-    alert(Language.get('alerts.feature_not_supported'));
-  }
-});
 
 /**
- * Cookie import/exporting
+ * Leaflet plugins
  */
+L.DivIcon.DataMarkup = L.DivIcon.extend({
+  _setIconStyles: function (img, name) {
+    L.DivIcon.prototype._setIconStyles.call(this, img, name);
+
+    if (this.options.marker)
+      img.dataset.marker = this.options.marker;
+
+    if (this.options.category)
+      img.dataset.category = this.options.category;
+
+    if (this.options.time) {
+      var from = parseInt(this.options.time[0]);
+      var to = parseInt(this.options.time[1]);
+
+      // Add all valid hours to the marker to be able to simply `.includes()` it later.
+      // Could also check `if X between start and end`, might be slightly better. ¯\_(ツ)_/¯
+      var times = [];
+      for (let index = from; index != to; (index != 23) ? index++ : index = 0)
+        times.push(index);
+
+      img.dataset.time = times;
+    }
+  }
+});
+
+L.LayerGroup.include({
+  getLayerById: function (id) {
+    for (var i in this._layers) {
+      if (this._layers[i].id == id) {
+        return this._layers[i];
+      }
+    }
+  }
+});
 
 $('#cookie-export').on("click", function () {
   try {
@@ -870,114 +494,4 @@ $('#cookie-import').on('click', function () {
     console.error(error);
     alert(Language.get('alerts.feature_not_supported'));
   }
-});
-
-/**
- * Tutorial logic
- */
-var defaultHelpTimeout;
-$('[data-help]').hover(function (e) {
-  var attr = $(this).attr('data-help');
-  clearTimeout(defaultHelpTimeout);
-  $('#help-container p').attr('data-text', `help.${attr}`).text(Language.get(`help.${attr}`));
-}, function () {
-  defaultHelpTimeout = setTimeout(function () {
-    $('#help-container p').attr('data-text', `help.default`).text(Language.get(`help.default`));
-  }, 100);
-});
-
-$('#show-help').on("change", function () {
-  Settings.showHelp = $("#show-help").prop('checked');
-  $.cookie('show-help', Settings.showHelp ? '1' : '0', { expires: 999 });
-
-  $("#help-container").toggle(Settings.showHelp);
-});
-
-/**
- * Leaflet plugins
- */
-L.DivIcon.DataMarkup = L.DivIcon.extend({
-  _setIconStyles: function (img, name) {
-    L.DivIcon.prototype._setIconStyles.call(this, img, name);
-
-    if (this.options.marker)
-      img.dataset.marker = this.options.marker;
-
-    if (this.options.category)
-      img.dataset.category = this.options.category;
-
-    if (this.options.time) {
-      var from = parseInt(this.options.time[0]);
-      var to = parseInt(this.options.time[1]);
-
-      // Add all valid hours to the marker to be able to simply `.includes()` it later.
-      // Could also check `if X between start and end`, might be slightly better. ¯\_(ツ)_/¯
-      var times = [];
-      for (let index = from; index != to; (index != 23) ? index++ : index = 0)
-        times.push(index);
-
-      img.dataset.time = times;
-    }
-  }
-});
-
-L.LayerGroup.include({
-  getLayerById: function (id) {
-    for (var i in this._layers) {
-      if (this._layers[i].id == id) {
-        return this._layers[i];
-      }
-    }
-  }
-});
-
-// Disable annoying menu on right mouse click
-$('*').on('contextmenu', function (e) {
-  if ($.cookie('right-click') == null)
-    e.preventDefault();
-});
-
-// reset all settings & cookies
-$('#delete-all-settings').on('click', function () {
-  var cookies = $.cookie();
-  for (var cookie in cookies) {
-    $.removeCookie(cookie);
-  }
-
-  $.each(localStorage, function (key) {
-    localStorage.removeItem(key);
-  });
-
-  location.reload(true);
-});
-
-/**
- * Modals
- */
-$('#open-clear-important-items-modal').on('click', function () {
-  $('#clear-important-items-modal').modal();
-});
-
-$('#open-delete-all-settings-modal').on('click', function () {
-  $('#delete-all-settings-modal').modal();
-});
-
-/**
- * Event listeners
- */
-
-$(function () {
-  init();
-  Heatmap.load();
-  MapBase.loadFastTravels();
-  MapBase.loadShops();
-  MapBase.loadCamps();
-  MapBase.loadGfh();
-  MadamNazar.loadMadamNazar();
-  Treasures.load();
-  Legendary.load();
-  Encounters.load();
-  MapBase.loadMarkers();
-  MapBase.loadDiscoverables();
-  FME.init();
 });

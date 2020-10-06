@@ -180,15 +180,6 @@ const FME = {
    * Update the FME card
    */
   update: function () {
-    // START RDO CUSTOM BLOCK
-    $.cookie('fmeDisplayGeneralPeriod', Settings.fmeDisplayGeneralPeriod, { expires: 999 });
-    $.cookie('fmeDisplayRolePeriod', Settings.fmeDisplayRolePeriod, { expires: 999 });
-    $.cookie('fmeEnabledEvents', Settings.fmeEnabledEvents, { expires: 999 });
-    $.cookie('fmeNotificationPeriod', Settings.fmeNotificationPeriod, { expires: 999 });
-    $.cookie('isFmeDisplayEnabled', Settings.isFmeDisplayEnabled, { expires: 999 });
-    $.cookie('isFmeNotificationEnabled', Settings.isFmeNotificationEnabled, { expires: 999 });
-    // END RDO CUSTOM BLOCK
-
     if (!Settings.isFmeDisplayEnabled && !Settings.isFmeNotificationEnabled) {
       FME.updateVisiblity();
       return;
@@ -227,15 +218,6 @@ const FME = {
    * Retrieve the FME data from FME.json
    */
   init: function () {
-    // START RDO CUSTOM BLOCK
-    Settings.fmeDisplayGeneralPeriod = $.cookie('fmeDisplayGeneralPeriod') !== undefined ? (parseInt($.cookie('fmeDisplayGeneralPeriod'))) : 30;
-    Settings.fmeDisplayRolePeriod = $.cookie('fmeDisplayRolePeriod') !== undefined ? (parseInt($.cookie('fmeDisplayRolePeriod'))) : 60;
-    Settings.fmeEnabledEvents = $.cookie('fmeEnabledEvents') !== undefined ? (parseInt($.cookie('fmeEnabledEvents'))) : 131071;
-    Settings.fmeNotificationPeriod = $.cookie('fmeNotificationPeriod') !== undefined ? (parseInt($.cookie('fmeNotificationPeriod'))) : 10;
-    Settings.isFmeDisplayEnabled = $.cookie('isFmeDisplayEnabled') !== undefined ? ($.cookie('isFmeDisplayEnabled') === "true") : true;
-    Settings.isFmeNotificationEnabled = $.cookie('isFmeNotificationEnabled') !== undefined ? ($.cookie('isFmeNotificationEnabled') === "true") : false;
-    // END RDO CUSTOM BLOCK
-
     $('#fme-display').on("change", function () {
       Settings.isFmeDisplayEnabled = $("#fme-display").prop('checked');
       $('#fme-display-general-period, #fme-display-role-period').parent().toggle(Settings.isFmeDisplayEnabled);

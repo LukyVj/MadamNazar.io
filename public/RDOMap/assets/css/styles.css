@@ -3,7 +3,7 @@
     src: url(../fonts/hapna.woff2) format("woff2"), url(../fonts/hapna.woff) format("woff"), url(../fonts/hapna.ttf) format("truetype");
     font-style: normal;
     font-weight: 400;
-    text-rendering: optimizeLegibility
+    text-rendering: optimizeLegibility;
 }
 
 @font-face {
@@ -11,7 +11,7 @@
     src: url(../fonts/RDRLino-Regular.woff2) format("woff2"), url(../fonts/RDRLino-Regular.woff) format("woff"), url(../fonts/RDRLino-Regular.ttf) format("truetype");
     font-style: normal;
     font-weight: 400;
-    text-rendering: optimizeLegibility
+    text-rendering: optimizeLegibility;
 }
 
 *,
@@ -36,7 +36,7 @@ body {
 }
 
 h1 {
-    font-size: 14px
+    font-size: 14px;
 }
 
 h2 {
@@ -65,6 +65,17 @@ textarea,
 select,
 .btn {
     outline: none;
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: url(../../assets/images/select_caret.png) no-repeat !important;
+    background-size: 12px !important;
+    background-position: calc(100% - 5px) center !important;
+    background-repeat: no-repeat !important;
+    background-color: #383838 !important;
 }
 
 .cycle-table {
@@ -106,8 +117,10 @@ select,
 #main-header-left,
 #main-header-right {
     user-select: none;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10+ and Edge */
     height: 75px;
 }
 
@@ -221,31 +234,31 @@ select,
     margin-right: 5px;
 }
 
-#countdown,
-#item-counter,
-#time-in-game {
-    font-size: 16px;
+.top-widget {
+    z-index: 1010;
+    position: fixed;
+    left: 40px;
+    top: 3px;
+    height: 34px;
+    width: 130px;
+    background-image: url(../../assets/images/timer_bg.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    padding: 5px 15px 5px 10px;
+    color: #fff;
+    text-align: center;
     user-select: none;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
-    margin: auto 8px auto 0;
+    transition: all 200ms ease-out;
 }
 
-.timer-container,
-.clock-container {
-    position: fixed;
-    z-index: 1010;
-    background: #111;
-    border: 1px solid #888;
-    color: #eee;
-    left: 40px;
-    top: 5px;
-    min-width: 50px;
-    height: 30px;
-    transition: all 200ms ease-out;
-    padding: 0 8px;
-    display: inline-flex;
-    line-height: 28px;
+.top-widget>* {
+    display: inline-block;
+    line-height: 18px;
+}
+
+.top-widget>p {
+    margin-right: 2px !important;
+    cursor: pointer;
 }
 
 .day-cycle {
@@ -282,8 +295,10 @@ select,
     font-size: 14px;
     cursor: pointer;
     user-select: none;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10+ and Edge */
     margin-top: 8px;
 }
 
@@ -307,6 +322,7 @@ select,
 .marker-popup-pin-input-desc {
     border: none;
     width: 100%;
+    background-color: #222;
 }
 
 .marker-popup-pin-input-name {
@@ -320,14 +336,15 @@ select,
 .marker-popup-pin-input-divider {
     margin: 2px 0;
     border: none;
-    border-top: solid 1px #B0B0B0;
+    border-top: solid 1px #b0b0b0;
 }
 
 .marker-popup-pin-label {
     margin-bottom: 2px;
 }
 
-.marker-popup-pin-input-icon {
+.marker-popup-pin-input-icon,
+.marker-popup-pin-input-color {
     background: #eee;
     border: none;
     padding: 5px 10px;
@@ -336,11 +353,107 @@ select,
     border-radius: 3px;
 }
 
+.pin-color.aquagreen {
+    color: #00ffa2;
+}
+
+.pin-color.beige {
+    color: #ffce70;
+}
+
+.pin-color.black {
+    color: #292929;
+}
+
+.pin-color.blue {
+    color: #31a6c7;
+}
+
+.pin-color.brown {
+    color: #7c411f;
+}
+
+.pin-color.cadetblue {
+    color: #416776;
+}
+
+.pin-color.darkblue {
+    color: #0066a2;
+}
+
+.pin-color.darkgreen {
+    color: #627134;
+}
+
+.pin-color.darkorange {
+    color: #e27839;
+}
+
+.pin-color.darkpurple {
+    color: #593769;
+}
+
+.pin-color.darkred {
+    color: #a13235;
+}
+
+.pin-color.gray {
+    color: #444444;
+}
+
+.pin-color.green {
+    color: #70ae25;
+}
+
+.pin-color.lightblue {
+    color: #88dbff;
+}
+
+.pin-color.lightgray {
+    color: #5e5e5e;
+}
+
+.pin-color.lightgreen {
+    color: #a3c62c;
+}
+
+.pin-color.lightorange {
+    color: #ff8c7d;
+}
+
+.pin-color.lightred {
+    color: #da4d6d;
+}
+
+.pin-color.orange {
+    color: #ee9232;
+}
+
+.pin-color.pink {
+    color: #c05b9f;
+}
+
+.pin-color.purple {
+    color: #6b65a4;
+}
+
+.pin-color.red {
+    color: #d43d29;
+}
+
+.pin-color.white {
+    color: #ffffff;
+}
+
+.pin-color.yellow {
+    color: #ffcc5c;
+}
+
 .links-container {
     display: flex;
     justify-content: space-around;
-    border-top: 1px solid #B0B0B0;
-    border-bottom: 1px solid #B0B0B0;
+    border-top: 1px solid #b0b0b0;
+    border-bottom: 1px solid #b0b0b0;
     padding: 10px 0;
     margin: 15px 0;
 }
@@ -378,8 +491,10 @@ select,
 
 .input-container {
     user-select: none;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10+ and Edge */
     display: flex;
     justify-content: space-between;
     margin: 5px 0;
@@ -387,8 +502,10 @@ select,
 
 .input-container-noflex {
     user-select: none;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10+ and Edge */
     margin: 5px 0;
     text-align: center;
 }
@@ -447,8 +564,9 @@ select,
 .menu-toggle {
     width: 30px;
     height: 30px;
-    background: #111;
-    border: 1px solid #888;
+    background-image: url(../../assets/images/timer_bg.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
     position: fixed;
     z-index: 1000;
     left: 5px;
@@ -457,9 +575,11 @@ select,
     text-align: center;
     line-height: 1.85;
     user-select: none;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
     cursor: pointer;
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10+ and Edge */
 }
 
 .side-menu {
@@ -492,8 +612,10 @@ select,
     align-items: start;
     padding: 0 5px;
     user-select: none;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10+ and Edge */
     cursor: pointer;
     line-height: 36px;
 }
@@ -507,7 +629,7 @@ select,
 }
 
 .side-menu .disabled {
-    opacity: .5;
+    opacity: 0.5;
 }
 
 .side-menu .disabled .menu-option-text,
@@ -527,6 +649,7 @@ select,
 .side-menu .ps-exclusive {
     color: #357aea !important;
 }
+
 .side-menu .menu-option .icon {
     width: 35px;
     margin-top: 6px;
@@ -571,11 +694,24 @@ select,
 }
 
 .side-menu .menu-hidden .collection-sell,
-.collection-reset {
+.collection-reset,
+.camps-small-btn,
+.camps-large-btn,
+.camps-wilderness-btn,
+.shops-hide-btn,
+.shops-show-btn,
+.gfh-hide-btn,
+.gfh-show-btn,
+.plants-hide-btn,
+.plants-show-btn,
+.encounters-hide-btn,
+.encounters-show-btn {
     cursor: pointer;
     user-select: none;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10+ and Edge */
 }
 
 .side-menu .menu-hidden .collectible-wrapper,
@@ -583,8 +719,10 @@ select,
     padding: 6px 12px;
     cursor: pointer;
     user-select: none;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10+ and Edge */
 }
 
 .side-menu .menu-hidden.two-column .collectible-wrapper,
@@ -667,8 +805,10 @@ select,
 
 .help-button {
     user-select: none;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10+ and Edge */
     font-size: 14px;
 }
 
@@ -691,7 +831,7 @@ a.wiki-page:visited {
 }
 
 .highlight-items {
-    filter: drop-shadow(0 0 .5rem #cc0000) drop-shadow(0 0 .4rem #cc0000);
+    filter: drop-shadow(0 0 0.5rem #cc0000) drop-shadow(0 0 0.4rem #cc0000);
 }
 
 .highlight-important-items-menu {
@@ -704,7 +844,7 @@ a.wiki-page:visited {
     position: fixed;
     width: 100%;
     height: 100vh;
-    background: rgba(0, 0, 0, .2);
+    background: rgba(0, 0, 0, 0.2);
     z-index: 1010;
     padding: 5%;
     color: #eee;
@@ -727,8 +867,10 @@ a.wiki-page:visited {
     top: 20px;
     text-align: center;
     user-select: none;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10+ and Edge */
     cursor: pointer;
 }
 
@@ -790,22 +932,26 @@ a.wiki-page:visited {
     cursor: pointer;
 }
 
-.cycle-changer {
+.dailies-changer {
     user-select: none;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10+ and Edge */
     display: flex;
     justify-content: center;
 }
 
-#cycle-changer-container {
+#dailies-changer-container {
     margin: 10px 0;
 }
 
-#cycle-changer-container .cycle-data {
+#dailies-changer-container .dailies-title {
     text-align: center;
-    min-width: 100px;
+    min-width: 170px;
     margin: 0 6px;
+    font-family: RDRLino, serif;
+    font-size: 19px;
 }
 
 .marker-content-wrapper {
@@ -828,7 +974,7 @@ a.wiki-page:visited {
 
 .disable-cycle-changer-arrow {
     cursor: default !important;
-    opacity: .3;
+    opacity: 0.3;
 }
 
 /* Custom checkbox styling */
@@ -932,7 +1078,7 @@ a.no-style:visited {
 }
 
 .text-danger {
-    color: #f95050 !important
+    color: #f95050 !important;
 }
 
 .hidden {
@@ -1011,7 +1157,7 @@ a.no-style:visited {
     }
 
     .modal:before {
-        content: '';
+        content: "";
         display: inline-block;
         height: 100%;
         vertical-align: middle;
@@ -1043,23 +1189,26 @@ a.no-style:visited {
     display: inline-grid;
 }
 
+.leaflet-popup-content>div.handover-wrapper-with-no-influence {
+    display: inherit;
+    /* fallback for Edge18 */
+    display: contents;
+}
+
 .leaflet-popup-content ::-webkit-scrollbar-thumb {
     background: #000 !important;
 }
 
 @media (max-width: 1024px) {
-
-    .timer-menu-opened,
-    .counter-menu-opened,
-    .fme-menu-opened {
+    .top-widget-menu-opened .fme-menu-opened {
         display: none !important;
     }
 }
 
 @media (min-width: 1025px) {
     .side-menu {
-        width: 390px;
-        left: -390px;
+        width: 400px;
+        left: -400px;
         top: 0;
     }
 
@@ -1068,11 +1217,15 @@ a.no-style:visited {
     }
 
     .timer-menu-opened {
-        left: 395px;
+        left: 410px;
     }
 
     .counter-menu-opened {
         left: 410px;
+    }
+
+    .top-widget-menu-opened {
+        left: 405px;
     }
 }
 
@@ -1095,7 +1248,7 @@ a.no-style:visited {
 
 .pathfinder-control {
     padding: 5px;
-    background: #fff
+    background: #fff;
 }
 
 .pathfinder-btn {
@@ -1132,15 +1285,18 @@ a.no-style:visited {
     vertical-align: baseline;
     top: -0.5em;
     left: 0.1em;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "Courier New", Courier, monospace;
     text-transform: uppercase;
 }
 
 /* Fix being able to select the overlays. */
+
 .leaflet-overlay-pane {
     user-select: none;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10+ and Edge */
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10+ and Edge */
 }
 
 /* Leaflet Marker styling */
@@ -1287,4 +1443,130 @@ a.no-style:visited {
         height: auto;
         margin-right: 8px;
     }
+}
+
+.dailies {
+    margin: 20px 5px;
+    font-size: 2rem;
+    user-select: none;
+}
+
+.daily-role {
+    margin: 25px 0;
+}
+
+.one-daily-container {
+    font-size: 1.5rem;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-gap: 5px;
+    margin: 10px 0;
+    justify-content: space-between;
+    align-content: center;
+    background-image: url(../../assets/images/menu_hover.png);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    min-height: 55px;
+}
+
+span.counter {
+    font-size: 1.9rem;
+    grid-area: counter;
+    font-weight: bold;
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    width: 55px;
+}
+
+span.daily {
+    display: grid;
+    align-content: center;
+    text-align: left;
+    grid-area: daily-challenge;
+    margin: 0;
+}
+
+.daily-not-found {
+    margin: auto;
+    width: 100%;
+    padding: 10px 0;
+    text-align: center;
+}
+.one-daily-container .input-checkbox-wrapper {
+    display: grid;
+    grid-area: daily-checkbox;
+    margin: 10px;
+    width: 25px;
+}
+
+/* Dark mode styling */
+
+.leaflet-popup-content-wrapper {
+    background: #222;
+    color: #dadada;
+}
+
+.leaflet-container a:visited,
+.leaflet-container a {
+    color: #3db2ff;
+}
+
+.leaflet-container a:hover {
+    color: #3dc6fc;
+}
+
+.leaflet-bar a {
+    background-color: #333;
+}
+
+.leaflet-bar a:hover {
+    background-color: #444;
+}
+
+.leaflet-bar a,
+.leaflet-bar a:hover {
+    border-bottom: 1px solid #555;
+    color: #d4d4d4;
+}
+
+.leaflet-bar a.leaflet-disabled {
+    background-color: #555;
+    color: #d4d4d4 !important;
+}
+
+.leaflet-control-layers {
+    box-shadow: 0 1px 5px #111;
+    background: #333;
+    user-select: none;
+}
+
+.leaflet-control-layers-expanded {
+    color: #d4d4d4;
+    background: #333;
+}
+
+.leaflet-control-zoom {
+    background-color: #333;
+    color: #d4d4d4;
+}
+
+.leaflet-control-zoom a {
+    background-color: #333;
+}
+
+.leaflet-popup-tip {
+    background: #222;
+    color: #d4d4d4;
+}
+
+.btn.btn-info.remove-button,
+.save-button {
+    background-color: #008fbece;
+    border: 1px solid #15b4f3af;
+}
+
+.btn.btn-info.remove-button:hover,
+.save-button:hover {
+    background-color: #15b4f3af;
 }
