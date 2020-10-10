@@ -49,30 +49,36 @@ const URLHandler = (props) => {
 
 const bannerStyles = {
   root: css`
-      background: url("${require("./images/bg-cowboys.jpg")}") repeat center top / 600px;
-      width: 100%;
-      height:auto;
-      left: 0;
-      padding: 1em 0;
-      position:fixed;
-      bottom:0;
+    background: url("${require("./images/bg-cowboys.jpg")}") repeat center top /
+      600px;
+    width: 100%;
+    height: auto;
+    left: 0;
+    padding: 1em 0;
+    position: fixed;
+    bottom: 0;
+    color: white;
+    z-index: 999;
+    border-color: #2e2e2e;
+    text-shadow: 1px 1px 0 black;
+    z-index: 999999999999999999999999;
+
+    a {
       color: white;
-      z-index: 999;
-      border-color: #2e2e2e;
-      text-shadow: 1px 1px 0 black;
-      z-index: 999999999999999999999999;
+    }
 
-      a {
-        color: white;
-      } 
-
-      @media (max-width: 960px) {
-        margin: 0 auto;
-        right: 0;
-      }
-    `,
+    @media (max-width: 960px) {
+      margin: 0 auto;
+      right: 0;
+    }
+  `,
 };
 
+const _parseJSON = (response) => {
+  return response.text().then(function (text) {
+    return text ? JSON.parse(text) : {};
+  });
+};
 class App extends Component {
   constructor(props) {
     super(props);
