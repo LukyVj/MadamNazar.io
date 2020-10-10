@@ -6,9 +6,9 @@ export const DISCORD_URL = "https://discord.gg/ZYj3G9h";
 
 // The v3 path allow to use real time information
 export const DEV_API =
-  "https://madam-nazar-location-api-2.herokuapp.com/v3/today";
+  "https://madam-nazar-location-api-2.herokuapp.com/v2/today";
 export const PROD_API =
-  "https://madam-nazar-location-api.herokuapp.com/v3/today";
+  "https://madam-nazar-location-api.herokuapp.com/v2/today";
 export const MOCK_API = "./data/mock.js";
 
 export const COLLECTOR_MAP_URL = "/CollectorsMap/";
