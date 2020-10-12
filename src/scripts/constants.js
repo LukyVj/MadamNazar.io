@@ -2,13 +2,13 @@ export const WEBSITE_NAME = "MadamNazar.io";
 export const TWITTER_URL = "https://twitter.com/MadamNazarIO";
 export const TWITTER_NAME = "@MadamNazarIO";
 export const PATREON_URL = "https://support-madamnazario.surge.sh/";
-export const DISCORD_URL = "https://discord.gg/ZYj3G9h";
+export const DISCORD_URL = "https://discord.gg/2eMYbxY";
 
 // The v3 path allow to use real time information
 export const DEV_API =
-  "https://madam-nazar-location-api-2.herokuapp.com/v2/today";
+  "https://madam-nazar-location-api-2.herokuapp.com/v3/today";
 export const PROD_API =
-  "https://madam-nazar-location-api.herokuapp.com/v2/today";
+  "https://madam-nazar-location-api.herokuapp.com/v3/today";
 export const MOCK_API = "./data/mock.js";
 
 export const COLLECTOR_MAP_URL = "/CollectorsMap/";
