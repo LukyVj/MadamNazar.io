@@ -4,7 +4,7 @@ export const TWITTER_NAME = "@MadamNazarIO";
 export const PATREON_URL = "https://support-madamnazario.surge.sh/";
 export const DISCORD_URL = "https://discord.gg/2eMYbxY";
 
-// The v3 path allow to use real time information
+// The v3 path allow to use real time information.
 export const DEV_API =
   "https://madam-nazar-location-api-2.herokuapp.com/v2/today";
 export const PROD_API =
