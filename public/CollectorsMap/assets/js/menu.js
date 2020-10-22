@@ -62,7 +62,7 @@ class Menu {
       .replace('{max}', max));
 
     $('#item-counter-percentage').text(Language.get('menu.collection_counter_percentage')
-      .replace('{count}', (count / max * 100).toFixed(2)));
+      .replace('{count}', (max ? (count / max * 100) : 0).toFixed(2)));
 
     $('#items-value').text(`$${Collection.totalValue().toFixed(2)}`);
 
@@ -100,7 +100,7 @@ class Menu {
             enabledCategories.push('fossils_random');
           }
 
-          if (Weekly.current.items.every(item => enabledCategories.includes(item.category)) && !enabledCategories.includes('weekly')) {
+          if (Weekly.current && Weekly.current.items.every(item => enabledCategories.includes(item.category)) && !enabledCategories.includes('weekly')) {
             enabledCategories.push('weekly');
           }
 
@@ -113,7 +113,7 @@ class Menu {
             enabledCategories = enabledCategories.filter(cat => cat !== 'fossils_random');
           }
 
-          if (Weekly.current.items.reduce((acc, item) => acc + +(item.category == category), 0)) {
+          if (Weekly.current && Weekly.current.items.reduce((acc, item) => acc + +(item.category == category), 0)) {
             enabledCategories = enabledCategories.filter(cat => cat !== 'weekly');
           }
 

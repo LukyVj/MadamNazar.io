@@ -19,6 +19,21 @@ Object.defineProperty(Array.prototype, 'arrayContains', {
   }
 });
 
+jQuery.fn.firstAncestorOrSelf = function (func) {
+  'use strict';
+  if (this.length !== 1) throw new TypeError('Not implemented (yet?) for selection length != 1.');
+  let node = this[0];
+  while (node) {
+    if (func(node)) return this.pushStack([node]);
+    node = node.parentNode;
+  }
+}
+jQuery.fn.propSearchUp = function (property) {
+  'use strict';
+  const element = this.firstAncestorOrSelf(element => element[property]);
+  return element && element.prop(property);
+}
+
 let searchTerms = [];
 let uniqueSearchMarkers = [];
 
@@ -48,16 +63,6 @@ L.DivIcon.DataMarkup = L.DivIcon.extend({
   }
 });
 
-L.LayerGroup.include({
-  getLayerById: function (id) {
-    for (const i in this._layers) {
-      if (this._layers[i].id == id) {
-        return this._layers[i];
-      }
-    }
-  }
-});
-
 /*
 - DOM will be ready, all scripts will be loaded (all loaded via DOM script elements)
 - everything in this file here will be executed
@@ -84,9 +89,8 @@ function init() {
   Settings.language = Language.availableLanguages.includes(Settings.language) ? Settings.language : 'en';
 
   Menu.init();
-  // Item.items (without .markers), Collection.collections, Collection.weekly*
   const lootTables = MapBase.loadLootTable();
-  const itemsCollectionsWeekly = Item.init();
+  const itemsCollectionsWeekly = Item.init(); // Item.items (without .markers), Collection.collections, Collection.weekly*
   itemsCollectionsWeekly.then(MapBase.loadOverlays);
   MapBase.mapInit(); // MapBase.map
   Language.init();
@@ -99,14 +103,19 @@ function init() {
   Inventory.init();
   MapBase.loadFastTravels();
   MapBase.loadFilters();
-  MadamNazar.loadMadamNazar();
   FME.init();
+
+  MapBase.beforeLoad();
+
   const treasures = Treasure.init();
   const legendaries = Legendary.init();
-  Promise.all([cycles, markers]).then(MapBase.runOncePostLoad);
+  Promise.all([cycles, markers]).then(MapBase.afterLoad);
   Routes.init();
   Promise.all([itemsCollectionsWeekly, markers, cycles, treasures, legendaries])
     .then(Loader.resolveMapModelLoaded);
+
+  if (!MapBase.isPreviewMode)
+    MadamNazar.loadMadamNazar();
 
   if (Settings.isMenuOpened) $('.menu-toggle').click();
 
@@ -428,7 +437,7 @@ $(document).on('click', '.collectible-wrapper[data-type]', function () {
   const collectible = $(this).data('type');
   const category = $(this).parent().data('type');
 
-  MapBase.removeItemFromMap(Cycles.categories[category], collectible, collectible, category, true);
+  MapBase.removeItemFromMap(Cycles.categories[category], collectible, collectible, category, !InventorySettings.isMenuUpdateEnabled);
 });
 
 $('.menu-toggle').on('click', function () {
@@ -557,10 +566,6 @@ $('#highlight_low_amount_items').on("change", function () {
 
 $('#enable-inventory-menu-update').on("change", function () {
   InventorySettings.isMenuUpdateEnabled = $("#enable-inventory-menu-update").prop('checked');
-});
-
-$('#reset-collection-updates-inventory').on("change", function () {
-  InventorySettings.resetButtonUpdatesInventory = $('#reset-collection-updates-inventory').prop('checked');
 });
 
 $('#auto-enable-sold-items').on("change", function () {
@@ -947,4 +952,11 @@ function linear(value, iMin, iMax, oMin, oMax) {
     return num <= min ? min : num >= max ? max : num;
   }
   return clamp((((value - iMin) / (iMax - iMin)) * (oMax - oMin) + oMin), oMin, oMax);
+}
+
+// converts string 'hours:minutes' to time 12/24 hours
+function convertToTime(hours = '00', minutes = '00') {
+  return Settings.isClock24Hour ?
+    `${hours}:${minutes}` :
+    `${+hours % 12 || 12}:${minutes}${+hours >= 12 ? 'PM' : 'AM'}`;
 }
