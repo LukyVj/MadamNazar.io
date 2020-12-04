@@ -1,17 +1,18 @@
 /**
  * Display various Free Mode Events.
- * 
+ *
  * Created by Richard Westenra, stripped to only display next 2 events.
  * For the full experience, please visit his websites at:
- * 
+ *
  * Website: https://www.richardwestenra.com/rdr2-free-roam-event-schedule
  * Patreon: https://www.patreon.com/bePatron?u=24592842
  * GitHub: https://github.com/richardwestenra
- * 
+ *
  * License: MIT
  */
 
 const FME = {
+
   /**
    * The last retrieved events JSON
    */
@@ -63,7 +64,7 @@ const FME = {
       nextEventName: document.getElementById('next-role-name'),
       nextEventEta: document.getElementById('next-role-eta'),
       nextEventBodyMobile: document.getElementById('next-role-mobile'),
-    }
+    },
   },
 
   /**
@@ -73,7 +74,7 @@ const FME = {
   updateEvent: function (schedule, key) {
     const frequencies = {
       general: Settings.fmeDisplayGeneralPeriod,
-      role: Settings.fmeDisplayRolePeriod
+      role: Settings.fmeDisplayRolePeriod,
     };
 
     const elements = FME.elements[key];
@@ -155,7 +156,7 @@ const FME = {
 
   getDateTime: function (date, eventTime) {
     return new Date(
-      [new Date(date).toDateString(), eventTime, "UTC"].join(" ")
+      [new Date(date).toDateString(), eventTime, 'UTC'].join(' ')
     );
   },
 
@@ -187,8 +188,8 @@ const FME = {
 
     if (FME._eventsJson === null) return;
 
-    FME.updateEvent(FME._eventsJson.general, "general");
-    FME.updateEvent(FME._eventsJson.role, "role");
+    FME.updateEvent(FME._eventsJson.general, 'general');
+    FME.updateEvent(FME._eventsJson.role, 'role');
 
     FME.updateVisiblity();
   },
@@ -218,14 +219,14 @@ const FME = {
    * Retrieve the FME data from FME.json
    */
   init: function () {
-    $('#fme-display').on("change", function () {
-      Settings.isFmeDisplayEnabled = $("#fme-display").prop('checked');
+    $('#fme-display').on('change', function () {
+      Settings.isFmeDisplayEnabled = $('#fme-display').prop('checked');
       $('#fme-display-general-period, #fme-display-role-period').parent().toggle(Settings.isFmeDisplayEnabled);
       $('#open-fme-enabled-events-modal').toggle((Settings.isFmeDisplayEnabled || Settings.isFmeNotificationEnabled));
       FME.update();
     });
 
-    $('#fme-display-general-period').on("change", function () {
+    $('#fme-display-general-period').on('change', function () {
       let inputValue = parseInt($('#fme-display-general-period').val());
       inputValue = !isNaN(inputValue) ? inputValue : 30;
       if (inputValue < 10 || inputValue > 45) inputValue = 30;
@@ -233,7 +234,7 @@ const FME = {
       FME.update();
     });
 
-    $('#fme-display-role-period').on("change", function () {
+    $('#fme-display-role-period').on('change', function () {
       let inputValue = parseInt($('#fme-display-role-period').val());
       inputValue = !isNaN(inputValue) ? inputValue : 60;
       if (inputValue < 10 || inputValue > 90) inputValue = 60;
@@ -241,11 +242,11 @@ const FME = {
       FME.update();
     });
 
-    $('#fme-notification').on("change", function () {
-      Settings.isFmeNotificationEnabled = $("#fme-notification").prop('checked');
+    $('#fme-notification').on('change', function () {
+      Settings.isFmeNotificationEnabled = $('#fme-notification').prop('checked');
 
       Notification.requestPermission().then(function (permission) {
-        if (permission === "denied") {
+        if (permission === 'denied') {
           FME.markPermissionDenied();
         }
       });
@@ -254,24 +255,24 @@ const FME = {
       $('#open-fme-enabled-events-modal').toggle((Settings.isFmeDisplayEnabled || Settings.isFmeNotificationEnabled));
     });
 
-    $('#fme-notification-period').on("change", function () {
+    $('#fme-notification-period').on('change', function () {
       let inputValue = parseInt($('#fme-notification-period').val());
       inputValue = !isNaN(inputValue) ? inputValue : 10;
       if (inputValue < 1 || inputValue > 30) inputValue = 10;
       Settings.fmeNotificationPeriod = inputValue;
     });
 
-    if (!("Notification" in window)) {
+    if (!('Notification' in window)) {
       this.markNotSupported();
-    } else if (Notification.permission === "denied") {
+    } else if (Notification.permission === 'denied') {
       this.markPermissionDenied();
     }
 
-    $("#fme-display").prop('checked', Settings.isFmeDisplayEnabled);
-    $("#fme-display-general-period").val(Settings.fmeDisplayGeneralPeriod).parent().toggle(Settings.isFmeDisplayEnabled);
-    $("#fme-display-role-period").val(Settings.fmeDisplayRolePeriod).parent().toggle(Settings.isFmeDisplayEnabled);
-    $("#fme-notification").prop('checked', Settings.isFmeNotificationEnabled);
-    $("#fme-notification-period").val(Settings.fmeNotificationPeriod);
+    $('#fme-display').prop('checked', Settings.isFmeDisplayEnabled);
+    $('#fme-display-general-period').val(Settings.fmeDisplayGeneralPeriod).parent().toggle(Settings.isFmeDisplayEnabled);
+    $('#fme-display-role-period').val(Settings.fmeDisplayRolePeriod).parent().toggle(Settings.isFmeDisplayEnabled);
+    $('#fme-notification').prop('checked', Settings.isFmeNotificationEnabled);
+    $('#fme-notification-period').val(Settings.fmeNotificationPeriod);
     $('#fme-notification-period').parent().toggle(Settings.isFmeNotificationEnabled);
     $('#open-fme-enabled-events-modal').toggle((Settings.isFmeDisplayEnabled || Settings.isFmeNotificationEnabled));
 
@@ -284,25 +285,24 @@ const FME = {
       $('#fme-enabled-events-modal').modal();
     });
 
-    $.getJSON(`data/fme.json?nocache=${nocache}`)
-      .done(function (data) {
-        FME._eventsJson = data;
-        FME.update();
-        FME.initModal();
-        window.setInterval(FME.update, 10000);
-        console.info('%c[FME] Loaded!', 'color: #bada55; background: #242424');
-      });
+    return Loader.promises['fme'].consumeJson(data => {
+      FME._eventsJson = data;
+      FME.update();
+      FME.initModal();
+      window.setInterval(FME.update, 10000);
+      console.info('%c[FME] Loaded!', 'color: #bada55; background: #242424');
+    });
   },
 
   initModal: function () {
     Object.keys(this.flags).forEach(f => {
-      if (f === "none") return;
+      if (f === 'none') return;
       var snippet = $(`
         <div class="input-container">
           <label for="${f}" data-text="menu.fme.${f}"></label>
           <div class="input-checkbox-wrapper">
             <input class="input-checkbox" type="checkbox" name="fme-enabled-events[]" value="${this.flags[f]}"
-              id="${f}" ${(Settings.fmeEnabledEvents & FME.flags[f]) ? "checked" : ""} />
+              id="${f}" ${(Settings.fmeEnabledEvents & FME.flags[f]) ? 'checked' : ''} />
             <label class="input-checkbox-label" for="${f}"></label>
           </div>
         </div>
@@ -335,11 +335,12 @@ const FME = {
    * @param {Object} event The event to send a notification for
    */
   notify: function (event) {
+
     // Disabled in settings.
     if (!Settings.isFmeNotificationEnabled) return;
 
     // No support.
-    if (!("Notification" in window)) {
+    if (!('Notification' in window)) {
       this.markNotSupported();
       return;
     }
@@ -357,15 +358,15 @@ const FME = {
       .replace('{name}', event.nameText)
       .replace('{time}', event.etaText);
 
-    if (Notification.permission === "granted") {
+    if (Notification.permission === 'granted') {
       new Notification(event.nameText, {
         body: notificationBody,
         icon: event.imageSrc,
         lang: Settings.language,
       });
-    } else if (Notification.permission !== "denied") {
+    } else if (Notification.permission !== 'denied') {
       Notification.requestPermission().then(function (permission) {
-        if (permission === "granted") {
+        if (permission === 'granted') {
           new Notification(event.nameText, {
             body: notificationBody,
             icon: event.imageSrc,
@@ -375,11 +376,11 @@ const FME = {
       });
     }
 
-    if (Notification.permission === "denied") {
+    if (Notification.permission === 'denied') {
       this.markPermissionDenied();
     }
 
     // Always add this to really make sure there's no dupes, even when the user denied permissions.
     this._sentNotifications.push(event.eventDateTime);
-  }
+  },
 };

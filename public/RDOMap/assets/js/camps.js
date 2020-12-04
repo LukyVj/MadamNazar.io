@@ -12,7 +12,7 @@ class Camp {
         this.locations.push(new Camp(item));
         this.quickParams.push(item.key);
       });
-      console.info(`%c[Camps] Loaded!`, 'color: #bada55; background: #242424');
+      console.info('%c[Camps] Loaded!', 'color: #bada55; background: #242424');
       Menu.reorderMenu(this.context);
     });
   }
@@ -47,12 +47,12 @@ class Camp {
     this.layer.clearLayers();
     this.markers.forEach(
       marker => {
+        if (!Camp.isLarge && marker.size === 'large') return;
+        if (!Camp.isSmall && marker.size === 'small') return;
+        if (!Camp.isWilderness && marker.size === 'wild') return;
 
-        if (!Camp.isLarge && marker.size == 'large') return;
-        if (!Camp.isSmall && marker.size == 'small') return;
-        if (!Camp.isWilderness && marker.size == 'wild') return;
-        
-        var shadow = Settings.isShadowsEnabled ? '<img class="shadow" width="' + 35 * Settings.markerSize + '" height="' + 16 * Settings.markerSize + '" src="./assets/images/markers-shadow.png" alt="Shadow">' : '';
+        const shadow = Settings.isShadowsEnabled ?
+          `<img class="shadow" width="${35 * Settings.markerSize}" height="${16 * Settings.markerSize}" src="./assets/images/markers-shadow.png" alt="Shadow">` : '';
         var tempMarker = L.marker([marker.lat, marker.lng], {
           opacity: Settings.markerOpacity,
           icon: new L.DivIcon.DataMarkup({
@@ -61,11 +61,12 @@ class Camp {
             popupAnchor: [1 * Settings.markerSize, -29 * Settings.markerSize],
             html: `<div>
                 <img class="icon" src="assets/images/icons/camps.png" alt="Icon">
-                <img class="background" src="assets/images/icons/marker_${this.color}.png" alt="Background">
+                <img class="background" src="assets/images/icons/marker_${MapBase.colorOverride || this.color}.png" alt="Background">
                 ${shadow}
               </div>`,
-            marker: this.key
-          })
+            marker: this.key,
+            tippy: marker.title,
+          }),
         }).bindPopup(marker.updateMarkerContent(), { minWidth: 300, maxWidth: 400 });
 
         this.layer.addLayer(tempMarker);
@@ -80,12 +81,12 @@ class Camp {
     if (state) {
       this.layer.addTo(MapBase.map);
       this.element.removeClass('disabled');
-      if (!MapBase.isPrewviewMode)
+      if (!MapBase.isPreviewMode)
         localStorage.setItem(`rdo:${this.key}`, 'true');
     } else {
       this.layer.remove();
       this.element.addClass('disabled');
-      if (!MapBase.isPrewviewMode)
+      if (!MapBase.isPreviewMode)
         localStorage.removeItem(`rdo:${this.key}`);
     }
   }

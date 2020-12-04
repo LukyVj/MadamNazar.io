@@ -9,7 +9,7 @@ class Shop {
         this.locations.push(new Shop(item));
         this.quickParams.push(item.key);
       });
-      console.info(`%c[Shops] Loaded!`, 'color: #bada55; background: #242424');
+      console.info('%c[Shops] Loaded!', 'color: #bada55; background: #242424');
       Menu.reorderMenu(this.context);
     });
   }
@@ -46,7 +46,8 @@ class Shop {
     this.layer.clearLayers();
     this.markers.forEach(
       marker => {
-        var shadow = Settings.isShadowsEnabled ? '<img class="shadow" width="' + 35 * Settings.markerSize + '" height="' + 16 * Settings.markerSize + '" src="./assets/images/markers-shadow.png" alt="Shadow">' : '';
+        const shadow = Settings.isShadowsEnabled ?
+          `<img class="shadow" width="${35 * Settings.markerSize}" height="${16 * Settings.markerSize}" src="./assets/images/markers-shadow.png" alt="Shadow">` : '';
         var tempMarker = L.marker([marker.lat, marker.lng], {
           opacity: Settings.markerOpacity,
           icon: new L.DivIcon.DataMarkup({
@@ -55,11 +56,12 @@ class Shop {
             popupAnchor: [1 * Settings.markerSize, -29 * Settings.markerSize],
             html: `<div>
                 <img class="icon" src="assets/images/icons/${this.key}.png" alt="Icon">
-                <img class="background" src="assets/images/icons/marker_${this.color}.png" alt="Background">
+                <img class="background" src="assets/images/icons/marker_${MapBase.colorOverride || this.color}.png" alt="Background">
                 ${shadow}
               </div>`,
-            marker: this.key
-          })
+            marker: this.key,
+            tippy: marker.title,
+          }),
         });
         tempMarker.bindPopup(marker.updateMarkerContent(), { minWidth: 300, maxWidth: 400 });
 
@@ -74,12 +76,12 @@ class Shop {
     if (state) {
       this.layer.addTo(MapBase.map);
       this.element.removeClass('disabled');
-      if (!MapBase.isPrewviewMode)
+      if (!MapBase.isPreviewMode)
         localStorage.setItem(`rdo:${this.key}`, 'true');
     } else {
       this.layer.remove();
       this.element.addClass('disabled');
-      if (!MapBase.isPrewviewMode)
+      if (!MapBase.isPreviewMode)
         localStorage.removeItem(`rdo:${this.key}`);
     }
   }

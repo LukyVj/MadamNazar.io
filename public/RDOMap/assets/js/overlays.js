@@ -7,7 +7,7 @@ class Overlay {
 
     return Loader.promises['overlays'].consumeJson(data => {
       data.forEach(item => this.locations.push(item));
-      console.info(`%c[Overlays] Loaded!`, 'color: #bada55; background: #242424');
+      console.info('%c[Overlays] Loaded!', 'color: #bada55; background: #242424');
       this.onSettingsChanged();
     });
   }
@@ -17,7 +17,7 @@ class Overlay {
     this.locations.forEach(item => {
       var overlay = `assets/overlays/${(MapBase.isDarkMode ? 'dark' : 'normal')}/${item.key}.png?nocache=${nocache}`;
       Overlay.layer.addLayer(L.imageOverlay(overlay, item.locations, {
-        opacity: Settings.overlayOpacity
+        opacity: Settings.overlayOpacity,
       }));
     });
   }

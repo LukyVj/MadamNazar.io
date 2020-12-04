@@ -1,29 +1,24 @@
 class Dailies {
-  constructor(role, translationKey, target, index) {
+  constructor(role, translationKey, target, challengeId) {
     this.role = role;
-    this.translationKey = translationKey;
+    this.translationKey = translationKey.toLowerCase();
     this.target = target;
-    this.index = index;
+    this.challengeId = challengeId.toLowerCase();
   }
   static init() {
     this.categories = [];
     this.categoryOffset = 0;
     this.jsonData = [];
     this.dailiesList = [];
-    this.context = $('.daily-challenges[data-type=dailies]');
     this.markersCategories = [];
 
     const currentDailies = Loader.promises['dailies'].consumeJson(data => this.dailiesList = data);
     const allDailies = Loader.promises['possible_dailies'].consumeJson(data => this.jsonData = data);
 
-    $('#dailies-prev').on('click', Dailies.prevCategory);
-    $('#dailies-next').on('click', Dailies.nextCategory);
+    const dailiesDate = new Date(Date.now() - 216e5).toISOUTCDateString(); // 21600000ms = 6 hours
 
-    const dailiesDate = new Date(Date.now() - 21600000).toISOUTCDateString();  // 21600000 = 6 hours
-
-    // delete old saved completed dailies on day change
     if (localStorage.lastDailiesDate !== dailiesDate) {
-      for (let setting in localStorage) {
+      for (const setting in localStorage) {
         if (setting.startsWith('rdo:dailies.'))
           delete localStorage[setting];
       }
@@ -35,21 +30,23 @@ class Dailies {
         if (this.dailiesList.date.indexOf(dailiesDate) === -1)
           return Promise.reject();
 
-        console.info(`%c[Dailies] Loaded!`, 'color: #bada55; background: #242424');
+        console.info('%c[Dailies] Loaded!', 'color: #bada55; background: #242424');
+        this.dailiesLoaded();
 
-        this.dailiesList.data.forEach((roleData, roleIndex) => {
+        this.dailiesList.data.forEach(roleData => {
           const role = roleData.role.replace(/CHARACTER_RANK_?/, '').toLowerCase() || 'general';
-          if (role === 'general') this.categoryOffset = roleIndex;
-          this.categories.push(role);
+          const categoryIndex = this.jsonData.category_order.findIndex(element => element === role);
+          this.categories[categoryIndex] = role;
 
           $('.dailies')
             .append($(`<div id="${role}" class="daily-role"></div>`)
-            .toggleClass('hidden', role !== 'general'));
+              .toggleClass('hidden', role !== 'general'));
 
-          roleData.challenges.forEach(({ desiredGoal, displayType, description: { label }}, index) => {
-            const activeCategory = this.jsonData.find(({ key }) => key === label.toLowerCase()).category;
-            this.markersCategories.push(activeCategory);
-            SettingProxy.addSetting(DailyChallenges, `${role}_${index}`, {});
+          roleData.challenges.forEach(({ desiredGoal, id, displayType, description: { label } }) => {
+            const activeCategory = this.jsonData[role].find(({ key }) => key === label.toLowerCase()).category;
+            if (activeCategory)
+              this.markersCategories.push(activeCategory);
+            SettingProxy.addSetting(DailyChallenges, `${role}_${id.toLowerCase()}`, {});
 
             switch (displayType) {
               case 'DISPLAY_CASH':
@@ -62,16 +59,19 @@ class Dailies {
                 desiredGoal = 1;
                 break;
               case 'DISPLAY_FEET':
-                desiredGoal = Math.floor(desiredGoal * 3.281);
+                desiredGoal = Math.floor(desiredGoal * 3.28084);
                 break;
+              default:
+                desiredGoal = Math.trunc(desiredGoal);
             }
 
-            const newDaily = new Dailies(role, label.toLowerCase(), desiredGoal, index);
+            const newDaily = new Dailies(role, label, desiredGoal, id);
             newDaily.appendToMenu();
           });
         });
-        this.onLanguageChanged();
+        this.sortDailies();
       })
+      .then(this.activateHandlers)
       .catch(this.dailiesNotUpdated);
   }
   appendToMenu() {
@@ -80,56 +80,65 @@ class Dailies {
     $(`.dailies > #${this.role}`)
       .append($(`
           <div class="one-daily-container">
-            <label for="checkbox-${this.role}-${this.index}"></label>
             <span class="counter" data-text="${this.target}"></span>
-            <span class="daily" id="daily-${this.role}-${this.index}" data-text="${this.translationKey}"></span>
-            <div class="input-checkbox-wrapper">
-              <input class="input-checkbox" type="checkbox" name="check-${this.role}-${this.index}" value="0"
-                id="checkbox-${this.role}-${this.index}" />
-              <label class="input-checkbox-label" for="checkbox-${this.role}-${this.index}"></label>
-            </div>
+            <label class="daily" data-text="${this.translationKey}" for="checkbox-${this.role}-${this.challengeId}"></label>
+            <span class="daily-checkbox">
+              <div class="input-checkbox-wrapper">
+                <input class="input-checkbox" type="checkbox" name="checkbox-${this.role}-${this.challengeId}" value="0"
+                  id="checkbox-${this.role}-${this.challengeId}" />
+                <label class="input-checkbox-label" for="checkbox-${this.role}-${this.challengeId}"></label>
+              </div>
+            </span>
           </div>`))
       .translate()
       .find('.one-daily-container')
-        .css({
-          'grid-template-areas': `"${structure[1]} daily-challenge ${structure[2]}"`,
-        })
+      .css({
+        'grid-template-areas': `"${structure[1]} daily-challenge ${structure[2]}"`,
+      })
       .end()
-      .find(`#checkbox-${this.role}-${this.index}`)
-        .prop('checked', DailyChallenges[`${this.role}_${this.index}`])
-        .on('change', () => {
-          DailyChallenges[`${this.role}_${this.index}`] = $(`#checkbox-${this.role}-${this.index}`).prop('checked');
-        })
+      .find(`#checkbox-${this.role}-${this.challengeId}`)
+      .prop('checked', DailyChallenges[`${this.role}_${this.challengeId}`])
+      .on('change', () => {
+        DailyChallenges[`${this.role}_${this.challengeId}`] = $(`#checkbox-${this.role}-${this.challengeId}`).prop('checked');
+      })
       .end();
   }
+  static dailiesLoaded() {
+    $('.dailies .daily-status.loading').addClass('hidden');
+  }
   static dailiesNotUpdated() {
-    $('.dailies').append($(`
-      <div class="daily-not-found not-found">${Language.get('menu.dailies_not_found')}</div>
-    `));
-    $('#dailies-changer-container, #sync-map-to-dailies').addClass('hidden');
+    const textKey = 'menu.dailies_not_found';
+    $('.dailies').append($('<div class="daily-status not-found"></div>').attr('data-text', textKey).text(Language.get(textKey)));
+    $('#dailies-changer-container, #sync-map-to-dailies, .dailies .daily-status.loading').addClass('hidden');
   }
-  static nextCategory() {
-    Dailies.categoryOffset = (Dailies.categoryOffset + 1).mod(Dailies.categories.length);
-    Dailies.switchCategory();
-  }
-  static prevCategory() {
-    Dailies.categoryOffset = (Dailies.categoryOffset - 1).mod(Dailies.categories.length);
-    Dailies.switchCategory();
-  }
-  static switchCategory() {
+  static switchCategory(offset) {
+    Dailies.categoryOffset = (Dailies.categoryOffset + offset).mod(Dailies.categories.length);
     const roles = $('.daily-role');
-    [].forEach.call(roles, element => {
+    [...roles].forEach(element => {
       $(element).toggleClass('hidden', element.id !== Dailies.categories[Dailies.categoryOffset]);
     });
-    $('.dailies-title').text(Language.get(`menu.dailies_${Dailies.categories[Dailies.categoryOffset]}`));
+    const textKey = `menu.dailies_${Dailies.categories[Dailies.categoryOffset]}`;
+    $('.dailies-title').attr('data-text', textKey).text(Language.get(textKey));
   }
-  static onLanguageChanged() {
-    Menu.reorderMenu(this.context);
+  static sortDailies() {
+    const $roleContainers = $('.daily-role');
+    [...$roleContainers].forEach(roleContainer => {
+      const dailies = $(roleContainer).children('.one-daily-container');
+      const sortedDailies = [...dailies].sort((...args) => {
+        const [a, b] = args.map(dailyContainer =>
+          Language.get($(dailyContainer).find('label.daily').attr('data-text')));
+        return a.localeCompare(b, Settings.language, { sensitivity: 'base' });
+      });
+      $(roleContainer).append(sortedDailies);
+    });
+  }
+  static activateHandlers() {
+    $('#dailies-prev, #dailies-next').on('click', event => {
+      const offset = event.currentTarget.id === 'dailies-next' ? 1 : -1;
+      Dailies.switchCategory(offset);
+    });
   }
 }
-
-
-
 
 // Still looking for a better way than trigger handlers, if you have any better idea feel free to modify it
 class SynchronizeDailies {
@@ -139,9 +148,7 @@ class SynchronizeDailies {
   }
   static init() {
     $('.menu-hide-all').trigger('click');
-    Dailies.markersCategories.forEach(element => {
-      const [category, marker] = element;
-      if (marker === '') return;
+    Dailies.markersCategories.forEach(([category, marker]) => {
       const newSyncedCategory = new SynchronizeDailies(category, marker);
       newSyncedCategory.sync();
     });

@@ -40,7 +40,7 @@ SettingProxy.addListener(Settings, 'day secondSetting', callback)
 
 */
 
-const SettingProxy = function () {
+const SettingProxy = (function () {
   'use strict';
   const _domain = Symbol('domain');
   const _proxyConfig = Symbol('proxyConfig');
@@ -64,10 +64,10 @@ const SettingProxy = function () {
         value = config.default;
       } else {
         try {
+
           // JSON.parse might raise SyntaxError, bc the setting is malformed
           value = config.type(JSON.parse(value));
-        }
-        catch (e) {
+        } catch (e) {
           value = config.default;
         }
       }
@@ -126,12 +126,12 @@ const SettingProxy = function () {
       const proxyConfig = settingProxy[_proxyConfig];
       names.split(' ').forEach(name => {
         settingHandler._checkAndGetSettingConfig(proxyConfig, name, ReferenceError)
-          .listeners.push(callback)
+          .listeners.push(callback);
       });
       return callback;
     },
   };
-}();
+})();
 
 // General settings
 const Settings = SettingProxy.createSettingProxy('main');
@@ -156,6 +156,7 @@ Object.entries({
   isPopupsEnabled: { default: true },
   isPopupsHoverEnabled: { default: false },
   isShadowsEnabled: { default: true },
+  isLaBgEnabled: { default: true },
   markerOpacity: { default: 1 },
   markerSize: { default: 1 },
   overlayOpacity: { default: 0.5 },
@@ -164,7 +165,10 @@ Object.entries({
   showImportExportSettings: { default: true },
   showUtilitiesSettings: { default: true },
   showTooltips: { default: true },
-  showDailies: { default: true }
+  showTooltipsMap: { default: true },
+  showDailies: { default: true },
+  legendarySpawnIconType: { default: 0 },
+  legendarySpawnIconSize: { default: 1 },
 }).forEach(([name, config]) => SettingProxy.addSetting(Settings, name, config));
 
 // Completed daily challenges settings (file dailies.js)

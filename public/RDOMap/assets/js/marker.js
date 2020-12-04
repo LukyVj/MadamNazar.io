@@ -10,18 +10,22 @@ class Marker {
       switch (category) {
         case 'fasttravel':
           return Language.get(`${this.category}.${this.text}.name`);
+        case 'rescue':
+          return Language.get(`map.${this.category}.${this.subdata}.name`);
         case 'shops':
         case 'gfh':
-        case 'rescue':
           return Language.get(`map.${this.category}.${this.subdata}.name`);
         case 'hideouts':
           return Language.get(`map.${this.category}.${this.text}.name`) + ' - ' + `[${convertToTime(this.subdata[0])} - ${convertToTime(this.subdata[1])}]`;
         case 'camps':
           return Language.get(`map.${this.category}.${this.subdata}.name`) + ' - ' + Language.get(`map.camps.sizes.${this.size}`);
         case 'daily_locations':
+        case 'dynamic_bounties':
           return Language.get(`map.${this.category}.${this.text}.name`);
         case 'harrietum_animals':
           return Language.get('map.harrietum_animals.name') + ' - ' + Language.get(`menu.cmpndm.${this.text}`);
+        case 'sightseeing':
+          return Language.get('map.sightseeing.name') + (this.text === 'hidden' ? ' - ' + Language.get('map.sightseeing.hidden') : '');
         default:
           return Language.get(`map.${this.category}.name`);
       }
@@ -48,5 +52,5 @@ class Marker {
         ${linksElement.prop('outerHTML')}
         ${Settings.isDebugEnabled ? debugDisplayLatLng.prop('outerHTML') : ''}
         `;
-   }
+  }
 }

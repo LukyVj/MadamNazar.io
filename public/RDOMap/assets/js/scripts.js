@@ -3,7 +3,7 @@ Object.defineProperty(String.prototype, 'filename', {
     let s = this.replace(/\\/g, '/');
     s = s.substring(s.lastIndexOf('/') + 1);
     return extension ? s.replace(/[?#].+$/, '') : s.split('.')[0];
-  }
+  },
 });
 
 Object.defineProperty(String.prototype, 'includesOneOf', {
@@ -16,13 +16,13 @@ Object.defineProperty(String.prototype, 'includesOneOf', {
       }
     }
     return include;
-  }
+  },
 });
 
 Object.defineProperty(Number.prototype, 'mod', {
   value: function (num) {
     return ((this % num) + num) % num;
-  }
+  },
 });
 
 
@@ -30,7 +30,7 @@ $(function () {
   try {
     init();
   } catch (e) {
-    if (getParameterByName('show-alert') == '1') {
+    if (getParameterByName('show-alert') === '1') {
       alert(e);
     }
     console.error(e);
@@ -51,7 +51,14 @@ function init() {
 
   changeCursor();
   Pins.init();
+  FME.init();
+
+  // Prevent blocks by external services. Sometimes these requests took >6 seconds.
+  // Bonus: If either of these fail to load, it doesn't block the map from working properly.
   Dailies.init();
+  MadamNazar.init();
+
+  MapBase.beforeLoad();
 
   const animals = AnimalCollection.init();
   const locations = Location.init();
@@ -61,14 +68,15 @@ function init() {
   const camps = Camp.init();
   const shops = Shop.init();
   const gfh = GunForHire.init();
-  const nazar = MadamNazar.init();
   const legendary = Legendary.init();
   const discoverables = Discoverable.init();
   const overlays = Overlay.init();
-  FME.init()
 
-  Promise.all([animals, locations, encounters, treasures, plants, camps, shops, gfh, nazar, legendary, discoverables, overlays])
-    .then(() => { Loader.resolveMapModelLoaded(); MapBase.runOncePostLoad(); });
+  Promise.all([animals, locations, encounters, treasures, plants, camps, shops, gfh, legendary, discoverables, overlays])
+    .then(() => {
+      Loader.resolveMapModelLoaded();
+      MapBase.afterLoad();
+    });
 
   if (Settings.isMenuOpened)
     $('.menu-toggle').click();
@@ -76,25 +84,27 @@ function init() {
   $('#language').val(Settings.language);
   $('#marker-opacity').val(Settings.markerOpacity);
   $('#marker-size').val(Settings.markerSize);
-  $('#marker-cluster').prop("checked", Settings.isMarkerClusterEnabled);
-  $('#tooltip').prop("checked", Settings.showTooltips);
-  $('#enable-marker-popups-hover').prop("checked", Settings.isPopupsHoverEnabled);
-  $('#enable-marker-shadows').prop("checked", Settings.isShadowsEnabled);
-  $('#enable-dclick-zoom').prop("checked", Settings.isDoubleClickZoomEnabled);
-  $('#show-help').prop("checked", Settings.showHelp);
-  $('#timestamps-24').prop("checked", Settings.isClock24Hour);
-  $('#show-dailies').prop("checked", Settings.showDailies);
-  $('#show-coordinates').prop("checked", Settings.isCoordsOnClickEnabled);
+  $('#marker-cluster').prop('checked', Settings.isMarkerClusterEnabled);
+  $('#tooltip').prop('checked', Settings.showTooltips);
+  $('#tooltip-map').prop('checked', Settings.showTooltipsMap);
+  $('#enable-marker-popups-hover').prop('checked', Settings.isPopupsHoverEnabled);
+  $('#enable-marker-shadows').prop('checked', Settings.isShadowsEnabled);
+  $('#enable-legendary-backgrounds').prop('checked', Settings.isLaBgEnabled);
+  $('#enable-dclick-zoom').prop('checked', Settings.isDoubleClickZoomEnabled);
+  $('#show-help').prop('checked', Settings.showHelp);
+  $('#timestamps-24').prop('checked', Settings.isClock24Hour);
+  $('#show-dailies').prop('checked', Settings.showDailies);
+  $('#show-coordinates').prop('checked', Settings.isCoordsOnClickEnabled);
 
-  $('#enable-debug').prop("checked", Settings.isDebugEnabled);
-  $('#enable-right-click').prop("checked", Settings.isRightClickEnabled);
+  $('#enable-debug').prop('checked', Settings.isDebugEnabled);
+  $('#enable-right-click').prop('checked', Settings.isRightClickEnabled);
 
-  $("#help-container").toggle(Settings.showHelp);
+  $('#help-container').toggle(Settings.showHelp);
   $('.daily-challenges').toggle(Settings.showDailies);
 }
 
 function isLocalHost() {
-  return location.hostname === "localhost" || location.hostname === "127.0.0.1";
+  return location.hostname === 'localhost' || location.hostname === '127.0.0.1';
 }
 
 function changeCursor() {
@@ -147,10 +157,10 @@ function clockTick() {
 
   $('.day-cycle').css('background', `url(assets/images/${nightTime ? 'moon' : 'sun'}.png)`);
 
-  $('.leaflet-marker-icon[data-marker="hideouts"]').each(function () {
+  $('.leaflet-marker-icon[data-time]').each(function () {
     let time = $(this).data('time') + '';
-    if (time === null || time == '') return;
-    if (time.split(",").includes(gameHour + "")) {
+    if (time === null || time === '') return;
+    if (time.split(',').includes(gameHour + '') && !MapBase.isPreviewMode) {
       $(this).css('filter', 'drop-shadow(0 0 .5rem #fff) drop-shadow(0 0 .25rem #fff)');
     } else {
       $(this).css('filter', 'none');
@@ -160,17 +170,17 @@ function clockTick() {
 
 setInterval(clockTick, 1000);
 
-$("#toggle-debug").on("click", function () {
-  $("#debug-container").toggleClass('opened');
+$('#toggle-debug').on('click', function () {
+  $('#debug-container').toggleClass('opened');
 });
 
 //TODO: re-implement this function
-$("#show-all-markers").on("change", function () {
-  Settings.showAllMarkers = $("#show-all-markers").prop('checked');
+$('#show-all-markers').on('change', function () {
+  Settings.showAllMarkers = $('#show-all-markers').prop('checked');
 });
 
-$('#enable-right-click').on("change", function () {
-  Settings.isRightClickEnabled = $("#enable-right-click").prop('checked');
+$('#enable-right-click').on('change', function () {
+  Settings.isRightClickEnabled = $('#enable-right-click').prop('checked');
 });
 
 //Disable menu category when click on input
@@ -179,19 +189,20 @@ $('.menu-option.clickable input, #submit-new-herb').on('click', function (e) {
 });
 
 $('#language').on('change', function () {
-  Settings.language = $("#language").val();
+  Settings.language = $('#language').val();
 
   Language.setMenuLanguage();
   Treasure.onLanguageChanged();
-  Dailies.onLanguageChanged();
+  Dailies.sortDailies();
 
-  //WIP: update markers without reload page
+  // WIP: update markers without reload page
   Camp.locations.forEach(camp => camp.onLanguageChanged());
   Encounter.locations.forEach(encounter => encounter.onLanguageChanged());
   GunForHire.locations.forEach(gfh => gfh.onLanguageChanged());
   Location.locations.forEach(location => location.onLanguageChanged());
   Shop.locations.forEach(shop => shop.onLanguageChanged());
   MadamNazar.addMadamNazar();
+  Legendary.onSettingsChanged();
 });
 
 $('#marker-size').on('change', function () {
@@ -207,7 +218,7 @@ $('#marker-size').on('change', function () {
 });
 
 $('#marker-opacity').on('change', function () {
-  Settings.markerOpacity = Number($("#marker-opacity").val());
+  Settings.markerOpacity = Number($('#marker-opacity').val());
   Treasure.onSettingsChanged();
   Camp.locations.forEach(camp => camp.reinitMarker());
   Encounter.locations.forEach(encounter => encounter.reinitMarker());
@@ -219,24 +230,23 @@ $('#marker-opacity').on('change', function () {
 });
 
 $('#overlay-opacity').on('change', function () {
-  Settings.overlayOpacity = Number($("#overlay-opacity").val());
+  Settings.overlayOpacity = Number($('#overlay-opacity').val());
   Legendary.onSettingsChanged();
   Overlay.onSettingsChanged();
 });
 
 $('#tooltip').on('change', function () {
-  Settings.showTooltips = $("#tooltip").prop('checked');
-
-  if (Settings.showTooltips)
-    Menu.tippyInstances = tippy('[data-tippy-content]', { theme: 'rdr2-theme' });
-  else {
-    Menu.tippyInstances.forEach(instance => instance.destroy());
-    Menu.tippyInstances = [];
-  }
+  Settings.showTooltips = $('#tooltip').prop('checked');
+  Menu.updateTippy();
 });
 
-$('#marker-cluster').on("change", function () {
-  Settings.isMarkerClusterEnabled = $("#marker-cluster").prop('checked');
+$('#tooltip-map').on('change', function () {
+  Settings.showTooltipsMap = $('#tooltip-map').prop('checked');
+  MapBase.updateTippy();
+});
+
+$('#marker-cluster').on('change', function () {
+  Settings.isMarkerClusterEnabled = $('#marker-cluster').prop('checked');
 
   Layers.oms.clearMarkers();
 
@@ -249,12 +259,12 @@ $('#marker-cluster').on("change", function () {
   Pins.loadPins();
 });
 
-$('#enable-marker-popups-hover').on("change", function () {
-  Settings.isPopupsHoverEnabled = $("#enable-marker-popups-hover").prop('checked');
+$('#enable-marker-popups-hover').on('change', function () {
+  Settings.isPopupsHoverEnabled = $('#enable-marker-popups-hover').prop('checked');
 });
 
-$('#enable-marker-shadows').on("change", function () {
-  Settings.isShadowsEnabled = $("#enable-marker-shadows").prop('checked');
+$('#enable-marker-shadows').on('change', function () {
+  Settings.isShadowsEnabled = $('#enable-marker-shadows').prop('checked');
   Treasure.onSettingsChanged();
   Camp.locations.forEach(camp => camp.reinitMarker());
   Encounter.locations.forEach(encounter => encounter.reinitMarker());
@@ -265,8 +275,23 @@ $('#enable-marker-shadows').on("change", function () {
   Shop.locations.forEach(shop => shop.reinitMarker());
 });
 
-$('#enable-dclick-zoom').on("change", function () {
-  Settings.isDoubleClickZoomEnabled = $("#enable-dclick-zoom").prop('checked');
+$('#enable-legendary-backgrounds').on('change', function () {
+  Settings.isLaBgEnabled = $('#enable-legendary-backgrounds').prop('checked');
+  Legendary.onSettingsChanged();
+});
+
+$('#legendary-animal-marker-type').on('change', function () {
+  Settings.legendarySpawnIconType = Number($('#legendary-animal-marker-type').val());
+  Legendary.onSettingsChanged();
+});
+
+$('#legendary-animal-marker-size').on('change', function () {
+  Settings.legendarySpawnIconSize = Number($('#legendary-animal-marker-size').val());
+  Legendary.onSettingsChanged();
+});
+
+$('#enable-dclick-zoom').on('change', function () {
+  Settings.isDoubleClickZoomEnabled = $('#enable-dclick-zoom').prop('checked');
   if (Settings.isDoubleClickZoomEnabled) {
     MapBase.map.doubleClickZoom.enable();
   } else {
@@ -274,29 +299,29 @@ $('#enable-dclick-zoom').on("change", function () {
   }
 });
 
-$('#show-help').on("change", function () {
-  Settings.showHelp = $("#show-help").prop('checked');
-  $("#help-container").toggle(Settings.showHelp);
+$('#show-help').on('change', function () {
+  Settings.showHelp = $('#show-help').prop('checked');
+  $('#help-container').toggle(Settings.showHelp);
 });
 
 $('#timestamps-24').on('change', function () {
-  Settings.isClock24Hour = $("#timestamps-24").prop('checked');
+  Settings.isClock24Hour = $('#timestamps-24').prop('checked');
   clockTick();
-  $("#language").triggerHandler('change');
+  $('#language').triggerHandler('change');
 });
 
 $('#show-dailies').on('change', function () {
-  Settings.showDailies = $("#show-dailies").prop('checked');
+  Settings.showDailies = $('#show-dailies').prop('checked');
   $('.daily-challenges').toggle(Settings.showDailies);
 });
 
 $('#show-coordinates').on('change', function () {
-  Settings.isCoordsOnClickEnabled = $("#show-coordinates").prop('checked');
+  Settings.isCoordsOnClickEnabled = $('#show-coordinates').prop('checked');
   changeCursor();
 });
 
-$('#enable-debug').on("change", function () {
-  Settings.isDebugEnabled = $("#enable-debug").prop('checked');
+$('#enable-debug').on('change', function () {
+  Settings.isDebugEnabled = $('#enable-debug').prop('checked');
 });
 
 //Open collection submenu
@@ -337,11 +362,15 @@ $('#delete-all-settings').on('click', function () {
   location.reload(true);
 });
 
+$('#reload-map').on('click', function () {
+  location.reload(true);
+});
+
 // converts string 'hours:minutes' to time 12/24 hours
 function convertToTime(hours = '00', minutes = '00') {
-  return Settings.isClock24Hour
-    ? `${hours}:${minutes}`
-    : `${+hours % 12 || 12}:${minutes}${+hours >= 12 ? 'PM' : 'AM'}`;
+  return Settings.isClock24Hour ?
+    `${hours}:${minutes}` :
+    `${+hours % 12 || 12}:${minutes}${+hours >= 12 ? 'PM' : 'AM'}`;
 }
 
 /**
@@ -369,6 +398,9 @@ L.DivIcon.DataMarkup = L.DivIcon.extend({
     if (this.options.category)
       img.dataset.category = this.options.category;
 
+    if (this.options.tippy)
+      img.dataset.tippy = this.options.tippy;
+
     if (this.options.time) {
       var from = parseInt(this.options.time[0]);
       var to = parseInt(this.options.time[1]);
@@ -376,25 +408,25 @@ L.DivIcon.DataMarkup = L.DivIcon.extend({
       // Add all valid hours to the marker to be able to simply `.includes()` it later.
       // Could also check `if X between start and end`, might be slightly better. ¯\_(ツ)_/¯
       var times = [];
-      for (let index = from; index != to; (index != 23) ? index++ : index = 0)
+      for (let index = from; index !== to; (index !== 23) ? index++ : index = 0)
         times.push(index);
 
       img.dataset.time = times;
     }
-  }
+  },
 });
 
 L.LayerGroup.include({
   getLayerById: function (id) {
     for (var i in this._layers) {
-      if (this._layers[i].id == id) {
+      if (this._layers[i].id === id) {
         return this._layers[i];
       }
     }
-  }
+  },
 });
 
-$('#cookie-export').on("click", function () {
+$('#cookie-export').on('click', function () {
   try {
     var cookies = $.cookie();
     var storage = localStorage;
@@ -420,7 +452,7 @@ $('#cookie-export').on("click", function () {
 
     var settings = {
       'cookies': cookies,
-      'local': storage
+      'local': storage,
     };
 
     var settingsJson = JSON.stringify(settings, null, 4);
@@ -466,8 +498,7 @@ $('#cookie-import').on('click', function () {
           return;
         }
       });
-    }
-    catch (error) {
+    } catch (error) {
       fallback = true;
     }
 
@@ -480,8 +511,7 @@ $('#cookie-import').on('click', function () {
         try {
           settings = JSON.parse(text);
           setSettings(settings);
-        }
-        catch (error) {
+        } catch (error) {
           alert(Language.get('alerts.file_not_valid'));
           return;
         }
@@ -489,9 +519,15 @@ $('#cookie-import').on('click', function () {
 
       reader.readAsText(file);
     }
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
     alert(Language.get('alerts.feature_not_supported'));
   }
 });
+
+function linear(value, iMin, iMax, oMin, oMax) {
+  const clamp = (num, min, max) => {
+    return num <= min ? min : num >= max ? max : num;
+  };
+  return clamp((((value - iMin) / (iMax - iMin)) * (oMax - oMin) + oMin), oMin, oMax);
+}

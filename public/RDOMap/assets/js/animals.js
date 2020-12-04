@@ -17,39 +17,42 @@ class Animal {
 
     if (this.groups != null) {
       this.groups.forEach(_group => {
+        if (!AnimalCollection.groups[_group])
+          return console.error(`The animal spawns group for ${_group} could not be found.`);
         MapBase.yieldingLoop(AnimalCollection.groups[_group].length, 50, function (i) {
           const _marker = AnimalCollection.groups[_group][i];
           const tempMarker = L.marker([_marker.x, _marker.y], {
             opacity: .75,
             icon: new L.divIcon({
-              iconUrl: `assets/images/icons/animal.png`,
+              iconUrl: 'assets/images/icons/animal.png',
               iconSize: [32, 32],
               iconAnchor: [16, 16],
-              popupAnchor: [0, -8]
-            })
+              popupAnchor: [0, -8],
+            }),
           });
 
-          let popupContent = Language.get(`map.animal_spawns.desc`)
+          let popupContent = Language.get('map.animal_spawns.desc')
             .replace('{animal}', Language.get(`menu.cmpndm.${self.key}`));
 
           if (_marker.start && _marker.end) {
             const startTime = convertToTime(_marker.start);
             const endTime = convertToTime(_marker.end);
-            popupContent = Language.get(`map.animal_spawns_timed.desc`)
+            popupContent = Language.get('map.animal_spawns_timed.desc')
               .replace('{animal}', Language.get(`menu.cmpndm.${self.key}`))
               .replace('{start}', startTime)
               .replace('{end}', endTime);
           }
 
+          let debugDisplayLatLng = $('<small>').text(`Latitude: ${_marker.x} / Longitude: ${_marker.y} / Start: ${_marker.start} / End: ${_marker.end}`);
           tempMarker.bindPopup(
-            `<h1>${Language.get(`map.animal_spawns.name`).replace('{animal}', Language.get(`menu.cmpndm.${self.key}`))}</h1>
-                <span class="marker-content-wrapper">
-                  <p>${popupContent}</p>
-                </span>
-                `, {
-            minWidth: 300,
-            maxWidth: 400
-          });
+            `<h1>${Language.get('map.animal_spawns.name').replace('{animal}', Language.get(`menu.cmpndm.${self.key}`))}</h1>
+            <span class="marker-content-wrapper">
+              <p>${popupContent}</p>
+            </span>
+            ${Settings.isDebugEnabled ? debugDisplayLatLng.prop('outerHTML') : ''}`, {
+              minWidth: 300,
+              maxWidth: 400,
+            });
           self.data.push(tempMarker._latlng);
           self.markers.push(tempMarker);
         }, function () {
@@ -69,7 +72,7 @@ class Animal {
         AnimalCollection.spawnLayer.addLayers(this.markers);
       this.element.children('span').removeClass('disabled');
     } else {
-      AnimalCollection.heatmapLayer.setData({ data: [] })
+      AnimalCollection.heatmapLayer.setData({ data: [] });
       AnimalCollection.spawnLayer.clearLayers();
       this.element.children('span').addClass('disabled');
     }
@@ -92,10 +95,10 @@ class AnimalCollection {
       latField: 'lat',
       lngField: 'lng',
       gradient: {
-        0.25: "rgb(125, 125, 125)",
-        0.55: "rgb(48, 25, 52)",
-        1.0: "rgb(255, 42, 32)"
-      }
+        0.25: 'rgb(125, 125, 125)',
+        0.55: 'rgb(48, 25, 52)',
+        1.0: 'rgb(255, 42, 32)',
+      },
     });
 
     this.spawnLayer = L.canvasIconLayer({ zoomAnimation: true });
@@ -108,11 +111,11 @@ class AnimalCollection {
     AnimalCollection.heatmapLayer.addTo(MapBase.map);
     AnimalCollection.spawnLayer.addTo(MapBase.map);
 
-    const animalSpawns = Loader.promises['animal_spawns'].consumeJson(data => this.groups = data[0]);
+    const animalSpawns = Loader.promises['animal_spawns'].consumeJson(data => this.groups = data);
     const animalHeatmap = Loader.promises['hm'].consumeJson(data => this.collectionsData = data);
 
     return Promise.all([animalSpawns, animalHeatmap]).then(() => {
-      console.info(`%c[Animals] Loaded!`, 'color: #bada55; background: #242424');
+      console.info('%c[Animals] Loaded!', 'color: #bada55; background: #242424');
       this.collectionsData.forEach(collection => this.collection.push(new AnimalCollection(collection)));
     });
   }

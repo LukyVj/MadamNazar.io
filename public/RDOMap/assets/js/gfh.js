@@ -10,7 +10,7 @@ class GunForHire {
         this.locations.push(new GunForHire(item));
         this.quickParams.push(item.key);
       });
-      console.info(`%c[Freeroam Missions] Loaded!`, 'color: #bada55; background: #242424');
+      console.info('%c[Freeroam Missions] Loaded!', 'color: #bada55; background: #242424');
       Menu.reorderMenu(this.context);
     });
   }
@@ -37,37 +37,55 @@ class GunForHire {
 
   onLanguageChanged() {
     this.markers = [];
-    this.locations.forEach(item => this.markers.push(new Marker(item.text, item.x, item.y, 'gfh', this.key, item.type)));
+    this.locations.forEach(item => this.markers.push(new Marker(item.text, item.x, item.y, 'gfh', this.key, item.types)));
 
     this.reinitMarker();
   }
 
+  updateMarkerContent(marker) {
+    let missionsElement = $('<ul>').addClass('missions-list');
+    marker.size.map(m => Language.get(`map.gfh.missions.${m}`)).sort().forEach(mission => {
+      missionsElement.append(`<li>${mission}</li>`);
+    });
+    $(missionsElement).sort();
+    let debugDisplayLatLng = $('<small>').text(`Text: ${marker.text} / Latitude: ${marker.lat} / Longitude: ${marker.lng}`);
+    return `<h1>${marker.title}</h1>
+        <span class="marker-content-wrapper">
+        <p>${marker.description}</p>
+        </span>
+        <br>
+        <p>${Language.get('map.gfh.missions_header')}</p>
+        ${missionsElement.prop('outerHTML')}
+        ${Settings.isDebugEnabled ? debugDisplayLatLng.prop('outerHTML') : ''}
+        `;
+  }
+
   reinitMarker() {
     this.layer.clearLayers();
-    this.markers.forEach(
-      marker => {
-        var shadow = Settings.isShadowsEnabled ? '<img class="shadow" width="' + 35 * Settings.markerSize + '" height="' + 16 * Settings.markerSize + '" src="./assets/images/markers-shadow.png" alt="Shadow">' : '';
-        var tempMarker = L.marker([marker.lat, marker.lng], {
-          opacity: Settings.markerOpacity,
-          icon: new L.DivIcon.DataMarkup({
-            iconSize: [35 * Settings.markerSize, 45 * Settings.markerSize],
-            iconAnchor: [17 * Settings.markerSize, 42 * Settings.markerSize],
-            popupAnchor: [1 * Settings.markerSize, -29 * Settings.markerSize],
-            html: `<div>
-                <img class="icon" src="assets/images/icons/gfh.png" alt="Icon">
-                <img class="background" src="assets/images/icons/marker_${this.color}.png" alt="Background">
-                ${shadow}
-              </div>`,
-            marker: this.key
-          })
-        });
-        tempMarker.bindPopup(marker.updateMarkerContent(), { minWidth: 300, maxWidth: 400 });
+    this.markers.forEach(marker => {
+      const shadow = Settings.isShadowsEnabled ?
+        `<img class="shadow" width="${35 * Settings.markerSize}" height="${16 * Settings.markerSize}" src="./assets/images/markers-shadow.png" alt="Shadow">` : '';
+      var tempMarker = L.marker([marker.lat, marker.lng], {
+        opacity: Settings.markerOpacity,
+        icon: new L.DivIcon.DataMarkup({
+          iconSize: [35 * Settings.markerSize, 45 * Settings.markerSize],
+          iconAnchor: [17 * Settings.markerSize, 42 * Settings.markerSize],
+          popupAnchor: [1 * Settings.markerSize, -29 * Settings.markerSize],
+          html: `<div>
+              <img class="icon" src="assets/images/icons/gfh.png" alt="Icon">
+              <img class="background" src="assets/images/icons/marker_${MapBase.colorOverride || this.color}.png" alt="Background">
+              ${shadow}
+            </div>`,
+          marker: this.key,
+          tippy: marker.title,
+        }),
+      });
+      tempMarker.bindPopup(this.updateMarkerContent(marker), { minWidth: 300, maxWidth: 400 });
 
-        this.layer.addLayer(tempMarker);
-        if (Settings.isMarkerClusterEnabled)
-          Layers.oms.addMarker(tempMarker);
-      }
-    );
+      this.layer.addLayer(tempMarker);
+      if (Settings.isMarkerClusterEnabled)
+        Layers.oms.addMarker(tempMarker);
+    });
   }
 
   set onMap(state) {
@@ -75,12 +93,12 @@ class GunForHire {
     if (state) {
       this.layer.addTo(MapBase.map);
       this.element.removeClass('disabled');
-      if (!MapBase.isPrewviewMode)
+      if (!MapBase.isPreviewMode)
         localStorage.setItem(`rdo:${this.key}`, 'true');
     } else {
       this.layer.remove();
       this.element.addClass('disabled');
-      if (!MapBase.isPrewviewMode)
+      if (!MapBase.isPreviewMode)
         localStorage.removeItem(`rdo:${this.key}`);
     }
   }

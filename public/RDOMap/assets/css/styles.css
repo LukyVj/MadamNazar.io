@@ -932,28 +932,6 @@ a.wiki-page:visited {
     cursor: pointer;
 }
 
-.dailies-changer {
-    user-select: none;
-    -webkit-user-select: none;
-    /* Safari */
-    -ms-user-select: none;
-    /* IE 10+ and Edge */
-    display: flex;
-    justify-content: center;
-}
-
-#dailies-changer-container {
-    margin: 10px 0;
-}
-
-#dailies-changer-container .dailies-title {
-    text-align: center;
-    min-width: 170px;
-    margin: 0 6px;
-    font-family: RDRLino, serif;
-    font-size: 19px;
-}
-
 .marker-content-wrapper {
     display: flex;
     align-items: center;
@@ -1043,15 +1021,6 @@ a.wiki-page:visited {
     background-position: center;
     margin-left: 6px;
     cursor: pointer;
-}
-
-.input-selection-arrow {
-    cursor: pointer;
-}
-
-.input-selection-arrow img {
-    height: 16px;
-    width: auto;
 }
 
 a.no-style {
@@ -1199,13 +1168,7 @@ a.no-style:visited {
     background: #000 !important;
 }
 
-@media (max-width: 1024px) {
-    .top-widget-menu-opened .fme-menu-opened {
-        display: none !important;
-    }
-}
-
-@media (min-width: 1025px) {
+@media (min-width: 769px) {
     .side-menu {
         width: 400px;
         left: -400px;
@@ -1370,6 +1333,7 @@ a.no-style:visited {
 
 #fme-container.fme-menu-opened {
     left: 405px;
+    overflow: hidden;
 }
 
 #fme-container .fme-card {
@@ -1432,6 +1396,7 @@ a.no-style:visited {
     #fme-container .fme-card #next-general-mobile,
     #fme-container .fme-card #next-role-mobile {
         display: block;
+        overflow: hidden;
     }
 
     #fme-container .fme-card .fme-body {
@@ -1443,8 +1408,14 @@ a.no-style:visited {
         height: auto;
         margin-right: 8px;
     }
+
+    .top-widget-menu-opened .fme-menu-opened {
+        display: none !important;
+    }
 }
 
+
+/* Dailies Styling */
 .dailies {
     margin: 20px 5px;
     font-size: 2rem;
@@ -1479,7 +1450,7 @@ span.counter {
     width: 55px;
 }
 
-span.daily {
+label.daily {
     display: grid;
     align-content: center;
     text-align: left;
@@ -1487,21 +1458,66 @@ span.daily {
     margin: 0;
 }
 
-.daily-not-found {
+span.daily-checkbox {
+    display: grid;
+    grid-area: daily-checkbox;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    padding: 10px;
+}
+
+.daily-status {
     margin: auto;
     width: 100%;
     padding: 10px 0;
     text-align: center;
 }
+
 .one-daily-container .input-checkbox-wrapper {
-    display: grid;
-    grid-area: daily-checkbox;
-    margin: 10px;
     width: 25px;
 }
 
-/* Dark mode styling */
+.input-selection-arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+}
 
+.input-selection-arrow img {
+    height: 16px;
+    margin: auto;
+}
+
+.dailies-changer {
+    user-select: none;
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10+ and Edge */
+    display: flex;
+    justify-content: center;
+}
+
+#dailies-changer-container {
+    margin: 10px 0;
+}
+
+#dailies-changer-container .dailies-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 170px;
+    margin: 0 6px;
+    font-family: RDRLino, serif;
+    font-size: 19px;
+}
+/* End of dailies Styling */
+
+/* Dark mode styling */
 .leaflet-popup-content-wrapper {
     background: #222;
     color: #dadada;
@@ -1569,4 +1585,42 @@ span.daily {
 .btn.btn-info.remove-button:hover,
 .save-button:hover {
     background-color: #15b4f3af;
+}
+/* end dark mode styling */
+
+.legendary-properties {
+    line-height: 1.8rem;
+    margin: 10px 0;
+    width: 100%;
+}
+
+/*Legendary animals popup text color*/
+.legendary-spawn-time,
+.legendary-preferred-weather {
+    color: #3abce5;
+}
+
+.legendary-trader-materials,
+.legendary-trader-pelt-materials {
+    color: #ff8d33;
+}
+
+.legendary-trapper-value,
+.legendary-trapper-pelt-value,
+.legendary-trapper-part-value {
+    color: #fdc607;
+}
+
+.legendary-sample-value {
+    color: #5de033;
+}
+
+.legendary-cooldown-timer {
+    color: #d80419;
+    margin-bottom: 10px;
+}
+
+.missions-list {
+    margin: 4px 0;
+    padding-left: 30px;
 }

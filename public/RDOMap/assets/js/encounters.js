@@ -9,7 +9,7 @@ class Encounter {
         this.locations.push(new Encounter(item));
         this.quickParams.push(item.key);
       });
-      console.info(`%c[Encounters] Loaded!`, 'color: #bada55; background: #242424');
+      console.info('%c[Encounters] Loaded!', 'color: #bada55; background: #242424');
       Menu.reorderMenu(this.context);
     });
   }
@@ -21,11 +21,12 @@ class Encounter {
 
     this.onLanguageChanged();
 
+    const imgKey = this.key === 'rescue' ? 'rescue_objective' : this.key;
     this.element = $(`<div class="collectible-wrapper" data-help="item" data-type="${this.key}">`)
       .attr('data-tippy-content', Language.get(`menu.${this.key}`))
       .toggleClass('disabled', !this.onMap)
       .on('click', () => this.onMap = !this.onMap)
-      .append($(`<img src="./assets/images/icons/${this.key}.png" class="collectible-icon">`))
+      .append($(`<img src="./assets/images/icons/${imgKey}.png" class="collectible-icon">`))
       .append($('<p class="collectible">').attr('data-text', `menu.${this.key}`))
       .translate();
 
@@ -44,43 +45,42 @@ class Encounter {
 
   reinitMarker() {
     this.layer.clearLayers();
-    this.markers.forEach(
-      marker => {
-        var shadow = Settings.isShadowsEnabled ? '<img class="shadow" width="' + 35 * Settings.markerSize + '" height="' + 16 * Settings.markerSize + '" src="./assets/images/markers-shadow.png" alt="Shadow">' : '';
-        var tempMarker = L.marker([marker.lat, marker.lng], {
-          opacity: Settings.markerOpacity,
-          icon: new L.DivIcon.DataMarkup({
-            iconSize: [35 * Settings.markerSize, 45 * Settings.markerSize],
-            iconAnchor: [17 * Settings.markerSize, 42 * Settings.markerSize],
-            popupAnchor: [1 * Settings.markerSize, -29 * Settings.markerSize],
-            html: `<div>
-              ${marker.subdata == 'mission_giver' ? '<img class="overlay" src="assets/images/icons/overlay_giver.png" alt="Mission giver">' : ''}
-              <img class="icon" src="assets/images/icons/${this.key}.png" alt="Icon">
-              <img class="background" src="assets/images/icons/marker_${this.color}.png" alt="Background">
+    this.markers.forEach(marker => {
+      const shadow = Settings.isShadowsEnabled ? `<img class="shadow" width="${35 * Settings.markerSize}" height="${16 * Settings.markerSize}" src="./assets/images/markers-shadow.png" alt="Shadow">` : '';
+      const imgKey = this.key === 'rescue' ? `${this.key}_${marker.subdata}` : this.key;
+      var tempMarker = L.marker([marker.lat, marker.lng], {
+        opacity: Settings.markerOpacity,
+        icon: new L.DivIcon.DataMarkup({
+          iconSize: [35 * Settings.markerSize, 45 * Settings.markerSize],
+          iconAnchor: [17 * Settings.markerSize, 42 * Settings.markerSize],
+          popupAnchor: [1 * Settings.markerSize, -29 * Settings.markerSize],
+          html: `<div>
+              <img class="icon" src="assets/images/icons/${imgKey}.png" alt="Icon">
+              <img class="background" src="assets/images/icons/marker_${MapBase.colorOverride || this.color}.png" alt="Background">
               ${shadow}
             </div>`,
-            marker: this.key
-          })
-        });
-        tempMarker.bindPopup(marker.updateMarkerContent(), { minWidth: 300, maxWidth: 400 });
+          marker: this.key,
+          tippy: marker.title,
+        }),
+      });
+      tempMarker.bindPopup(marker.updateMarkerContent(), { minWidth: 300, maxWidth: 400 });
 
-        this.layer.addLayer(tempMarker);
-        if (Settings.isMarkerClusterEnabled)
-          Layers.oms.addMarker(tempMarker);
-      }
-    );
+      this.layer.addLayer(tempMarker);
+      if (Settings.isMarkerClusterEnabled)
+        Layers.oms.addMarker(tempMarker);
+    });
   }
 
   set onMap(state) {
     if (state) {
       this.layer.addTo(MapBase.map);
       this.element.removeClass('disabled');
-      if (!MapBase.isPrewviewMode)
+      if (!MapBase.isPreviewMode)
         localStorage.setItem(`rdo:${this.key}`, 'true');
     } else {
       this.layer.remove();
       this.element.addClass('disabled');
-      if (!MapBase.isPrewviewMode)
+      if (!MapBase.isPreviewMode)
         localStorage.removeItem(`rdo:${this.key}`);
     }
   }
