@@ -158,6 +158,7 @@ Object.entries({
   isPopupsHoverEnabled: { default: false },
   isRightClickEnabled: { default: false },
   isShadowsEnabled: { default: true },
+  isLaBgEnabled: { default: true },
   markerOpacity: { default: 1 },
   markerSize: { default: 1 },
   overlayOpacity: { default: 0.5 },
@@ -171,6 +172,8 @@ Object.entries({
   topWidgetState: { default: 0 },
   nazarCustomLocation: { default: 0 },
   nazarDate: { default: "" },
+  legendarySpawnIconType: { default: 0 },
+  legendarySpawnIconSize: { default: 1 },
 }).forEach(([name, config]) => SettingProxy.addSetting(Settings, name, config));
 
 // Inventory settings

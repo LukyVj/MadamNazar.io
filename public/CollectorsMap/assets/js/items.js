@@ -152,11 +152,16 @@ class Item extends BaseItem {
   }
   updateMenu() {
     const currentMarkers = this.currentMarkers();
-    const buggy = currentMarkers.every(marker => marker.buggy);
+    const isBugged = !!(currentMarkers.length && currentMarkers.every(marker => marker.buggy));
+    const isCollected = currentMarkers.every(marker => !marker.canCollect);
+    const isRandom = currentMarkers.every(marker => marker.isRandomizedItem);
+
     this.$menuButton
       .attr('data-help', () => {
-        if (buggy) {
+        if (isBugged) {
           return 'item_unavailable';
+        } else if (isRandom) {
+          return 'item_random';
         } else if (['flower_agarita', 'flower_blood_flower'].includes(this.itemId)) {
           return 'item_night_only';
         } else if (this.isWeekly()) {
@@ -167,19 +172,23 @@ class Item extends BaseItem {
       })
       .toggleClass('weekly-item', this.isWeekly())
       .find('.collectible-text p')
-      .toggleClass('disabled', currentMarkers.every(marker => !marker.canCollect))
+      .toggleClass('disabled', isCollected)
+      .toggleClass('not-found', isBugged)
       .end()
       .find('.counter')
       .toggle(InventorySettings.isEnabled)
       .end()
       .find('.collectible-icon.random-spot')
-      .toggle(buggy)
+      .toggle(isRandom)
       .end()
       .find('.counter-number')
-      .toggleClass('not-found', buggy)
+      .toggleClass('not-found', isRandom)
       .end();
 
-    return buggy;
+    return {
+      isBugged,
+      isRandom,
+    };
   }
   changeAmountWithSideEffects(changeAmount) {
     this.amount += changeAmount;

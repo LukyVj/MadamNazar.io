@@ -39,8 +39,6 @@ class Marker {
     this.item = this.category === 'random' ? undefined : Item.items.find(item =>
       item.itemId === this.itemId);
 
-    this.isRandomizedItem = ['arrowhead', 'coin', 'fossils_random', 'jewelry_random', 'random'].includes(this.category);
-
     /**
      * `._collectedKey` is the key for the `.isCollected` accessors
      * - the data they represent are best described as “legacy non-sense”, if I’m allowed to say
@@ -62,7 +60,7 @@ class Marker {
     /**
      * Used to display per-item descriptions.
      * Kept in case we need to change this later.
-     * 
+     *
      * @returns {string} The translatable key of the primary description.
      */
     this.primaryDescriptionKey = (() => {
@@ -75,7 +73,7 @@ class Marker {
 
     /**
      * Used to display descriptions per category.
-     * 
+     *
      * @returns {string} The translatable key of the secondary description.
      */
     this.secondaryDescriptionKey = (() => {
@@ -167,13 +165,17 @@ class Marker {
       );
   }
 
+  get isRandomizedItem() {
+    return ['arrowhead', 'coin', 'fossils_random', 'jewelry_random', 'random'].includes(this.category);
+  }
+
   toolAccepted() {
     return Settings.toolType >= this.tool || Settings.toolType === -this.tool ? true : false;
   }
 
   colorUrls() {
     const url = ([base, contour]) => [
-      `assets/images/icons/marker_${base}.png`,
+      `assets/images/icons/marker_${MapBase.colorOverride || base}.png`,
       `assets/images/icons/contours/contour_marker_${contour}.png`,
     ];
     const markerColor = MapBase.isPreviewMode ? 'by_cycle' : Settings.markerColor;
@@ -197,14 +199,14 @@ class Marker {
         cups: 'blue',
         swords: 'blue',
         wands: 'blue',
-        pentacles: 'blue',        
-        
+        pentacles: 'blue',
+
         jewelry_random: 'yellow',
         bracelet: 'yellow',
         necklace: 'yellow',
         ring: 'yellow',
         earring: 'yellow',
-        
+
         heirlooms: 'pink',
 
         random: this.tool === 2 ? 'lightgray' : 'lightgray',

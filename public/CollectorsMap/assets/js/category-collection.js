@@ -110,6 +110,12 @@ class Collection extends BaseCollection {
   static updateMenu() {
     this.collections.forEach(collection => collection.updateMenu());
   }
+  static switchCycle(categoriesArray, cycle) {
+    categoriesArray.forEach(category => {
+      $(`.input-cycle[name=${category}]`).val(cycle);
+      Cycles.categories[category] = cycle;
+    });
+  }
   static _installSettingsAndEventHandlers() {
     SettingProxy.addSetting(Settings, 'sortItemsAlphabetically', { default: false });
     Loader.mapModelLoaded.then(() => {
@@ -125,24 +131,26 @@ class Collection extends BaseCollection {
           const collection = $input.propSearchUp('rdoCollection');
           if (collection && $input.hasClass('input-cycle')) {
             event.stopImmediatePropagation();
-            Cycles.categories[collection.category] = +$input.val();
             switch (collection.category) {
-              case 'heirloom':
-                Cycles.categories['heirloom_random'] = +$input.val();
+              case 'cups':
+              case 'swords':
+              case 'wands':
+              case 'pentacles':
+                this.switchCycle(['cups', 'swords', 'wands', 'pentacles'], +$input.val());
                 break;
               case 'bracelet':
               case 'earring':
               case 'necklace':
               case 'ring':
-                Cycles.categories['jewelry_random'] = +$input.val();
+                this.switchCycle(['bracelet', 'earring', 'necklace', 'ring', 'jewelry_random'], +$input.val());
                 break;
               case 'coastal':
               case 'oceanic':
               case 'megafauna':
-                Cycles.categories['fossils_random'] = +$input.val();
-                $('.input-cycle[name=coastal], .input-cycle[name=oceanic], .input-cycle[name=megafauna]').val($input.val());
+                this.switchCycle(['coastal', 'oceanic', 'megafauna', 'fossils_random'], +$input.val());
                 break;
               default:
+                this.switchCycle([collection.category], +$input.val());
                 break;
             }
             MapBase.addMarkers();
@@ -233,19 +241,22 @@ class Collection extends BaseCollection {
     });
   }
   updateMenu() {
-    const buggy = this.items.map(item => item.updateMenu()).includes(true);
+    const checkItems = property => this.items.map(item => item.updateMenu()[property]).includes(true);
+    const containBuggedItems = checkItems('isBugged');
+    const containRandomItems = checkItems('isRandom');
     const isSameCycle = Cycles.isSameAsYesterday(this.category);
     this.$menuButton
       .attr('data-help', () => {
         if (isSameCycle) {
           return 'item_category_same_cycle';
-        } else if (buggy) {
+        } else if (containBuggedItems || containRandomItems) {
           return 'item_category_unavailable_items';
         } else {
           return 'item_category';
         }
       })
-      .toggleClass('not-found', buggy)
+      .toggleClass('random-category', containRandomItems)
+      .toggleClass('not-found', containBuggedItems)
       .find('.same-cycle-warning-menu')
       .toggle(isSameCycle)
       .end();

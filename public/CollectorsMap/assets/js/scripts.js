@@ -129,6 +129,9 @@ function init() {
   $('#enable-marker-popups').prop("checked", Settings.isPopupsEnabled);
   $('#enable-marker-popups-hover').prop("checked", Settings.isPopupsHoverEnabled);
   $('#enable-marker-shadows').prop("checked", Settings.isShadowsEnabled);
+  $('#enable-legendary-backgrounds').prop("checked", Settings.isLaBgEnabled);
+  $('#legendary-animal-marker-type').val(Settings.legendarySpawnIconType);
+  $('#legendary-animal-marker-size').val(Settings.legendarySpawnIconSize);
   $('#enable-dclick-zoom').prop("checked", Settings.isDoubleClickZoomEnabled);
   $('#pins-place-mode').prop("checked", Settings.isPinsPlacingEnabled);
   $('#pins-edit-mode').prop("checked", Settings.isPinsEditingEnabled);
@@ -405,6 +408,7 @@ $("#language").on("change", function () {
   Cycles.setLocaleDate();
   MapBase.addMarkers();
   Treasure.onLanguageChanged();
+  Legendary.onLanguageChanged();
 });
 
 $("#marker-opacity").on("change", function () {
@@ -416,6 +420,7 @@ $("#marker-size").on("change", function () {
   Settings.markerSize = Number($("#marker-size").val());
   MapBase.addMarkers();
   Treasure.onSettingsChanged();
+  Legendary.onSettingsChanged();
 });
 
 $("#enable-cycle-input").on("change", function () {
@@ -471,6 +476,21 @@ $('#enable-marker-shadows').on("change", function () {
   MapBase.addMarkers();
 });
 
+$("#enable-legendary-backgrounds").on("change", function () {
+  Settings.isLaBgEnabled = $("#enable-legendary-backgrounds").prop('checked');
+  Legendary.onSettingsChanged();
+});
+
+$("#legendary-animal-marker-type").on("change", function () {
+  Settings.legendarySpawnIconType = Number($("#legendary-animal-marker-type").val());
+  Legendary.onSettingsChanged();
+});
+
+$("#legendary-animal-marker-size").on("change", function () {
+  Settings.legendarySpawnIconSize = Number($("#legendary-animal-marker-size").val());
+  Legendary.onSettingsChanged();
+});
+
 $('#enable-dclick-zoom').on("change", function () {
   Settings.isDoubleClickZoomEnabled = $("#enable-dclick-zoom").prop('checked');
   if (Settings.isDoubleClickZoomEnabled) {
@@ -491,6 +511,10 @@ $('#pins-edit-mode').on("change", function () {
 
 $('#pins-place-new').on("click", function () {
   Pins.addPinToCenter();
+});
+
+$('#remove-all-pins').on('click', function () {
+  Pins.removeAllPins();
 });
 
 $('#pins-export').on("click", function () {
@@ -845,6 +869,10 @@ $('#open-delete-all-settings-modal').on('click', function () {
   $('#delete-all-settings-modal').modal();
 });
 
+$('#open-remove-all-pins-modal').on('click', function () {
+  $('#remove-all-pins-modal').modal();
+});
+
 function formatLootTableLevel(table, level = 0) {
   let result = $("<div>");
 
@@ -926,7 +954,7 @@ function filterMapMarkers() {
     filterMarkers(weeklyItems);
   }
   else if (Settings.filterType === 'important') {
-    filterMarkers(MapBase.importantItems);
+    filterMarkers(JSON.parse(localStorage.getItem('importantItems')) || []);
   }
   else if (Settings.filterType === 'static') {
     let staticItems = [];
