@@ -15,7 +15,7 @@ Object.defineProperty(String.prototype, 'filename', {
 Object.defineProperty(Array.prototype, 'arrayContains', {
   value: function (sub) {
     const result = sub.filter(item => this.indexOf(item) > -1);
-    return sub.length === result.length;
+    return result.length > 0;
   }
 });
 
@@ -60,7 +60,24 @@ L.DivIcon.DataMarkup = L.DivIcon.extend({
     L.DivIcon.prototype._setIconStyles.call(this, img, name);
     if (this.options.marker)
       img.dataset.marker = this.options.marker;
+
+    if (this.options.time) {
+      const from = parseInt(this.options.time[0]);
+      const to = parseInt(this.options.time[1]);
+
+      img.dataset.time = timeRange(from, to);
+    }
   }
+});
+
+// Glowing icon (legendary animals)
+L.Icon.TimedData = L.Icon.extend({
+  _setIconStyles: function (img, name) {
+    L.Icon.prototype._setIconStyles.call(this, img, name);
+    if (this.options.time && this.options.time !== []) {
+      img.dataset.time = this.options.time;
+    }
+  },
 });
 
 /*
@@ -137,12 +154,13 @@ function init() {
   $('#pins-edit-mode').prop("checked", Settings.isPinsEditingEnabled);
   $('#show-help').prop("checked", Settings.showHelp);
   $('#show-coordinates').prop("checked", Settings.isCoordsOnClickEnabled);
-  $('#nazar-position').val(Settings.nazarCustomLocation)
   $('#timestamps-24').prop("checked", Settings.isClock24Hour);
+  $('#enable-cycles').prop("checked", Settings.isCyclesVisible);
   $('#enable-cycle-input').prop("checked", Settings.isCycleInputEnabled);
   $("#enable-right-click").prop('checked', Settings.isRightClickEnabled);
   $("#enable-debug").prop('checked', Settings.isDebugEnabled);
   $("#enable-cycle-changer").prop('checked', Settings.isCycleChangerEnabled);
+  $("#timezone-offset").val(Settings.timeZoneOffset);
 
   $("#show-utilities").prop('checked', Settings.showUtilitiesSettings);
   $("#show-customization").prop('checked', Settings.showCustomizationSettings);
@@ -152,9 +170,9 @@ function init() {
 
   $("#help-container").toggle(Settings.showHelp);
 
-  $('.input-cycle').toggleClass('hidden', !(Settings.isCycleInputEnabled));
-  $('.cycle-icon').toggleClass('hidden', Settings.isCycleInputEnabled);
-  $('.nazar-position-dropdown-menu').toggleClass('hidden', !Settings.isCycleInputEnabled);
+  $('.input-cycle').toggleClass('hidden', !Settings.isCycleInputEnabled);
+  $('.cycle-icon').toggleClass('hidden', !Settings.isCyclesVisible || Settings.isCycleInputEnabled);
+  $('.cycle-display').toggleClass('hidden', !Settings.isCyclesVisible);
   $('#cycle-changer-container').toggleClass('hidden', !(Settings.isCycleChangerEnabled));
 
   $("#utilities-container").toggleClass('opened', Settings.showUtilitiesSettings);
@@ -162,6 +180,8 @@ function init() {
   $("#routes-container").toggleClass('opened', Settings.showRoutesSettings);
   $("#import-export-container").toggleClass('opened', Settings.showImportExportSettings);
   $("#debug-container").toggleClass('opened', Settings.showDebugSettings);
+
+  Updates.init();
 
   updateTopWidget();
 }
@@ -222,6 +242,7 @@ function downloadAsFile(filename, text) {
 function clockTick() {
   'use strict';
   const now = new Date();
+  now.setHours((now.getHours() + Settings.timeZoneOffset))
   const gameTime = new Date(now * 30);
   const gameHour = gameTime.getUTCHours();
   const nightTime = gameHour >= 22 || gameHour < 5;
@@ -255,6 +276,16 @@ function clockTick() {
 
   $('[data-marker*="flower_agarita"], [data-marker*="flower_blood"]').css('filter',
     nightTime ? 'drop-shadow(0 0 .5rem #fff) drop-shadow(0 0 .25rem #fff)' : 'none');
+
+  $('.leaflet-marker-icon[data-time]').each(function () {
+    let time = $(this).data('time') + '';
+    if (time === null || time === '') return;
+    if (time.split(',').includes(gameHour + '') && !MapBase.isPreviewMode) {
+      $(this).css('filter', 'drop-shadow(0 0 .5rem #fff) drop-shadow(0 0 .25rem #fff)');
+    } else {
+      $(this).css('filter', 'none');
+    }
+  });
 }
 
 /*
@@ -276,10 +307,6 @@ $('.top-widget > p').on('click', function () {
   const pElements = $('.top-widget > p').length;
   Settings.topWidgetState = (Settings.topWidgetState + 1) % pElements;
   updateTopWidget();
-});
-
-$('.update-warning').on('click', function () {
-  $(this).hide();
 });
 
 $("#show-all-markers").on("change", function () {
@@ -318,6 +345,10 @@ $("#show-debug").on("change", function () {
 
 $('#enable-debug').on("change", function () {
   Settings.isDebugEnabled = $("#enable-debug").prop('checked');
+});
+
+$('#timezone-offset').on("change", function () {
+  Settings.timeZoneOffset = parseInt($("#timezone-offset").val());
 });
 
 $('#enable-cycle-changer').on("change", function () {
@@ -423,18 +454,16 @@ $("#marker-size").on("change", function () {
   Legendary.onSettingsChanged();
 });
 
-$("#enable-cycle-input").on("change", function () {
-  Settings.isCycleInputEnabled = $("#enable-cycle-input").prop('checked');
-  $('.input-cycle').toggleClass('hidden', !(Settings.isCycleInputEnabled));
-  $('.cycle-icon').toggleClass('hidden', Settings.isCycleInputEnabled);
-  $('.nazar-position-dropdown-menu').toggleClass('hidden', !Settings.isCycleInputEnabled);
+$("#enable-cycles").on("change", function () {
+  Settings.isCyclesVisible = $("#enable-cycles").prop('checked');
+  $('.cycle-icon').toggleClass('hidden', !Settings.isCyclesVisible || Settings.isCycleInputEnabled);
+  $('.cycle-display').toggleClass('hidden', !Settings.isCyclesVisible);
 });
 
-$('#nazar-position').on("change", function () {
-  const nazarDate = new Date(Date.now() - 21600000).toISOUTCDateString();
-  Settings.nazarCustomLocation = parseInt($('#nazar-position').val());
-  Settings.nazarDate = nazarDate;
-  MadamNazar.addMadamNazar();
+$("#enable-cycle-input").on("change", function () {
+  Settings.isCycleInputEnabled = $("#enable-cycle-input").prop('checked');
+  $('.input-cycle').toggleClass('hidden', !Settings.isCycleInputEnabled);
+  $('.cycle-icon').toggleClass('hidden', !Settings.isCyclesVisible || Settings.isCycleInputEnabled);
 });
 
 // Remove item from map when using the menu
@@ -873,28 +902,37 @@ $('#open-remove-all-pins-modal').on('click', function () {
   $('#remove-all-pins-modal').modal();
 });
 
-function formatLootTableLevel(table, level = 0) {
-  let result = $("<div>");
+$('#open-updates-modal').on('click', function () {
+  Updates.showModal();
+});
 
-  if (!table.items) {
-    const item = $(`<div class="loot-table-item"><span data-text="${table.name}.name"></span><span class="rate">${table.rate}%</span></div>`);
-    result.append(item);
-  } else {
-    let title = $(`<span class="loot-table-title level-${(level + 1)}">`);
+function formatLootTableLevel(table, rate = 1, level = 0) {
+  const result = $("<div>");
+  
+  const items = MapBase.lootTables.loot[table];
+  const hasItems = !!items;
 
-    if (table.rate) {
-      title.append($(`<h5 data-text="menu.${table.name}">`));
-      title.append($(`<h5 class="rate">`).text(table.rate + "%"));
+  // Max. 2 digits but no trailing.
+  const formatted = Number((rate * 100).toPrecision(2));
+
+  if (hasItems) {
+    const title = $(`<span class="loot-table-title level-${level + 1}">`);
+    if (level === 0) {
+      title.append($(`<h4 data-text="menu.${table}">`));
     } else {
-      title.append($(`<h4 data-text="menu.${table.name}">`));
+      title.append($(`<h5 data-text="menu.${table}">`));
+      title.append($(`<h5 class="rate">`).text(formatted + "%"));
     }
+    result.append(title);
 
-    let wrapper = $(`<div class="loot-table-wrapper level-${(level + 1)}">`);
-    table.items.forEach(item => {
-      wrapper.append(formatLootTableLevel(item, (level + 1)));
+    const wrapper = $(`<div class="loot-table-wrapper level-${level + 1}">`);
+    Object.keys(items).forEach(key => {
+      wrapper.append(formatLootTableLevel(key, rate * items[key], level + 1));
     });
-
-    result.append(title, wrapper);
+    result.append(wrapper);
+  } else {
+    const item = $(`<div class="loot-table-item"><span data-text="${table}.name"></span><span class="rate">~${formatted}%</span></div>`);
+    result.append(item);
   }
 
   return result.children();
@@ -904,18 +942,17 @@ $('#loot-table-modal').on('show.bs.modal', function (event) {
   // Get related loot table.
   const button = $(event.relatedTarget);
   const table = button.attr('data-loot-table');
-
-  // Format loot table.
-  const modal = $(this);
-  const lootTables = MapBase.lootTables[table];
   let wrapper = $('<div class="loot-tables-wrapper">');
 
-  lootTables.forEach(lootTable => {
-    wrapper.append(formatLootTableLevel(lootTable));
+  // Format loot table.
+  const tables = MapBase.lootTables.categories[table];
+  tables.forEach(table => {
+    wrapper.append(formatLootTableLevel(table));
   })
 
+  // Append loot table to modal.
   const translatedContent = Language.translateDom(wrapper)[0];
-  modal.find('.modal-body').html(translatedContent);
+  $('#loot-table-modal #loot').html(translatedContent);
 });
 
 function filterMapMarkers() {
@@ -975,6 +1012,14 @@ function filterMapMarkers() {
   MapBase.addMarkers();
 }
 
+/**
+  linear proportion with cut values out of range:
+  value - number to convert,
+  iMin - input range minimum,
+  iMax - input range maximum,
+  oMin - output range minimum,
+  oMax - output range maximum;
+**/
 function linear(value, iMin, iMax, oMin, oMax) {
   const clamp = (num, min, max) => {
     return num <= min ? min : num >= max ? max : num;
@@ -982,9 +1027,21 @@ function linear(value, iMin, iMax, oMin, oMax) {
   return clamp((((value - iMin) / (iMax - iMin)) * (oMax - oMin) + oMin), oMin, oMax);
 }
 
-// converts string 'hours:minutes' to time 12/24 hours
+// converts number to correct 12/24 hours time:
 function convertToTime(hours = '00', minutes = '00') {
   return Settings.isClock24Hour ?
     `${hours}:${minutes}` :
-    `${+hours % 12 || 12}:${minutes}${+hours >= 12 ? 'PM' : 'AM'}`;
+    `${+hours % 12 || 12}:${minutes}${+hours >= 12 ? ' PM' : ' AM'}`;
+}
+
+// returns an Array with all hours between from...to
+function timeRange(from, to) {
+  const times = [];
+
+  let hour = from;
+  while (hour !== to) {
+    times.push(hour);
+    hour = (hour + 1) % 24;
+  }
+  return times;
 }

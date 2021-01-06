@@ -52,22 +52,30 @@ class Legendary {
     this.marker = L.layerGroup();
     if (Settings.isLaBgEnabled) {
       this.marker.addLayer(L.circle([this.x, this.y], {
-          color: this.isGreyedOut ? '#c4c4c4' : "#fdc607",
-          fillColor: this.isGreyedOut ? '#c4c4c4' : "#fdc607",
-          fillOpacity: linear(Settings.overlayOpacity, 0, 1, 0.1, 0.5),
+          color: this.isGreyedOut ? '#c4c4c4' : '#fdc607',
+          fillColor: this.isGreyedOut ? '#c4c4c4' : '#fdc607',
+          fillOpacity: linear(Settings.overlayOpacity, 0, 1, .1, .2),
           radius: this.radius,
+          opacity: linear(Settings.overlayOpacity, 0, 1, .2, .6),
         })
         .bindPopup(this.popupContent.bind(this), {
           minWidth: 400
         })
       );
     }
-    const iconTypePath = ['heads/blip_mp', 'footprints/footprint'][Settings.legendarySpawnIconType];
+
+    const iconType = ['head', 'footprint'][Settings.legendarySpawnIconType];
     const spawnIconSize = Settings.legendarySpawnIconSize;
-    this.spawnIcon = L.icon({
-      iconUrl: `./assets/images/icons/game/animals/legendaries/${iconTypePath}_${this.species}.png?nocache=${nocache}`,
+
+    this.spawnIcon = new L.Icon.TimedData({
+      iconUrl: `./assets/images/icons/game/animals/legendaries/small/${iconType}_${MapBase.isDarkMode() ? 'gold_' : ''}${this.species}.png?nocache=${nocache}`,
       iconSize: [16 * spawnIconSize, 16 * spawnIconSize],
       iconAnchor: [8 * spawnIconSize, 8 * spawnIconSize],
+      time: (() => {
+        const hours = [];
+        this.spawn_time.forEach(timeArray => hours.push(...timeRange(timeArray[0], timeArray[1])));
+        return hours;
+      })(),
     });
     this.locations.forEach(point =>
       this.marker.addLayer(L.marker([point.x, point.y], {
@@ -86,7 +94,7 @@ class Legendary {
         [this.x - this.radius, this.y - this.radius * 2],
         [this.x + this.radius, this.y + this.radius * 2]
       ], {
-        opacity: linear(Settings.overlayOpacity, 0, 1, 0.5, 1),
+        opacity: MapBase.isDarkMode() ? linear(Settings.overlayOpacity, 0, 1, .1, .5) : linear(Settings.overlayOpacity, 0, 1, .5, .8),
       }));
     }
     this.onMap = this.onMap;
@@ -94,10 +102,7 @@ class Legendary {
   getAnimalProperties() {
     const spawnTime = (() => {
       let timeString = '';
-      const spawnTimes = [].concat(...this.spawn_time);
-      spawnTimes.forEach((time, index) => {
-        timeString += convertToTime(time) + (index % 2 === 0 ? ' - ' : ', ');
-      });
+      this.spawn_time.forEach(timeArray => timeString += `${convertToTime(timeArray[0])} - ${convertToTime(timeArray[1])}, `);
       return timeString.replace(/,\s$/, '');
     })();
 
@@ -118,6 +123,7 @@ class Legendary {
     const properties = this.getAnimalProperties();
     const snippet = $(`
       <div class="handover-wrapper-with-no-influence">
+        <img class="snippet-animal-image" src="assets/images/icons/game/animals/legendaries/${this.text}.svg" alt="Animal">
         <h1 data-text="${this.text}"></h1>
         <p class="legendary-cooldown-timer" data-text="map.legendary_animal_cooldown_end_time"></p>
         <p data-text="${Language.get(this.text + '.desc')}"></p>
@@ -149,11 +155,10 @@ class Legendary {
       $cooldownTimer.text(Language.get($cooldownTimer.attr('data-text'))
         .replace('{timer}', () => {
           const timeMilliseconds = +localStorage.getItem(this.animalSpeciesKey);
-          const timer = new Date(timeMilliseconds)
+          return new Date(timeMilliseconds)
             .toLocaleString(Settings.language, {
-              weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+              weekday: 'long', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit',
             });
-          return `[${timer}]`;
         })
       );
     }
@@ -172,6 +177,9 @@ class Legendary {
       .end()
       .find('button.remove-animal')
         .on('click', () => this.onMap = false)
+      .end()
+        .find('.snippet-animal-image')
+        .toggle(!Settings.isLaBgEnabled)
       .end();
 
     return snippet[0];

@@ -89,18 +89,6 @@ select {
     border: 1px solid black;
 }
 
-.update-warning {
-    width: 100%;
-    background: #800000;
-    color: #eee;
-    text-align: center;
-    padding: 10px;
-    position: fixed;
-    z-index: 9909;
-    display: block;
-    /* When the time comes, you gotta run and change this to block. This is a warning. */
-}
-
 #main-header {
     display: flex;
     margin: 10px;
@@ -529,7 +517,7 @@ select {
 }
 
 .side-menu .random-category {
-    color: #F0F000;
+    color: #fef390;
 }
 
 .side-menu .not-found {
@@ -1061,17 +1049,16 @@ a.no-style:visited {
 
 
 /* Bootstrap modal styling */
-
 .modal {
     user-select: none;
 }
 
-.modal-dialog.modal-sm {
+.modal-dialog {
     position: relative;
     background-color: #000;
 }
 
-.modal-dialog.modal-sm::after {
+.modal-dialog::after {
     border-color: #d80419;
     border-image-repeat: round;
     border-image-slice: 10 10 10 10 fill;
@@ -1098,10 +1085,44 @@ a.no-style:visited {
 .modal-header,
 .modal-body,
 .modal-footer {
-    padding-left: 40px;
-    padding-right: 40px;
     text-align: center;
     border: none;
+}
+
+.modal-header,
+.modal-footer {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px 40px;
+}
+
+.modal-header::after,
+.modal-footer::before {
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 28px;
+    display: block;
+}
+
+.modal-header {
+    padding-bottom: 10px;
+}
+
+.modal-footer {
+    padding-top: 10px;
+}
+
+.modal-header::after {
+    margin-top: 10px;
+    background: url(../../assets/images/modal-title.png) !important;
+    background-position: bottom center !important;
+}
+
+.modal-footer::before {
+    margin-top: -36px;
+    background: url(../../assets/images/modal-footer.png) !important;
+    background-position: top center !important;
 }
 
 .modal-header,
@@ -1109,20 +1130,24 @@ a.no-style:visited {
     color: #fff;
 }
 
-.modal-header {
-    padding-top: 40px;
+.modal h4 {
+    font-family: RDRLino, serif;
+    font-weight: normal;
+    font-size: 24px;
+    line-height: 1;
 }
 
 .modal-body {
-    padding-top: 0;
+    padding: 40px;
+    overflow-y: scroll;
 }
 
 .modal-body .settings-container {
     margin-top: 15px;
 }
 
-.modal-footer {
-    padding-bottom: 60px;
+.modal-actions .btn {
+    margin: 5px;
 }
 
 @media (min-width: 768px) {
@@ -1137,7 +1162,10 @@ a.no-style:visited {
         height: 100%;
         vertical-align: middle;
         margin-right: -4px;
-        /* Adjusts for spacing */
+    }
+
+    .modal-body {
+        max-height: 650px !important;
     }
 
     .modal-dialog {
@@ -1150,7 +1178,6 @@ a.no-style:visited {
         width: 450px;
     }
 }
-
 
 /* Fix buttons showing on top of sidebar on mobile menu */
 
@@ -1474,7 +1501,6 @@ a.no-style:visited {
 }
 
 /* Freemode Events */
-
 #fme-container {
     position: absolute;
     left: 5px;
@@ -1486,6 +1512,7 @@ a.no-style:visited {
 
 #fme-container.fme-menu-opened {
     left: 405px;
+    overflow: hidden;
 }
 
 #fme-container .fme-card {
@@ -1493,19 +1520,22 @@ a.no-style:visited {
     align-items: center;
     background-image: url(../../assets/images/fme_background.png);
     background-size: 100% 100%;
-    padding: 25px;
-    width: 400px;
-    max-width: 400px;
+    width: 432px;
+    max-width: 432px;
+    height: 96px;
+    max-height: 96px;
     color: #fff;
 }
 
 #fme-container .fme-card .fme-image {
+    margin-left: 16px;
     margin-right: 12px;
     height: 66px;
+    width: 66px;
 }
 
 #fme-container .fme-card .fme-body {
-    flex-grow: 1;
+flex-grow: 1;
 }
 
 #fme-container .fme-card .fme-body .fme-title {
@@ -1513,14 +1543,23 @@ a.no-style:visited {
     color: #7b66af;
     margin: 0;
     text-align: left;
-    font-size: 24px;
+    font-size: 21px;
     line-height: 1;
+    font-weight: normal;
+    margin-right: 35px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #fme-container .fme-card .fme-body .fme-text {
-    margin: 0;
     text-align: left;
     font-size: 18px;
+    margin: 0 !important;
+    margin-right: 35px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 #fme-container .fme-card #next-general-mobile,
@@ -1533,6 +1572,7 @@ a.no-style:visited {
 
 #fme-container .fme-card .fme-body {
     display: block;
+    overflow: hidden;
 }
 
 @media (max-width: 1024px) {
@@ -1542,12 +1582,14 @@ a.no-style:visited {
 
     #fme-container .fme-card {
         padding: 10px 20px 10px 10px;
+        height: auto;
         width: initial;
     }
 
     #fme-container .fme-card #next-general-mobile,
     #fme-container .fme-card #next-role-mobile {
         display: block;
+        overflow: hidden;
     }
 
     #fme-container .fme-card .fme-body {
@@ -1557,7 +1599,12 @@ a.no-style:visited {
     #fme-container .fme-card .fme-image {
         width: 32px;
         height: auto;
+        margin-left: 0;
         margin-right: 8px;
+    }
+
+    .top-widget-menu-opened .fme-menu-opened {
+        display: none !important;
     }
 }
 
@@ -1598,10 +1645,6 @@ a.no-style:visited {
     }
 }
 
-#loot-table-modal .modal-body {
-    padding: 0 20px;
-}
-
 .loot-table-wrapper {
     background: rgba(255, 255, 255, 0.1);
     padding: 0 5px 5px 5px;
@@ -1611,15 +1654,13 @@ a.no-style:visited {
 .loot-table-title h4 {
     width: 100%;
     font-size: 24px;
-    line-height: 1.6;
-    margin: 12px 0 0 0;
+    margin: 18px 0 12px 0;
 }
 
 .loot-table-title h5 {
     display: inline;
     font-size: 20px;
-    line-height: 1.6;
-    margin: 12px 0;
+    margin: 8px 4px;
 }
 
 .loot-table-title h4,
@@ -1661,6 +1702,9 @@ a.no-style:visited {
     margin: 10px 0;
     width: 100%;
 }
+.legendary-properties p {
+    max-width: 65%;
+}
 
 /*Legendary animals popup text color*/
 .legendary-spawn-time,
@@ -1686,4 +1730,20 @@ a.no-style:visited {
 .legendary-cooldown-timer {
     color: #d80419;
     margin-bottom: 10px;
+}
+
+.snippet-animal-image {
+    width: 90%;
+    position: absolute;
+    top: 47%;
+    right: 0%;
+    opacity: .7;
+    margin: 0 -25%;
+    pointer-events: none;
+    user-select: none;
+}
+
+button.reload-nazar {
+    margin-top: 14px;
+    width: 100%;
 }

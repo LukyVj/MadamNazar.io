@@ -136,6 +136,7 @@ const SettingProxy = function () {
 // General settings
 const Settings = SettingProxy.createSettingProxy('main');
 Object.entries({
+  lastVersion: { default: 0 },
   alertClosed: { default: false },
   baseLayer: { default: 'map.layers.default' },
   fmeDisplayGeneralPeriod: { default: 30 },
@@ -144,6 +145,7 @@ Object.entries({
   fmeNotificationPeriod: { default: 10 },
   isClock24Hour: { default: false },
   isCoordsOnClickEnabled: { default: false },
+  isCyclesVisible: { default: false },
   isCycleChangerEnabled: { default: false },
   isCycleInputEnabled: { default: false },
   isDebugEnabled: { default: false },
@@ -170,10 +172,9 @@ Object.entries({
   showRoutesSettings: { default: true },
   showUtilitiesSettings: { default: true },
   topWidgetState: { default: 0 },
-  nazarCustomLocation: { default: 0 },
-  nazarDate: { default: "" },
   legendarySpawnIconType: { default: 0 },
   legendarySpawnIconSize: { default: 1 },
+  timeZoneOffset: { default: 0 },
 }).forEach(([name, config]) => SettingProxy.addSetting(Settings, name, config));
 
 // Inventory settings
@@ -207,6 +208,6 @@ Object.entries({
   runOnStart: { default: false },
   startMarkerLat: { default: -119.9063 },
   startMarkerLng: { default: 8.0313 },
-  usePathfinder: { default: false },
+  usePathfinder: { default: true },
   customRoute: { default: '' }
 }).forEach(([name, config]) => SettingProxy.addSetting(RouteSettings, name, config));
