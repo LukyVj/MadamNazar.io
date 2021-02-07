@@ -10,5 +10,9 @@
     "map.ambush.name": "Ambush",
     "mp_animal_alligator_legendary_02.desc": "This alligator has been spotted by residents in Lakay. It has a distinctive orange colouring which can be easy to spot among the green and brown of the bayou. It is patient and cunning, biding its time before it takes down prey. It is rarely seen outside the early hours of the morning and favours heavy fog and mist.",
     "mp_animal_bison_legendary_01.desc": "This subspecies of bison has been spotted grazing near Heartland Overflow. It can be distinguished from common black bison by the white colouring across its head and back. Large and muscular, these creatures will charge if provoked. They are most commonly spotted during the day, in rain and drizzly weather.",
-    "mp_animal_moose_legendary_01.desc": "This moose has been sighted near Barrow Lagoon. With its white colouring, it blends naturally into the snowy landscape. However, its large black antlers are easier to spot. It is a solitary creature and will flee if approached. Sightings have been reported at night, with the animal preferring wet weather."
+    "mp_animal_moose_legendary_01.desc": "This moose has been sighted near Barrow Lagoon. With its white colouring, it blends naturally into the snowy landscape. However, its large black antlers are easier to spot. It is a solitary creature and will flee if approached. Sightings have been reported at night, with the animal preferring wet weather.",
+    "menu.customization_title": "Customisation",
+    "menu.show_customization": "Show customisation settings",
+    "help.show_customization": "Toggles whether the customisation settings should be visible in the menu.",
+    "menu.bounties": "Tracking Bounties"
 }

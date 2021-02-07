@@ -45,7 +45,6 @@
     "menu.show_coords": "Visa koordinater när du klickar",
     "menu.show_help": "Visa hjälp när du håller över",
     "menu.toggle_debug": "Sätt på eller av felsökningsfunktioner",
-    "menu.tooltip_disabled": "Avaktiverad",
     "menu.trains": "Tåg",
     "menu.treasure_hunter": "Skattjägare",
     "menu.treasures": "Skattkarta",
@@ -379,5 +378,15 @@
     "menu.fme.fme_role_wreckage": "Bärgning",
     "menu.fme.fme_wild_animal_kills": "Döda vilda djur",
     "menu.reload_map": "Genindlæs kortet nu",
-    "help.reload_map": "Giver mulighed for at genindlæse kortet, hvis der er noget galt med webstedet."
+    "help.reload_map": "Giver mulighed for at genindlæse kortet, hvis der er noget galt med webstedet.",
+    "menu.customization_title": "Tilpasning",
+    "menu.show_utilities": "Vis funktionens indstillinger",
+    "menu.show_customization": "Vis tilpasningsindstillinger",
+    "menu.show_import_export": "Vis import/eksportindstillinger",
+    "menu.show_debug": "Vis fejlfindingsindstillinger",
+    "help.show_utilities": "Aktiverer / deaktiverer, om funktionens indstillinger skal være synlige på menuen.",
+    "help.show_customization": "Aktiverer / deaktiverer, om tilpasningsindstillingerne skal være synlige på menuen.",
+    "help.show_import_export": "Aktiverer / deaktiverer, om indstillingerne for import / eksport skal være synlige på menuen.",
+    "help.show_debug": "Aktiverer / deaktiverer, om fejlsøgningsindstillingerne skal være synlige på menuen.",
+    "menu.bounties": "Tracking Bounties"
 }

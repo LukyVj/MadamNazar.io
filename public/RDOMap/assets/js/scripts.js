@@ -64,6 +64,9 @@ function init() {
   const locations = Location.init();
   const encounters = Encounter.init();
   const treasures = Treasure.init();
+  const bounties = BountyCollection.init();
+  const fmeCondorEgg = CondorEgg.init();
+  const fmeSalvage = Salvage.init();
   const plants = PlantsCollection.init();
   const camps = Camp.init();
   const shops = Shop.init();
@@ -72,7 +75,7 @@ function init() {
   const discoverables = Discoverable.init();
   const overlays = Overlay.init();
 
-  Promise.all([animals, locations, encounters, treasures, plants, camps, shops, gfh, legendary, discoverables, overlays])
+  Promise.all([animals, locations, encounters, treasures, bounties, fmeCondorEgg, fmeSalvage, plants, camps, shops, gfh, legendary, discoverables, overlays])
     .then(() => {
       Loader.resolveMapModelLoaded();
       MapBase.afterLoad();
@@ -93,14 +96,23 @@ function init() {
   $('#enable-dclick-zoom').prop('checked', Settings.isDoubleClickZoomEnabled);
   $('#show-help').prop('checked', Settings.showHelp);
   $('#timestamps-24').prop('checked', Settings.isClock24Hour);
-  $('#show-dailies').prop('checked', Settings.showDailies);
   $('#show-coordinates').prop('checked', Settings.isCoordsOnClickEnabled);
-
   $('#enable-debug').prop('checked', Settings.isDebugEnabled);
   $('#enable-right-click').prop('checked', Settings.isRightClickEnabled);
 
   $('#help-container').toggle(Settings.showHelp);
-  $('.daily-challenges').toggle(Settings.showDailies);
+
+  $('#show-dailies').prop('checked', Settings.showDailies);
+  $('#show-utilities').prop('checked', Settings.showUtilitiesSettings);
+  $('#show-customization').prop('checked', Settings.showCustomizationSettings);
+  $('#show-import-export').prop('checked', Settings.showImportExportSettings);
+  $('#show-debug').prop('checked', Settings.showDebugSettings);
+
+  $('#dailies-container').toggleClass('opened', Settings.showDailies);
+  $('#utilities-container').toggleClass('opened', Settings.showUtilitiesSettings);
+  $('#customization-container').toggleClass('opened', Settings.showCustomizationSettings);
+  $('#import-export-container').toggleClass('opened', Settings.showImportExportSettings);
+  $('#debug-container').toggleClass('opened', Settings.showDebugSettings);
 }
 
 function isLocalHost() {
@@ -170,8 +182,14 @@ function clockTick() {
 
 setInterval(clockTick, 1000);
 
-$('#toggle-debug').on('click', function () {
-  $('#debug-container').toggleClass('opened');
+$('.side-menu').on('scroll', function () {
+  // These are not equality checks because of mobile weirdness.
+  const atTop = $(this).scrollTop() <= 0;
+  const atBottom = $(this).scrollTop() + $(document).height() >= $(this).prop('scrollHeight');
+  $('.scroller-line-tp').toggle(atTop);
+  $('.scroller-arrow-tp').toggle(!atTop);
+  $('.scroller-line-bt').toggle(atBottom);
+  $('.scroller-arrow-bt').toggle(!atBottom);
 });
 
 //TODO: re-implement this function
@@ -181,6 +199,31 @@ $('#show-all-markers').on('change', function () {
 
 $('#enable-right-click').on('change', function () {
   Settings.isRightClickEnabled = $('#enable-right-click').prop('checked');
+});
+
+$('#show-dailies').on('change', function () {
+  Settings.showDailies = $('#show-dailies').prop('checked');
+  $('#dailies-container').toggleClass('opened', Settings.showDailies);
+});
+
+$('#show-utilities').on('change', function () {
+  Settings.showUtilitiesSettings = $('#show-utilities').prop('checked');
+  $('#utilities-container').toggleClass('opened', Settings.showUtilitiesSettings);
+});
+
+$('#show-customization').on('change', function () {
+  Settings.showCustomizationSettings = $('#show-customization').prop('checked');
+  $('#customization-container').toggleClass('opened', Settings.showCustomizationSettings);
+});
+
+$('#show-import-export').on('change', function () {
+  Settings.showImportExportSettings = $('#show-import-export').prop('checked');
+  $('#import-export-container').toggleClass('opened', Settings.showImportExportSettings);
+});
+
+$('#show-debug').on('change', function () {
+  Settings.showDebugSettings = $('#show-debug').prop('checked');
+  $('#debug-container').toggleClass('opened', Settings.showDebugSettings);
 });
 
 //Disable menu category when click on input
@@ -193,6 +236,7 @@ $('#language').on('change', function () {
 
   Language.setMenuLanguage();
   Treasure.onLanguageChanged();
+  Bounty.onLanguageChanged();
   Dailies.sortDailies();
 
   // WIP: update markers without reload page
@@ -203,11 +247,16 @@ $('#language').on('change', function () {
   Shop.locations.forEach(shop => shop.onLanguageChanged());
   MadamNazar.addMadamNazar();
   Legendary.onSettingsChanged();
+
+  MapBase.updateTippy('language');
 });
 
 $('#marker-size').on('change', function () {
   Settings.markerSize = Number($('#marker-size').val());
   Treasure.onSettingsChanged();
+  Bounty.onSettingsChanged();
+  CondorEgg.onSettingsChanged();
+  Salvage.onSettingsChanged();
   Camp.locations.forEach(camp => camp.reinitMarker());
   Encounter.locations.forEach(encounter => encounter.reinitMarker());
   GunForHire.locations.forEach(gfh => gfh.reinitMarker());
@@ -220,6 +269,9 @@ $('#marker-size').on('change', function () {
 $('#marker-opacity').on('change', function () {
   Settings.markerOpacity = Number($('#marker-opacity').val());
   Treasure.onSettingsChanged();
+  Bounty.onSettingsChanged();
+  CondorEgg.onSettingsChanged();
+  Salvage.onSettingsChanged();
   Camp.locations.forEach(camp => camp.reinitMarker());
   Encounter.locations.forEach(encounter => encounter.reinitMarker());
   GunForHire.locations.forEach(gfh => gfh.reinitMarker());
@@ -233,6 +285,8 @@ $('#overlay-opacity').on('change', function () {
   Settings.overlayOpacity = Number($('#overlay-opacity').val());
   Legendary.onSettingsChanged();
   Overlay.onSettingsChanged();
+  CondorEgg.onSettingsChanged();
+  Salvage.onSettingsChanged();
 });
 
 $('#tooltip').on('change', function () {
@@ -242,7 +296,7 @@ $('#tooltip').on('change', function () {
 
 $('#tooltip-map').on('change', function () {
   Settings.showTooltipsMap = $('#tooltip-map').prop('checked');
-  MapBase.updateTippy();
+  MapBase.updateTippy('tooltip');
 });
 
 $('#marker-cluster').on('change', function () {
@@ -266,6 +320,7 @@ $('#enable-marker-popups-hover').on('change', function () {
 $('#enable-marker-shadows').on('change', function () {
   Settings.isShadowsEnabled = $('#enable-marker-shadows').prop('checked');
   Treasure.onSettingsChanged();
+  Bounty.onSettingsChanged();
   Camp.locations.forEach(camp => camp.reinitMarker());
   Encounter.locations.forEach(encounter => encounter.reinitMarker());
   GunForHire.locations.forEach(gfh => gfh.reinitMarker());
@@ -308,11 +363,6 @@ $('#timestamps-24').on('change', function () {
   Settings.isClock24Hour = $('#timestamps-24').prop('checked');
   clockTick();
   $('#language').triggerHandler('change');
-});
-
-$('#show-dailies').on('change', function () {
-  Settings.showDailies = $('#show-dailies').prop('checked');
-  $('.daily-challenges').toggle(Settings.showDailies);
 });
 
 $('#show-coordinates').on('change', function () {
@@ -383,8 +433,18 @@ $('#open-clear-important-items-modal').on('click', function () {
 $('#open-delete-all-settings-modal').on('click', function () {
   $('#delete-all-settings-modal').modal();
 });
+/* returns an Array with the range of all hours between from to to  */
+function timeRange(from, to) {
+  const times = [];
 
+  let hour = from;
+  while (hour !== to) {
+    times.push(hour);
+    hour = (hour + 1) % 24;
+  }
 
+  return times;
+}
 /**
  * Leaflet plugins
  */
@@ -405,13 +465,7 @@ L.DivIcon.DataMarkup = L.DivIcon.extend({
       var from = parseInt(this.options.time[0]);
       var to = parseInt(this.options.time[1]);
 
-      // Add all valid hours to the marker to be able to simply `.includes()` it later.
-      // Could also check `if X between start and end`, might be slightly better. ¯\_(ツ)_/¯
-      var times = [];
-      for (let index = from; index !== to; (index !== 23) ? index++ : index = 0)
-        times.push(index);
-
-      img.dataset.time = times;
+      img.dataset.time = timeRange(from, to);
     }
   },
 });
@@ -422,6 +476,16 @@ L.LayerGroup.include({
       if (this._layers[i].id === id) {
         return this._layers[i];
       }
+    }
+  },
+});
+
+// Glowing icon (legendary animals)
+L.Icon.TimedData = L.Icon.extend({
+  _setIconStyles: function (img, name) {
+    L.Icon.prototype._setIconStyles.call(this, img, name);
+    if (this.options.time && this.options.time !== []) {
+      img.dataset.time = this.options.time;
     }
   },
 });

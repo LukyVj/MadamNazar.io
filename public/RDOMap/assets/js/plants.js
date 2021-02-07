@@ -5,12 +5,19 @@ class Plants {
 
     this.element = $(`<div class="collectible-wrapper" data-help="item" data-type="${this.key}">`)
       .attr('data-tippy-content', Language.get(`map.plants.${this.key}.name`))
-      .toggleClass('disabled', !this.onMap)
       .on('click', () => {
         this.onMap = !this.onMap; setTimeout(() => PlantsCollection.layer.redraw(), 40);
       })
-      .append($(`<img src="./assets/images/icons/game/${this.key}.png" class="collectible-icon">`))
-      .append($('<p class="collectible">').attr('data-text', `map.plants.${this.key}.name`))
+      .append($(`<img class="collectible-icon" src="./assets/images/icons/game/${this.key}.png">`))
+      .append($('<span class="collectible-text">')
+        .toggleClass('disabled', !this.onMap)
+        .append($('<p class="collectible">').attr('data-text', `map.plants.${this.key}.name`)
+          .css('color', () => {
+            if (this.key === 'harrietum')
+              return '#fdc607';
+            else
+              return null;
+          })))
       .translate();
 
     this.element.appendTo(PlantsCollection.context);
@@ -43,14 +50,10 @@ class Plants {
           <span class="marker-content-wrapper">
             <p>${Language.get('map.plants.desc').replace(/{plant}/, Language.get(`map.plants.${this.key}.name`))}</p>
           </span>
-          `, {
-          minWidth: 300,
-          maxWidth: 400,
-        });
+        `, { minWidth: 300, maxWidth: 400 });
       this.markers.push(tempMarker);
     });
   }
-
 
   set onMap(state) {
     if (!MapBase.isPreviewMode && !PlantsCollection.onMap) return false;
@@ -63,7 +66,7 @@ class Plants {
       PlantsCollection.layer.addLayers(PlantsCollection.markers);
       if (!MapBase.isPreviewMode)
         localStorage.setItem(`rdo:${this.key}`, 'true');
-      this.element.removeClass('disabled');
+      this.element.children('span').removeClass('disabled');
     } else {
 
       PlantsCollection.markers = PlantsCollection.markers.filter((el) => !this.markers.includes(el));
@@ -75,9 +78,10 @@ class Plants {
 
       if (!MapBase.isPreviewMode)
         localStorage.removeItem(`rdo:${this.key}`);
-      this.element.addClass('disabled');
+      this.element.children('span').addClass('disabled');
     }
   }
+
   get onMap() {
     return !!localStorage.getItem(`rdo:${this.key}`);
   }
@@ -128,7 +132,6 @@ class PlantsCollection {
     PlantsCollection.locations.forEach(_plants => {
       if (_plants.onMap) _plants.onMap = state;
     });
-
   }
 
   static get onMap() {

@@ -268,6 +268,13 @@ class Pins {
     if (Settings.isMarkerClusterEnabled && !Settings.isPinsEditingEnabled)
       Layers.oms.addMarker(tempMarker);
     Pins.save();
+
+    tempMarker.addEventListener('dragend', function () {
+      Pins.pinsList.forEach(pin => {
+        pin.save(pin.title, pin.desc, pin.icon, pin.color);
+      });
+      Pins.save();
+    }, { capture: false });
   }
 
   static addPinToCenter() {
@@ -335,7 +342,9 @@ class Pins {
         localStorage.removeItem('rdo:pins-enabled');
       this.context.addClass('disabled');
     }
+    MapBase.updateTippy('pins');
   }
+
   static get onMap() {
     return !!localStorage.getItem('rdo:pins-enabled');
   }

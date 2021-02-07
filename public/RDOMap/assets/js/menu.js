@@ -48,6 +48,10 @@ class Menu {
       });
       MadamNazar.onMap = false;
       Pins.onMap = false;
+      Treasure.treasuresOnMap = false;
+      Bounty.bountiesOnMap = false;
+      CondorEgg.condorEggOnMap = false;
+      Salvage.salvageOnMap = false;
     });
 
     $('.menu-show-all').on('click', function () {
@@ -75,6 +79,10 @@ class Menu {
       });
       MadamNazar.onMap = true;
       Pins.onMap = true;
+      Treasure.treasuresOnMap = true;
+      Bounty.bountiesOnMap = true;
+      CondorEgg.condorEggOnMap = true;
+      Salvage.salvageOnMap = true;
     });
 
     $('.camps-small-btn').on('click', function () {
@@ -83,6 +91,7 @@ class Menu {
       Camp.locations.forEach(camp => {
         if (camp.layer['_map'] != null) camp.reinitMarker();
       });
+      MapBase.updateTippy('campsbtn');
     });
     $('.camps-large-btn').on('click', function () {
       $(this).toggleClass('disabled');
@@ -90,6 +99,7 @@ class Menu {
       Camp.locations.forEach(camp => {
         if (camp.layer['_map'] != null) camp.reinitMarker();
       });
+      MapBase.updateTippy('campsbtn');
     });
     $('.camps-wilderness-btn').on('click', function () {
       $(this).toggleClass('disabled');
@@ -97,6 +107,7 @@ class Menu {
       Camp.locations.forEach(camp => {
         if (camp.layer['_map'] != null) camp.reinitMarker();
       });
+      MapBase.updateTippy('campsbtn');
     });
 
     $('.shops-hide-btn').on('click', function () {

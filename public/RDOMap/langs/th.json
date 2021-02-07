@@ -37,7 +37,6 @@
     "menu.show_all": "แสดงทั้งหมด",
     "menu.show_coords": "แสดงพิกัดเมื่อคลิก",
     "menu.show_help": "แสดงตัวช่วยเมื่อชี้เมาส์",
-    "menu.tooltip_disabled": "ปิดการใช้งาน",
     "menu.treasures": "Treasure Maps",
     "menu.user_pins_edit_mode": "เปิดใช้งานแก้ไขหมุด",
     "menu.user_pins_export": "ส่งออก",
@@ -144,5 +143,11 @@
     "menu.fme_display": "แสดงกิจกรรม",
     "menu.fme_notification": "เปิดการแจ้งเตือนกิจกรรม",
     "menu.close": "ปิด",
-    "menu.reload_map": "รีโหลดแผนที่เดี๋ยวนี้"
+    "menu.reload_map": "รีโหลดแผนที่เดี๋ยวนี้",
+    "menu.customization_title": "การปรับแต่ง",
+    "menu.show_utilities": "แสดงอื่น ๆ",
+    "menu.show_customization": "แสดงการปรับแต่ง",
+    "menu.show_import_export": "แสดงการตั้งค่า นำเข้า/ส่งออก",
+    "menu.show_debug": "แสดงการตั้งค่านักพัฒนา",
+    "menu.bounties": "Tracking Bounties"
 }

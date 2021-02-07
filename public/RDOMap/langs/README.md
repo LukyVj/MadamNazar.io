@@ -7,49 +7,52 @@ We'd like to also mention the people that helped translate before the project sw
 ## Crowdin Contributors
 These are the people that helped translate the project using Crowdin. Please note that Crowdin might not always report accurate numbers due to contributions from before Crowdin.
 
-### Afrikaans:
+### Afrikaans (0%):
   - **eduardvlog** (23 words)
 
-### Arabic:
+### Arabic (29%):
   - **Aboodsaad27** (82 words)
+  - **i_NaifKhaldi** (72 words)
   - **y_ksq** (1,748 words)
 
-### Catalan:
+### Catalan (5%):
   - **juandamanacor2013** (91 words)
+  - **zrubio** (365 words)
 
-### Chinese Simplified:
+### Chinese Simplified (99%):
   - **578218087** (55 words)
-  - **akbcd** (131 words)
+  - **akbcd** (133 words)
   - **BHT256** (254 words)
   - **curryguru** (102 words)
-  - **Jabaay** (496 words)
+  - **Jabaay** (1,018 words)
   - **kagurazakakotori** (16 words)
-  - **Megitsune** (20,863 words)
-  - **PeanutSlinger** (2,293 words)
+  - **Megitsune** (21,042 words)
+  - **PeanutSlinger** (2,551 words)
   - **qiexiacn** (223 words)
 
-### Chinese Traditional:
-  - **jurn0818** (516 words)
+### Chinese Traditional (98%):
+  - **jurn0818** (548 words)
   - **L1Chung** (3,267 words)
-  - **Megitsune** (20,863 words)
+  - **Megitsune** (21,042 words)
   - **pach318** (265 words)
+  - **RichardC.P.** (984 words)
 
-### Czech:
+### Czech (29%):
   - **avojta** (119 words)
   - **Nydrail** (379 words)
 
-### Dutch:
+### Dutch (26%):
   - **ranforingus** (325 words)
 
-### English, United Kingdom:
+### English, United Kingdom (2%):
   - **W10075343** (1,650 words)
 
-### Finnish:
+### Finnish (22%):
   - **aksu.smal** (158 words)
 
-### French:
+### French (86%):
   - **escaliburos** (10 words)
-  - **FRANCESCADOLORES** (397 words)
+  - **FRANCESCADOLORES** (401 words)
   - **JeanBankarbone** (87 words)
   - **kaeporatheglitcha** (403 words)
   - **L2** (97 words)
@@ -60,79 +63,113 @@ These are the people that helped translate the project using Crowdin. Please not
   - **skonky** (2,824 words)
   - **SoSuz** (153 words)
   - **starblunter** (72 words)
-  - **YuYusS** (95 words)
+  - **YuYusS** (110 words)
 
-### German:
-  - **djenerg** (15 words)
+### German (90%):
+  - **Alexified** (152 words)
+  - **djenerg** (33 words)
+  - **ingoonline11** (19 words)
   - **Matityahuu** (78 words)
-  - **Megitsune** (20,863 words)
+  - **Megitsune** (21,042 words)
   - **michaelahofer** (875 words)
   - **mojan66** (335 words)
   - **paeulchen.j** (274 words)
+  - **Scotmanhands** (131 words)
   - **viliri** (456 words)
   - **werhel** (11 words)
 
-### Italian:
-  - **daveo979** (492 words)
-  - **GiorgioHerbie** (5,191 words)
-  - **harleyhawke** (48 words)
-  - **Megitsune** (20,863 words)
-  - **Raffox97** (273 words)
-  - **Tony_Bell** (128 words)
+### Greek (13%):
+  - **dvagos7** (1,200 words)
+  - **libidosiemens** (23 words)
 
-### Japanese:
-  - **Megitsune** (20,863 words)
+### Hungarian (0%):
+  - **Balesz** (10 words)
+
+### Italian (54%):
+  - **daveo979** (1,232 words)
+  - **Enrik014** (344 words)
+  - **GiorgioHerbie** (5,266 words)
+  - **harleyhawke** (48 words)
+  - **Megitsune** (21,042 words)
+  - **nellonenollen** (22 words)
+  - **Raffox97** (273 words)
+  - **Tony_Bell** (134 words)
+
+### Japanese (71%):
+  - **Megitsune** (21,042 words)
   - **menbou** (182 words)
 
-### Korean:
-  - **CoolBreeze-13s** (1,599 words)
-  - **Megitsune** (20,863 words)
+### Korean (60%):
+  - **CoolBreeze-13s** (1,663 words)
+  - **Megitsune** (21,042 words)
+  - **ssh2** (70 words)
+  - **vega7621** (33 words)
 
-### Norwegian:
+### Norwegian (2%):
   - **petter.landsem.krogstad** (83 words)
 
-### Polish:
+### Polish (92%):
   - **FrankTVPL** (506 words)
-  - **Megitsune** (20,863 words)
-  - **Michal__d** (1,809 words)
+  - **Megitsune** (21,042 words)
+  - **Michal__d** (1,960 words)
+  - **Pabeu** (49 words)
 
-### Portuguese, Brazilian:
+### Portuguese (8%):
+  - **FilipeLuk** (649 words)
+
+### Portuguese, Brazilian (99%):
   - **FilipFelipe** (13 words)
-  - **jeanropke** (26,079 words)
+  - **jeanropke** (27,452 words)
+  - **mgoebelm** (100 words)
+  - **msfern** (12 words)
   - **neohazukibr** (41 words)
 
-### Russian:
+### Romanian (0%):
+  - **pozitive95** (33 words)
+
+### Russian (97%):
   - **dramatic_prophet** (262 words)
   - **hellcat_tail** (164 words)
-  - **Megitsune** (20,863 words)
+  - **MEE5RUS** (312 words)
+  - **Megitsune** (21,042 words)
+  - **mrsanze6** (49 words)
   - **Nacuman.exe** (142 words)
   - **Overnoes** (430 words)
   - **poeblu85** (395 words)
   - **tegetron** (29 words)
 
-### Spanish:
+### Spanish (92%):
   - **a.equis23** (263 words)
+  - **AshTurquoise** (27 words)
   - **Bruxes** (435 words)
   - **chanito86** (10 words)
   - **idiot.rejected** (102 words)
   - **JoseLopez95** (409 words)
-  - **Megitsune** (20,863 words)
+  - **Megitsune** (21,042 words)
   - **Njordude** (1,614 words)
+  - **Pocholo95** (160 words)
+  - **sandratormo20** (33 words)
+  - **tuwangi** (279 words)
   - **W10075343** (1,650 words)
 
-### Swedish:
+### Swedish (26%):
   - **Anvnamnet** (2,189 words)
   - **Shineberg** (141 words)
+  - **wiiwil** (249 words)
 
-### Thai:
+### Thai (3%):
   - **MrFermz** (39 words)
 
-### Turkish:
+### Turkish (41%):
   - **birseysoylicem** (134 words)
   - **Krykl** (406 words)
   - **tercumantanumut** (149 words)
 
-### Ukrainian:
+### Ukrainian (76%):
+  - **beskorjake2332** (598 words)
   - **grmaster5s** (5,664 words)
   - **warkoun** (293 words)
+
+### Vietnamese (2%):
+  - **1751020005** (238 words)
 

@@ -32,8 +32,6 @@
     "menu.settings_import_export_title": "Innstillinger",
     "menu.show_all": "Vis alle",
     "menu.show_coords": "Vis koordinater ved klikk",
-    "menu.tooltip_disabled": "Deativert",
-    "menu.tooltip_enabled": "Aktivert",
     "menu.trains": "Tog",
     "menu.treasure_hunter": "Skattejeger",
     "menu.treasures": "Skattekart",
@@ -137,5 +135,7 @@
     "map.weather.storm": "Stormfullt vær",
     "map.weather.foggy": "Tåkete vær",
     "map.weather.rain": "Regnvær",
-    "map.weather.any": "Ethvert vær"
+    "map.weather.any": "Ethvert vær",
+    "menu.customization_title": "Tilpasning",
+    "menu.bounties": "Tracking Bounties"
 }
