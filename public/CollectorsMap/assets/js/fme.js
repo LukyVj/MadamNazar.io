@@ -29,23 +29,25 @@ const FME = {
    */
   flags: {
     none: 0,
-    fme_archery: 1,
-    fme_dead_drop: 2,
-    fme_fishing_challenge: 4,
-    fme_golden_hat: 8,
-    fme_hot_property: 16,
+    fme_master_archer: 1,
+    fme_dispatch_rider: 2,
+    fme_challenge_river_fishing: 4,
+    fme_fools_gold: 8,
+    fme_cold_dead_hands: 16,
     fme_king_of_the_castle: 32,
-    fme_king_of_the_rail: 64,
-    fme_random: 128,
+    fme_railroad_baron: 64,
+    fme_challenges: 128,
     fme_role_animal_tagging: 256,
     fme_role_condor_egg: 512,
-    fme_role_greatest_bounty_hunter: 1024,
+    fme_role_day_of_reckoning: 1024,
     fme_role_protect_legendary_animal: 2048,
-    fme_role_round_up: 4096,
-    fme_role_supply_train: 8192,
-    fme_role_wildlife_photographer: 16384,
-    fme_role_wreckage: 32768,
-    fme_wild_animal_kills: 65536,
+    fme_role_manhunt: 4096,
+    fme_role_trade_route: 8192,
+    fme_wildlife_photographer: 16384,
+    fme_role_salvage: 32768,
+    fme_challenge_wild_animals_kills: 65536,
+    fme_challenge_lake_fishing: 131072,
+    fme_challenge_swamp_fishing: 262144,
   },
 
   /**
@@ -97,7 +99,7 @@ const FME = {
 
           elements.nextEventName.innerHTML = fmeName;
           elements.nextEventEta.innerHTML = fmeBody;
-          elements.nextEventBodyMobile.innerHTML = `${fmeName} - ${event.etaText}`;
+          elements.nextEventBodyMobile.innerHTML = `<span class="next-title">${fmeName}</span><span class="next-time"> - ${event.etaText}</span>`;
         }
 
         FME.notify(event);
@@ -218,6 +220,10 @@ const FME = {
    * Retrieve the FME data from FME.json
    */
   init: function () {
+    SettingProxy.addSetting(Settings, 'fmeEnabledEvents', {
+      default: Object.values(FME.flags).reduce((acc, value) => acc + value, 0),
+    });
+
     $('#fme-display').on("change", function () {
       Settings.isFmeDisplayEnabled = $("#fme-display").prop('checked');
       $('#fme-display-general-period, #fme-display-role-period').parent().toggle(Settings.isFmeDisplayEnabled);
@@ -277,21 +283,26 @@ const FME = {
 
     $("input[name='fme-enabled-events[]']").each(function (i, v) {
       const id = $(this).attr('id');
-      $(this).prop('checked', (Settings.fmeEnabledEvents & FME.flags[id]));
+      $(this).prop('checked', (Settings.fmeEnabledEvents && FME.flags[id]));
     });
 
     $('#open-fme-enabled-events-modal').on('click', function () {
       $('#fme-enabled-events-modal').modal();
     });
 
-    $.getJSON(`data/fme.json?nocache=${nocache}`)
-      .done(function (data) {
-        FME._eventsJson = data;
-        FME.update();
-        FME.initModal();
-        window.setInterval(FME.update, 10000);
-        console.info('%c[FME] Loaded!', 'color: #bada55; background: #242424');
+    return Loader.promises['fme'].consumeJson(eventsData => {
+      const [general, role] = ['default', 'themed'].map(key => {
+        return Object.entries(eventsData[key]).reduce((acc, [time, { name, variation }]) => {
+          return [...acc, [time, variation || name]];
+        }, []);
       });
+
+      FME._eventsJson = { general, role };
+      FME.update();
+      FME.initModal();
+      window.setInterval(FME.update, 10000);
+      console.info('%c[FME] Loaded!', 'color: #bada55; background: #242424');
+    });
   },
 
   initModal: function () {
@@ -357,22 +368,27 @@ const FME = {
       .replace('{name}', event.nameText)
       .replace('{time}', event.etaText);
 
-    if (Notification.permission === "granted") {
-      new Notification(event.nameText, {
-        body: notificationBody,
-        icon: event.imageSrc,
-        lang: Settings.language,
-      });
-    } else if (Notification.permission !== "denied") {
-      Notification.requestPermission().then(function (permission) {
-        if (permission === "granted") {
-          new Notification(event.nameText, {
-            body: notificationBody,
-            icon: event.imageSrc,
-            lang: Settings.language,
-          });
-        }
-      });
+    try {
+      if (Notification.permission === "granted") {
+        new Notification(event.nameText, {
+          body: notificationBody,
+          icon: event.imageSrc,
+          lang: Settings.language,
+        });
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(function (permission) {
+          if (permission === "granted") {
+            new Notification(event.nameText, {
+              body: notificationBody,
+              icon: event.imageSrc,
+              lang: Settings.language,
+            });
+          }
+        });
+      }
+    } catch (error) {
+      // Notifications not supported.
+      this.markPermissionDenied();
     }
 
     if (Notification.permission === "denied") {

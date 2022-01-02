@@ -4,11 +4,12 @@ Object.defineProperty(Date.prototype, 'toISOUTCDateString', {
 
 class Loader {
     static init(urls) {
-        this.urls = urls;
+        this.urls = new Map();
         this.promises = {};
         urls.forEach(url => {
-            const name = url.split('/').pop().split('.', 1)[0];
+            const name = url.split('?')[0].split('/').filter(e => e).pop().split('.', 1)[0];
             this.promises[name] = new Loader(name, url);
+            this.urls.set(name, url);
         });
         /*
         Similar to DOMContentLoaded: to be fired once cycles, items, collections, treasures, ...
@@ -23,10 +24,11 @@ class Loader {
         const queryString = {};
 
         if (['updates'].includes(name)) queryString.nocache = Date.now();
+        else if (['fme'].includes(name)) queryString.nocache = Math.floor(Date.now() / 10000);
         else if (!url.startsWith('http')) queryString.nocache = customNoCache || nocache;
         else queryString.nocache = customNoCache || new Date(Date.now() - 21600000).toISOUTCDateString();
 
-        if (['cycles'].includes(name)) queryString.date = customNoCache || new Date().toISOUTCDateString();
+        if (['cycles', 'lang_progress'].includes(name)) queryString.date = customNoCache || new Date().toISOUTCDateString();
 
         this._json = $.getJSON(url, queryString);
     }
@@ -38,24 +40,28 @@ class Loader {
     }
     static reloadData(name) {
         delete this.promises[name];
-        const url = this.urls.find(url => url.split('/').pop().split('.', 1)[0] === name);
-        this.promises[name] = new Loader(name, url, Date.now());
+        this.promises[name] = new Loader(name, this.urls.get(name), Date.now());
     }
 }
 
 const urls = [
-    'data/updates.json',
-    'data/items_value.json',
-    'https://pepegapi.jeanropke.net/v2/rdo/weekly',
-    'https://jeanropke.github.io/RDR2CollectorsMap/data/weekly_sets.json',
-    'https://jeanropke.github.io/RDR2CollectorsMap/data/cycles.json',
-    'data/overlays.json',
-    'data/items.json',
-    'data/fasttravels.json',
-    'https://pepegapi.jeanropke.net/v2/rdo/nazar',
-    'data/treasures.json',
     'data/animal_legendary.json',
-    'data/loot.json',
+    'data/fasttravels.json',
     'data/filters.json',
+    'data/items_value.json',
+    'data/items.json',
+    'data/lang_progress.json',
+    'data/loot.json',
+    'data/mapping.json',
+    'data/overlays.json',
+    'data/treasures.json',
+    'data/weekly_sets.json',
+    'https://api.rdo.gg/fme/',
+    'https://jeanropke.github.io/RDR2CollectorsMap/data/cycles.json',
+    'https://jeanropke.github.io/RDR2CollectorsMap/data/updates.json',
+    'https://pepegapi.jeanropke.net/v2/rdo/nazar',
+    'https://pepegapi.jeanropke.net/v2/rdo/weekly',
+    'https://showcase.api.linx.twenty57.net/UnixTime/tounixtimestamp?datetime=now'
 ];
+
 Loader.init(urls);

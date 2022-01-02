@@ -36,13 +36,19 @@ class Legendary {
   // not idempotent (on the environment)
   constructor(preliminary) {
     Object.assign(this, preliminary);
-    this._shownKey = `shown.${this.text}`;
+    this._shownKey = `rdr2collector.shown.${this.text}`;
     this.element = $('<div class="collectible-wrapper" data-help="item">')
       .on('click', () => this.onMap = !this.onMap)
       .append($('<p class="collectible">').attr('data-text', this.text))
       .translate();
     this.species = this.text.replace(/^mp_animal_|_legendary_\d+$/g, '');
-    this.animalSpeciesKey = `rdr2collector:Legendaries_category_time_${this.species}`;
+    this.animalSpeciesKey = `rdr2collector.Legendaries_category_time_${this.species}`;
+    this.preferred_weather = Language.get(`map.weather.${this.preferred_weather}`);
+    this.trader_materials = this.trader_materials || Language.get('map.cant_be_picked_up');
+    this.trapper_value = this.trapper_value ? `$${this.trapper_value.toFixed(2)}` : Language.get('map.cant_be_picked_up');
+    this.trapper_pelt_value = `$${this.trapper_pelt_value.toFixed(2)}`;
+    this.trapper_part_value = `$${this.trapper_part_value.toFixed(2)}`;
+    this.sample_value = `$${this.sample_value.toFixed(2)}`;
     this.reinitMarker();
     this.element.appendTo(Legendary.context);
   }
@@ -58,24 +64,19 @@ class Legendary {
           radius: this.radius,
           opacity: linear(Settings.overlayOpacity, 0, 1, .2, .6),
         })
-        .bindPopup(this.popupContent.bind(this), {
-          minWidth: 400
-        })
+        .bindPopup(this.popupContent.bind(this), { minWidth: 400 })
       );
     }
 
-    const iconType = ['head', 'footprint'][Settings.legendarySpawnIconType];
+    const iconType = Settings.legendarySpawnIconType;
     const spawnIconSize = Settings.legendarySpawnIconSize;
+    const isGold = MapBase.isDarkMode() ? 'gold_' : '';
 
     this.spawnIcon = new L.Icon.TimedData({
-      iconUrl: `./assets/images/icons/game/animals/legendaries/small/${iconType}_${MapBase.isDarkMode() ? 'gold_' : ''}${this.species}.png?nocache=${nocache}`,
+      iconUrl: `./assets/images/icons/game/animals/legendaries/small/${iconType}_${isGold}${this.species}.png?nocache=${nocache}`,
       iconSize: [16 * spawnIconSize, 16 * spawnIconSize],
       iconAnchor: [8 * spawnIconSize, 8 * spawnIconSize],
-      time: (() => {
-        const hours = [];
-        this.spawn_time.forEach(timeArray => hours.push(...timeRange(timeArray[0], timeArray[1])));
-        return hours;
-      })(),
+      time: this.spawn_time.reduce((acc, [start, end]) => [...acc, ...timeRange(start, end)], []),
     });
     this.locations.forEach(point =>
       this.marker.addLayer(L.marker([point.x, point.y], {
@@ -99,37 +100,16 @@ class Legendary {
     }
     this.onMap = this.onMap;
   }
-  getAnimalProperties() {
-    const spawnTime = (() => {
-      let timeString = '';
-      this.spawn_time.forEach(timeArray => timeString += `${convertToTime(timeArray[0])} - ${convertToTime(timeArray[1])}, `);
-      return timeString.replace(/,\s$/, '');
-    })();
-
-    return {
-      animalSpecies: this.species,
-      spawn_time: spawnTime,
-      preferred_weather: Language.get(`map.weather.${this.preferred_weather}`),
-      trader_materials: this.trader_materials ? this.trader_materials : Language.get('map.cant_be_picked_up'),
-      trader_pelt_materials: this.trader_pelt_materials,
-      trapper_value: this.trapper_value ? `$${this.trapper_value.toFixed(2)}` : Language.get('map.cant_be_picked_up'),
-      trapper_pelt_value: `$${this.trapper_pelt_value.toFixed(2)}`,
-      trapper_part_value: `$${this.trapper_part_value.toFixed(2)}`,
-      sample_value: `$${this.sample_value.toFixed(2)}`,
-      animal_category: this.animal_category,
-    };
-  }
   popupContent() {
-    const properties = this.getAnimalProperties();
     const snippet = $(`
       <div class="handover-wrapper-with-no-influence">
-        <img class="snippet-animal-image" src="assets/images/icons/game/animals/legendaries/${this.text}.svg" alt="Animal">
+        <img class="legendary-animal-popup-image" src="assets/images/icons/game/animals/legendaries/${this.text}.svg" alt="Animal">
         <h1 data-text="${this.text}"></h1>
         <p class="legendary-cooldown-timer" data-text="map.legendary_animal_cooldown_end_time"></p>
         <p data-text="${Language.get(this.text + '.desc')}"></p>
         <br><p data-text="map.legendary_animal.desc"></p>
         <span class="legendary-properties">
-          <p class="legendary-spawn-time" data-text="map.legendary.spawn_time"></p>
+          <p class="legendary-spawn-time" data-text="map.legendary.spawn_time_string"></p>
           <p class="legendary-preferred-weather" data-text="map.legendary.preferred_weather"></p>
           <p class="legendary-trader-materials" data-text="map.legendary.trader_materials"></p>
           <p class="legendary-trader-pelt-materials" data-text="map.legendary.trader_pelt_materials"></p>
@@ -144,9 +124,11 @@ class Legendary {
       </div>`)
       .translate();
 
+    this.spawn_time_string = this.spawn_time.map(timeRange => timeRange.map(hour => convertToTime(hour)).join(' - ')).join(', ');
+
     const pElements = $('span > p', snippet);
     [...pElements].forEach(p => {
-      const propertyText = Language.get($(p).attr('data-text')).replace(/{([a-z_]+)}/, (full, key) => properties[key]);
+      const propertyText = Language.get($(p).attr('data-text')).replace(/{([a-z_]+)}/, (full, key) => this[key]);
       $(p).text(propertyText);
     });
 
@@ -177,30 +159,25 @@ class Legendary {
       .end()
       .find('button.remove-animal')
         .on('click', () => this.onMap = false)
-      .end()
-        .find('.snippet-animal-image')
-        .toggle(!Settings.isLaBgEnabled)
       .end();
 
     return snippet[0];
   }
   static toggleAnimalSpecies(animalSpecies) {
     Legendary.animals.forEach(animal => {
-      const _prop = animal.getAnimalProperties();
-      if (_prop.animalSpecies === animalSpecies)
+      if (animal.species === animalSpecies)
         animal.reinitMarker();
     });
   }
   static checkSpawnTime() {
     const animalSpeciesSet = new Set();
     Legendary.animals.forEach(animal => {
-      const _prop = animal.getAnimalProperties();
-      animalSpeciesSet.add(_prop.animalSpecies);
+      animalSpeciesSet.add(animal.species);
     });
 
     setInterval(() => {
       animalSpeciesSet.forEach(animalSpecies => {
-        const key = `rdr2collector:Legendaries_category_time_${animalSpecies}`;
+        const key = `rdr2collector.Legendaries_category_time_${animalSpecies}`;
         if (!(key in localStorage)) return;
 
         const time = localStorage.getItem(key);
@@ -228,16 +205,16 @@ class Legendary {
       Legendary.layer[method](this.marker);
       this.element.removeClass('disabled');
       if (!MapBase.isPrewviewMode)
-        localStorage.setItem(`rdr2collector:${this._shownKey}`, 'true');
+        localStorage.setItem(this._shownKey, 'true');
     } else {
       Legendary.layer.removeLayer(this.marker);
       this.element.addClass('disabled');
       if (!MapBase.isPrewviewMode)
-        localStorage.removeItem(`rdr2collector:${this._shownKey}`);
+        localStorage.removeItem(this._shownKey);
     }
   }
   get onMap() {
-    return !!localStorage.getItem(`rdr2collector:${this._shownKey}`);
+    return !!localStorage.getItem(this._shownKey);
   }
   static onCategoryToggle() {
     Legendary.animals.forEach(animal => animal.onMap = animal.onMap);

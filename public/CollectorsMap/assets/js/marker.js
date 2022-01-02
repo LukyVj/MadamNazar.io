@@ -55,7 +55,7 @@ class Marker {
      * and one for “visibility” per item (in a new Item class).
      * Both should drive how faded the marker is going to be.
      */
-    this._collectedKey = `collected.${this.text}`;
+    this._collectedKey = `rdr2collector.collected.${this.text}`;
 
     /**
      * Used to display per-item descriptions.
@@ -66,7 +66,7 @@ class Marker {
     this.primaryDescriptionKey = (() => {
       if (this.category === 'random') {
         return `${this.text}.desc`;
-      }  else {
+      } else {
         return `${this.markerId}.desc`;
       }
     })();
@@ -88,27 +88,58 @@ class Marker {
       } else if (this.category === 'jewelry_random') {
         return "jewelry_random.desc";
       }
-
       switch (this.itemId) {
-        case 'flower_agarita':
-        case 'flower_blood_flower':
+        case 'provision_wldflwr_agarita':
+        case 'provision_wldflwr_blood_flower':
           return 'map.flower_type.night_only';
-        case 'flower_creek_plum':
+        case 'provision_wldflwr_creek_plum':
           return 'map.flower_type.bush';
-        case 'egg_spoonbill':
-        case 'egg_heron':
-        case 'egg_eagle':
-        case 'egg_hawk':
-        case 'egg_egret':
+        case 'provision_spoonbill_egg':
+        case 'provision_heron_egg':
+        case 'provision_eagle_egg':
+        case 'provision_hawk_egg':
+        case 'provision_egret_egg':
           return 'map.egg_type.tree';
-        case 'egg_vulture':
+        case 'provision_vulture_egg':
           return 'map.egg_type.stump';
-        case 'egg_duck':
-        case 'egg_goose':
-        case 'egg_loon':
+        case 'provision_duck_egg':
+        case 'provision_goose_egg':
+        case 'provision_loon_egg':
           return 'map.egg_type.ground';
         default:
           return '';
+      }
+    })();
+
+    /**
+     * Used to get the loot table key per category.
+     *
+     * @returns {string} The key of the loot table.
+     */
+    this.lootTable = (() => {
+      switch (this.category) {
+        case 'fossils_random': {
+          if (this.text.includes('_mud_'))
+            return 'fossils_buried_mud';
+          else if (this.text.includes('_snow_dirt_'))
+            return 'fossils_buried_dirt_snow';
+          else if (this.text.includes('_snow_'))
+            return 'fossils_buried_snow';
+          else if (this.text.includes('_water_'))
+            return 'fossils_buried_water';
+        }
+        case 'arrowhead': {
+          if (this.tool === 1) {
+            return 'arrowhead_buried_mounds';
+          }
+        }
+        case 'random': {
+          if (this.tool === 1) {
+            return 'random_buried_mounds';
+          }
+        }
+        default:
+          return this.category;
       }
     })();
   }
@@ -184,36 +215,46 @@ class Marker {
       return url(MapBase.isDarkMode() ? [dark, normal] : [normal, dark]);
     }
 
-    let base;
+    let base = {
+      arrowhead: 'purple',
+      bottle: 'brown',
+      coin: 'darkorange',
+      egg: 'white',
+      flower: 'lightdarkred',
+      fossils_random: 'darkgreen',
+
+      cups: 'blue',
+      swords: 'blue',
+      wands: 'blue',
+      pentacles: 'blue',
+
+      jewelry_random: 'yellow',
+      bracelet: 'yellow',
+      necklace: 'yellow',
+      ring: 'yellow',
+      earring: 'yellow',
+
+      heirlooms: 'pink',
+
+      random: this.tool === 2 ? 'lightgray' : 'lightergray',
+    };
+
     if (this.item && this.item.isWeekly() && Settings.showWeeklySettings) {
       base = 'green';
-    } else if (markerColor === 'by_category') {
-      base = {
-        arrowhead: 'purple',
-        bottle: 'brown',
-        coin: 'darkorange',
-        egg: 'white',
-        flower: 'lightdarkred',
-        fossils_random: 'darkgreen',
-
-        cups: 'blue',
-        swords: 'blue',
-        wands: 'blue',
-        pentacles: 'blue',
-
-        jewelry_random: 'yellow',
-        bracelet: 'yellow',
-        necklace: 'yellow',
-        ring: 'yellow',
-        earring: 'yellow',
-
-        heirlooms: 'pink',
-
-        random: this.tool === 2 ? 'lightgray' : 'lightgray',
-      } [this.category] || 'lightred';
-    } else if (markerColor === 'by_cycle') {
+    }
+    else if (markerColor === 'by_category') {
+      base = base[this.category] || 'lightred';
+    }
+    else if (markerColor === 'custom') {
+      const settingsColor = JSON.parse(localStorage.getItem('rdr2collector.customMarkersColors') || localStorage.getItem('customMarkersColors'));
+      const colors = Object.assign(base, settingsColor || {});
+      colors.random = (this.tool === 2 ? colors.random_spot_metal : colors.random_spot_shovel) || 'lightgray';
+      base = base[this.category] || 'lightred';
+    }
+    else if (markerColor === 'by_cycle') {
       base = ['blue', 'orange', 'pink', 'darkpurple', 'darkred', 'darkblue'][+this.cycleName - 1] || 'lightred';
-    } else {
+    }
+    else {
       base = markerColor;
     }
     const contour = {
@@ -264,7 +305,7 @@ class Marker {
       </span>
       <p class='marker-popup-links'>
         <span><a href="${this.video}" target="_blank" data-text="map.video"></a> |</span>
-        <span><a href="" data-text="map.view_loot" data-toggle="modal" data-target="#loot-table-modal" data-loot-table="${this.category}"></a> |</span>
+        <span><a href="" data-text="map.view_loot" data-toggle="modal" data-target="#loot-table-modal" data-loot-table="${this.lootTable}"></a> |</span>
         <span><a href="" data-text="map.mark_important"></a> |</span>
         <span><a href="" data-text="map.copy_link"></a></span>
       </p>
@@ -292,8 +333,11 @@ class Marker {
       .find('[data-text="map.mark_important"]')
       .click((e) => {
         e.preventDefault();
-        MapBase.highlightImportantItem(this.text, this.category);
-      });
+        this.item.isImportant = !this.item.isImportant;
+      })
+      .parent()
+      .toggle(!this.isRandomizedItem)
+      .end();
     snippet.find('.remove-button').click(() =>
       MapBase.removeItemFromMap(this.cycleName, this.text, this.subdata || '', this.category));
     if (!Cycles.isSameAsYesterday(this.category) && !unknownCycle) {
@@ -307,20 +351,17 @@ class Marker {
     }
     snippet
       .find('[data-text="weekly.desc"]').toggle(this.item && this.item.isWeekly()).end()
-      .find('[data-text="map.item.unable"]').toggle(this.buggy).end()
+      .find('[data-text="map.item.unable"]').toggle(this.buggy).end();
     const toolImg = snippet.find('.tool-type');
     if (!this.buggy && this.tool === 0) {
       toolImg.hide();
     } else {
-      const imgName = this.buggy ? 'cross' : {1: 'shovel', 2: 'magnet'}[this.tool];
+      const imgName = this.buggy ? 'cross' : { 1: 'shovel', 2: 'magnet' }[this.tool];
       toolImg.attr('src', `assets/images/${imgName}.png`);
     }
     if (!Settings.isDebugEnabled) snippet.find('.popupContentDebug').hide();
     if (!this.isRandomizedItem) snippet.find('[data-text="map.view_loot"]').parent().hide();
     if (!this.video) snippet.find('[data-text="map.video"]').parent().hide();
-    if (['flower_agarita', 'flower_blood_flower'].includes(this.itemId)) {
-      snippet.find('[data-text="map.mark_important"]').parent().hide();
-    }
     const inventoryButtons = snippet.find('.marker-popup-buttons')
     if (InventorySettings.isEnabled && InventorySettings.isPopupsEnabled &&
       this.category !== 'random' && this.item) {
@@ -347,8 +388,7 @@ class Marker {
     this.lMarker && this.lMarker.setOpacity(this.canCollect ? opacity : opacity / 3);
   }
   recreateLMarker(isShadowsEnabled = Settings.isShadowsEnabled, markerSize = Settings.markerSize) {
-    const icon = this.category !== 'random' ? this.category :
-      (this.tool === 1 ? 'shovel' : 'magnet');
+    const icon = this.category !== 'random' ? this.category : (this.tool === 1 ? 'shovel' : 'magnet');
     const [bgUrl, contourUrl] = this.colorUrls();
     const aii = 'assets/images/icons';
     const snippet = $(`<div>
@@ -365,7 +405,7 @@ class Marker {
       let detail = false;
       if (this.buggy) {
         detail = ['cross', 'crossed out'];
-      } else if (['flower_agarita', 'flower_blood_flower'].includes(this.itemId)) {
+      } else if (['provision_wldflwr_agarita', 'provision_wldflwr_blood_flower'].includes(this.itemId)) {
         detail = ['time', 'timed'];
       } else if (this.height === 1) {
         detail = ['high', 'high ground'];
@@ -378,13 +418,24 @@ class Marker {
         extra.remove();
     }
 
+    let itemString = `${Language.get(this.itemTranslationKey)} ${this.itemNumberStr}`;
+
+    const unknownCycle = this.cycleName == Cycles.unknownCycleNumber;
+    if (!unknownCycle && Settings.isCyclesVisible)
+      itemString += ` - ${Language.get('menu.day')} ${this.cycleName}`;
+
     this.lMarker = L.marker([this.lat, this.lng], {
       icon: new L.DivIcon.DataMarkup({
         iconSize: [35 * markerSize, 45 * markerSize],
         iconAnchor: [17 * markerSize, 42 * markerSize],
         popupAnchor: [1 * markerSize, -29 * markerSize],
         html: snippet[0],
-        marker: this.text
+        marker: this.text,
+        tippy: `
+          <div class="tippy-box hint">
+            ${itemString} ${this.tool > 0 ? `<img class="icon" src="${aii}/${this.tool === 1 ? 'shovel' : 'magnet'}.png" alt="Icon">` : ''}
+          </div>
+        `,
       })
     });
 

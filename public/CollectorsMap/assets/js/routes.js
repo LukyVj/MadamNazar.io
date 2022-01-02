@@ -45,7 +45,7 @@ const Routes = {
   },
 
   getCustomRoute: function () {
-    const customRoute = JSON.parse(localStorage.getItem("routes.customRoute"));
+    const customRoute = JSON.parse(localStorage.getItem("rdr2collector.routes.customRoute") || localStorage.getItem("routes.customRoute"));
 
     if (!customRoute) return;
 
@@ -278,7 +278,7 @@ const Routes = {
     }
 
     if (RouteSettings.importantOnly) {
-      newMarkersImp = newMarkers.filter(marker => MapBase.importantItems.includes(marker.text));
+      const newMarkersImp = newMarkers.filter(marker => marker.item && marker.item.isImportant);
       if (newMarkers.length > 0 && newMarkersImp.length == 0) {
         if (!confirm(Language.get('dialog.generate_route_important_only_ignore'))) {
           return;
@@ -323,7 +323,7 @@ const Routes = {
     Routes.lastPolyline = L.polyline(polylines).addTo(MapBase.map);
   },
 
-  setCustomRouteStart: function (lat, lng) {
+  setCustomRouteStart: function (lat, lng, startNow) {
     lat = parseFloat(lat) ? parseFloat(lat) : -119.9063;
     lng = parseFloat(lng) ? parseFloat(lng) : 8.0313;
 
@@ -336,5 +336,8 @@ const Routes = {
     RouteSettings.genPathStart = 'Custom';
     RouteSettings.startMarkerLat = lat;
     RouteSettings.startMarkerLng = lng;
+
+    if (startNow)
+      Routes.generatePath(true);
   }
 };

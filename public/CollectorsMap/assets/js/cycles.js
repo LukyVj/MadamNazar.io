@@ -10,18 +10,18 @@ const Cycles = {
   load: function () {
     return Loader.promises['cycles'].consumeJson(_data => {
       Cycles.data = _data;
-      Cycles.getTodayCycle();
-      setInterval(Cycles.checkForUpdate, 1000 * 10);
       console.info('%c[Cycles] Loaded!', 'color: #bada55; background: #242424');
+      Cycles.getTodayCycle();
+      Cycles.checkForUpdate();
     });
   },
-  getFreshSelectedDay: function () {
-    'use strict';
-    const now = new Date();
+
+  getFreshSelectedDay: function (offset = Cycles.offset) {
+    const now = MapBase.mapTime();
     return new Date(Date.UTC(
       now.getUTCFullYear(),
       now.getUTCMonth(),
-      now.getUTCDate() + Cycles.offset
+      now.getUTCDate() + offset,
     ));
   },
   getTodayCycle: function () {
@@ -36,7 +36,9 @@ const Cycles = {
     if (cycleIndex < 1) {
       // either -1 (not found) or 0 (first day) for which there is no yesterday
       console.error('[Cycles] Cycle not found: ' + selectedDayStr);
-      $('.map-cycle-alert').removeClass('hidden');
+
+      if (!MapBase.isPreviewMode)
+        $('.map-cycle-alert').removeClass('hidden');
 
       fallback = {
         arrowhead: 1,
@@ -140,7 +142,8 @@ const Cycles = {
   checkForUpdate: function () {
     'use strict';
     if (Cycles.selectedDay === undefined) return;
-    if (Cycles.getFreshSelectedDay().valueOf() !== Cycles.selectedDay.valueOf()) {
+    const remainingTime = Cycles.getFreshSelectedDay(1).valueOf() - MapBase.mapTime();
+    setTimeout(() => {
       if (Cycles.offset !== 1) {
         Cycles.offset = 0;
         Cycles.getTodayCycle();
@@ -149,7 +152,8 @@ const Cycles = {
         $('div>span.cycle-date').removeClass('not-found');
       }
       MapBase.runOnDayChange();
-    }
+      Cycles.checkForUpdate();
+    }, remainingTime);
   },
 
   isSameAsYesterday: function (category) {
@@ -162,7 +166,7 @@ const Cycles = {
   },
 
   nextDayDataExists: function () {
-    const newDate = new Date();
+    const newDate = MapBase.mapTime();
     newDate.setUTCDate(newDate.getUTCDate() + Cycles.forwardMaxOffset);
     const nextDayCycle = Cycles.data.findIndex(element => element.date === newDate.toISOUTCDateString());
     if (nextDayCycle === -1 && Cycles.forwardMaxOffset > 0) {

@@ -52,13 +52,12 @@ class NonCollectible extends BaseItem {
 class Item extends BaseItem {
   constructor(preliminary) {
     super(preliminary);
-    this.category = this.itemId.split('_', 1)[0];
-    this.collection = Collection.collections.find(c => c.category === this.category);
+    this.collection = Collection.collections.find(({ category }) => category === this.category);
     this.collection.items.push(this);
-    this.legacyItemId = this.itemId.replace(/^flower_|^egg_/, '');
+    this.legacyItemId = this.itemId.replace(/^_flower|^_egg/, '');
     this.weeklyHelpKey = 'weekly_item_collectable';
     this.markers = []; // filled by Marker.init();
-    this._amountKey = `amount.${this.itemId}`;
+    this._amountKey = `rdr2collector.amount.${this.itemId}`;
     this._insertMenuElement();
   }
   // `.init()` needs DOM ready and jquery, but no other map realted scripts initialized
@@ -66,8 +65,12 @@ class Item extends BaseItem {
     this._installEventHandlers();
     this.items = [];
     return Loader.promises['items_value'].consumeJson(data => {
-      Collection.init(data.collections);
-      data.items.forEach(interimItem => this.items.push(new Item(interimItem)));
+      Collection.init(data);
+      data.forEach(({ category, itemsList }) =>
+        itemsList.forEach((interimItem) =>
+          this.items.push(new Item({ category, ...interimItem }))
+        )
+      );
       return Weekly.init();
     });
   }
@@ -79,9 +82,7 @@ class Item extends BaseItem {
         if (item && !event.target.closest('.counter')) {
           event.preventDefault();
           event.stopImmediatePropagation();
-          if (!['flower_agarita', 'flower_blood_flower'].includes(item.itemId)) {
-            MapBase.highlightImportantItem(item.itemId, item.category);
-          }
+          item.isImportant = !item.isImportant;
         }
       })[0].addEventListener('click', event => { // `.on()` can’t register to capture phase
         if (event.target.classList.contains('counter-button')) {
@@ -100,7 +101,7 @@ class Item extends BaseItem {
   _insertMenuElement() {
     this.$menuButton = $(`
       <div class="collectible-wrapper" data-type="${this.legacyItemId}"
-        data-help="${['flower_agarita', 'flower_blood_flower'].includes(this.itemId) ? 'item_night_only' : 'item'}">
+        data-help="${['provision_wldflwr_agarita', 'provision_wldflwr_blood_flower'].includes(this.itemId) ? 'item_night_only' : 'item'}">
         <img class="collectible-icon" src="assets/images/icons/game/${this.itemId}.png" alt="Set icon">
         <img class="collectible-icon random-spot" src="assets/images/icons/random_overlay.png" alt="Random set icon">
         <span class="collectible-text">
@@ -162,7 +163,7 @@ class Item extends BaseItem {
           return 'item_unavailable';
         } else if (isRandom) {
           return 'item_random';
-        } else if (['flower_agarita', 'flower_blood_flower'].includes(this.itemId)) {
+        } else if (['provision_wldflwr_agarita', 'provision_wldflwr_blood_flower'].includes(this.itemId)) {
           return 'item_night_only';
         } else if (this.isWeekly()) {
           return 'item_weekly';
@@ -207,5 +208,41 @@ class Item extends BaseItem {
 
     Inventory.updateItemHighlights();
     Menu.refreshItemsCounter();
+  }
+
+  static initImportedItems() {
+    this.items.forEach(item => item.isImportant = item.isImportant);
+  }
+
+  set isImportant(state) {
+    const textKey = `rdr2collector.important.${this.itemId}`;
+    if (state)
+      localStorage.setItem(textKey, 'true');
+    else
+      localStorage.removeItem(textKey);
+
+    this.highlightImportantItem();
+    clockTick();
+  }
+
+  get isImportant() {
+    return !!localStorage.getItem(`rdr2collector.important.${this.itemId}`);
+  }
+
+  highlightImportantItem() {
+    $(`[data-marker*="${this.itemId}"]`).toggleClass('highlight-items', this.isImportant);
+    $(`[data-type="${this.legacyItemId}"]`).toggleClass('highlight-important-items-menu', this.isImportant);
+  }
+
+  static clearImportantItems() {
+    this.items.forEach(item => item.isImportant = false);
+  }
+
+  static convertImportantItems() {
+    const oldItems = JSON.parse(localStorage.getItem('importantItems'));
+    if (!oldItems) return;
+    const newItems = this.items.filter(marker => oldItems.includes(marker.itemId));
+    [...new Set(newItems)].forEach(item => item.isImportant = true);
+    localStorage.removeItem('importantItems');
   }
 }

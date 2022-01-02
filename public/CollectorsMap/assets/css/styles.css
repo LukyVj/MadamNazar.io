@@ -29,6 +29,11 @@
     border-radius: 3px;
 }
 
+html,
+body {
+    height: 100%;
+}
+
 body {
     margin: 0;
     font-size: 16px;
@@ -91,7 +96,7 @@ select {
 
 #main-header {
     display: flex;
-    margin: 10px;
+    margin: 0;
 }
 
 #main-header::after {
@@ -200,10 +205,6 @@ select {
     text-align: center;
 }
 
-.map-cycle-alert {
-    z-index: 1010 !important;
-}
-
 .map-alert .close-button,
 .map-cycle-alert .close-button,
 .filter-alert .close-button {
@@ -223,7 +224,6 @@ select {
     width: 100%;
     width: 100vw;
     height: 100%;
-    height: 100vh;
     font-family: Hapna, serif;
     font-size: 13px;
 }
@@ -238,7 +238,7 @@ select {
 }
 
 .top-widget {
-    z-index: 1010;
+    z-index: 990;
     position: fixed;
     left: 40px;
     top: 3px;
@@ -323,20 +323,117 @@ select {
 .marker-popup-pin-input-divider {
     margin: 2px 0;
     border: none;
-    border-top: solid 1px #B0B0B0;
+    border-top: solid 1px #b0b0b0;
 }
 
 .marker-popup-pin-label {
     margin-bottom: 2px;
 }
 
-.marker-popup-pin-input-icon {
+.marker-popup-pin-input-icon,
+.marker-popup-pin-input-color {
     background: #eee;
     border: none;
     padding: 5px 10px;
     font-size: 14px;
     height: 100%;
     border-radius: 3px;
+}
+
+.pin-color.aquagreen {
+    color: #00ffa2;
+}
+
+.pin-color.beige {
+    color: #ffce70;
+}
+
+.pin-color.black {
+    color: #292929;
+}
+
+.pin-color.blue {
+    color: #31a6c7;
+}
+
+.pin-color.brown {
+    color: #7c411f;
+}
+
+.pin-color.cadetblue {
+    color: #416776;
+}
+
+.pin-color.darkblue {
+    color: #0066a2;
+}
+
+.pin-color.darkgreen {
+    color: #627134;
+}
+
+.pin-color.darkorange {
+    color: #e27839;
+}
+
+.pin-color.darkpurple {
+    color: #593769;
+}
+
+.pin-color.darkred {
+    color: #a13235;
+}
+
+.pin-color.gray {
+    color: #444444;
+}
+
+.pin-color.green {
+    color: #70ae25;
+}
+
+.pin-color.lightblue {
+    color: #88dbff;
+}
+
+.pin-color.lightgray {
+    color: #5e5e5e;
+}
+
+.pin-color.lightgreen {
+    color: #a3c62c;
+}
+
+.pin-color.lightorange {
+    color: #ff8c7d;
+}
+
+.pin-color.lightred {
+    color: #da4d6d;
+}
+
+.pin-color.orange {
+    color: #ee9232;
+}
+
+.pin-color.pink {
+    color: #c05b9f;
+}
+
+.pin-color.purple {
+    color: #6b65a4;
+}
+
+.pin-color.red {
+    color: #d43d29;
+}
+
+.pin-color.white {
+    color: #ffffff;
+}
+
+.pin-color.yellow {
+    color: #ffcc5c;
 }
 
 .links-container {
@@ -475,7 +572,6 @@ select {
     overflow-y: auto;
     overflow-x: hidden;
     height: 100%;
-    height: 100vh;
     color: #eee;
     z-index: 1000;
     scrollbar-width: thin;
@@ -526,7 +622,7 @@ select {
 
 .side-menu .menu-option .icon {
     width: 35px;
-    margin: 6px 0 -3px 2px;
+    margin: -4px 0 -3px 2px;
 }
 
 .side-menu .open-submenu {
@@ -666,7 +762,7 @@ select {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 220px;
+    width: 250px;
     margin: 0 calc(50% - 100px) 20px;
     z-index: 910;
     color: #dadada;
@@ -676,6 +772,12 @@ select {
     padding: 14px 8px;
     border-radius: 3px;
     display: none;
+}
+
+.lat-lng-container hr {
+    height: 1px;
+    margin: 5px 0;
+    padding: 0;
 }
 
 .lat-lng-container a {
@@ -744,7 +846,7 @@ a.wiki-page:visited {
 .help-popup {
     position: fixed;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     background: rgba(0, 0, 0, .2);
     z-index: 1010;
     padding: 5%;
@@ -889,7 +991,6 @@ a.wiki-page:visited {
     min-width: 5.5rem;
 }
 
-
 /* Custom checkbox styling */
 
 .input-checkbox-wrapper {
@@ -921,7 +1022,6 @@ a.wiki-page:visited {
 .input-checkbox-wrapper .input-checkbox:disabled+.input-checkbox-label {
     cursor: not-allowed !important;
 }
-
 
 /* Custom action button styling */
 
@@ -1047,8 +1147,8 @@ a.no-style:visited {
     margin-right: 25px;
 }
 
-
 /* Bootstrap modal styling */
+
 .modal {
     user-select: none;
 }
@@ -1097,11 +1197,11 @@ a.no-style:visited {
 
 .modal-header::after,
 .modal-footer::before {
-    z-index: 1;
+    z-index: 0;
     position: absolute;
     left: 0;
     right: 0;
-    height: 28px;
+    height: 20px;
     display: block;
 }
 
@@ -1120,7 +1220,7 @@ a.no-style:visited {
 }
 
 .modal-footer::before {
-    margin-top: -36px;
+    margin-top: -20px;
     background: url(../../assets/images/modal-footer.png) !important;
     background-position: top center !important;
 }
@@ -1150,7 +1250,7 @@ a.no-style:visited {
     margin: 5px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 769px) {
     .modal {
         text-align: center;
         padding: 0 !important;
@@ -1203,12 +1303,6 @@ a.no-style:visited {
 }
 
 @media (max-width: 768px) {
-
-    .top-widget-menu-opened,
-    .fme-menu-opened {
-        display: none !important;
-    }
-
     .side-menu .menu-hidden .collectible-icon {
         margin-top: 7px;
     }
@@ -1261,22 +1355,83 @@ a.no-style:visited {
     }
 }
 
-
 /* Tutorial styling */
 
-#help-container {
+#top-sticky,
+#bottom-sticky {
     position: relative;
     position: -webkit-sticky;
     position: sticky;
+    z-index: 20;
+    padding: 0 !important;
+}
+
+#top-sticky {
+    top: 0;
+}
+
+#bottom-sticky {
     bottom: 0;
-    z-index: 10;
+}
+
+.sticky-container {
+    background-color: #000;
+    padding: 5px;
+}
+
+#top-sticky .sticky-container {
+    padding-bottom: 0;
+}
+
+#bottom-sticky .sticky-container {
+    padding-top: 0;
+}
+
+.scroller {
+    -ms-flex-pack: justify !important;
+    justify-content: space-between !important;
+    display: -ms-flexbox !important;
+    display: flex !important;
+    overflow: hidden;
+    line-height: 0;
+    margin: 0 -10px;
+}
+
+.scroller-grow,
+.scroller-stat {
+    position: relative;
+    width: 100%;
+    min-height: 10px;
+    line-height: 0;
+}
+
+.scroller-grow {
+    -ms-flex-preferred-size: 0;
+    flex-basis: 0;
+    -ms-flex-positive: 1;
+    flex-grow: 1;
+    max-width: 100%;
+}
+
+.scroller-stat {
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+    width: auto;
+    max-width: none;
+}
+
+.scroller-grow img {
+    width: 100%;
+    height: 10px;
+}
+
+#help-container {
     min-height: 100px;
     background-image: url(../../assets/images/help_text_bg.png);
     background-repeat: no-repeat;
     background-size: 100% 100%;
     padding: 15px 25px;
 }
-
 
 /* Pathfinder styling */
 
@@ -1324,7 +1479,9 @@ a.no-style:visited {
 }
 
 /* Dark mode styling */
+
 /* Override Bootstrap && Leaflet buttons color styling */
+
 .btn.btn-info.remove-button,
 .save-button {
     background-color: #008fbece;
@@ -1390,6 +1547,7 @@ a.no-style:visited {
 }
 
 /* Fix being able to select the overlays. */
+
 .leaflet-overlay-pane {
     user-select: none;
 }
@@ -1430,6 +1588,7 @@ a.no-style:visited {
 }
 
 /* Leaflet Marker styling */
+
 .leaflet-div-icon {
     width: 36px;
     height: 45px;
@@ -1456,7 +1615,6 @@ a.no-style:visited {
     z-index: 4;
     width: 100%;
     height: auto;
-    padding-top: 6px;
 }
 
 .leaflet-div-icon .background {
@@ -1483,7 +1641,6 @@ a.no-style:visited {
     left: 9px;
 }
 
-
 /* Donate form */
 
 .donate-form {
@@ -1501,6 +1658,7 @@ a.no-style:visited {
 }
 
 /* Freemode Events */
+
 #fme-container {
     position: absolute;
     left: 5px;
@@ -1535,7 +1693,7 @@ a.no-style:visited {
 }
 
 #fme-container .fme-card .fme-body {
-flex-grow: 1;
+    flex-grow: 1;
 }
 
 #fme-container .fme-card .fme-body .fme-title {
@@ -1577,6 +1735,7 @@ flex-grow: 1;
 
 @media (max-width: 1024px) {
     #fme-container {
+        bottom: 25px;
         right: 50px;
     }
 
@@ -1588,8 +1747,21 @@ flex-grow: 1;
 
     #fme-container .fme-card #next-general-mobile,
     #fme-container .fme-card #next-role-mobile {
-        display: block;
+        display: flex;
         overflow: hidden;
+    }
+
+    #fme-container .fme-card #next-general-mobile .next-title,
+    #fme-container .fme-card #next-role-mobile .next-title {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    #fme-container .fme-card #next-general-mobile .next-time,
+    #fme-container .fme-card #next-role-mobile .next-time {
+        flex: 1;
+        margin: 0 5px;
     }
 
     #fme-container .fme-card .fme-body {
@@ -1603,8 +1775,8 @@ flex-grow: 1;
         margin-right: 8px;
     }
 
-    .top-widget-menu-opened .fme-menu-opened {
-        display: none !important;
+    #fme-container.fme-menu-opened {
+        left: 5px;
     }
 }
 
@@ -1702,11 +1874,13 @@ flex-grow: 1;
     margin: 10px 0;
     width: 100%;
 }
+
 .legendary-properties p {
-    max-width: 65%;
+    max-width: 60%;
 }
 
 /*Legendary animals popup text color*/
+
 .legendary-spawn-time,
 .legendary-preferred-weather {
     color: #3abce5;
@@ -1732,10 +1906,10 @@ flex-grow: 1;
     margin-bottom: 10px;
 }
 
-.snippet-animal-image {
+.legendary-animal-popup-image {
     width: 90%;
     position: absolute;
-    top: 47%;
+    bottom: 16%;
     right: 0%;
     opacity: .7;
     margin: 0 -25%;
@@ -1746,4 +1920,9 @@ flex-grow: 1;
 button.reload-nazar {
     margin-top: 14px;
     width: 100%;
+}
+.chrome-store-button {
+    justify-content: center;
+    display: flex;
+    padding: 12px 0 0 0;
 }

@@ -19,7 +19,11 @@ class Menu {
       .attr('data-text', this._warnings.size > 1 ? 'map.has_multi_filter_alert' :
         this._warnings.values().next().value)
       .translate();
-    setTimeout(() => { $('.filter-alert').hide(); }, 10000);
+
+    clearTimeout(this.toggleFilterWarning.timeout);
+    this.toggleFilterWarning.timeout = setTimeout(() => {
+      $('.filter-alert').hide();
+    }, 10000);
   }
 
   static reorderMenu(menu) {
@@ -49,7 +53,7 @@ class Menu {
   }
 
   static refreshItemsCounter() {
-    const _markers = MapBase.markers.filter(marker => marker.isCurrent && marker.isVisible);
+    const _markers = MapBase.markers.filter(marker => marker.isCurrent && marker.isVisible && marker.toolAccepted());
     const count = _markers.filter(marker => marker.isCollected).length;
     const max = _markers.length;
 
@@ -66,12 +70,12 @@ class Menu {
 
     $('#items-value').text(`$${Collection.totalValue().toFixed(2)}`);
 
-    Collection.collections.forEach(coll => coll.updateCounter());
+    Collection.collections.forEach(collection => collection.updateCounter());
   }
 
   static activateHandlers() {
     $('#clear_highlights').on('click', function () {
-      MapBase.clearImportantItems();
+      Item.clearImportantItems();
     });
 
     // change cycles from menu (if debug options are enabled)
@@ -120,17 +124,17 @@ class Menu {
         } else {
           enabledCategories = toEnable ? categories : [];
         }
-        localStorage.setItem("enabled-categories", JSON.stringify(enabledCategories));
+        localStorage.setItem("rdr2collector.enabled-categories", JSON.stringify(enabledCategories));
 
         if (!category) {
           MapBase.addMarkers();
           Treasure.onCategoryToggle();
           Legendary.onCategoryToggle();
-          Pins.addToMap();
+          Pins.onCategoryToggle();
         } else if (category === 'nazar') {
           MadamNazar.addMadamNazar();
         } else if (category === 'user_pins') {
-          Pins.addToMap();
+          Pins.onCategoryToggle();
         } else if (category === 'treasure') {
           Treasure.onCategoryToggle();
         } else if (category === 'legendary_animals') {
@@ -150,8 +154,6 @@ class Menu {
         $helpParagraph.html(Language.get(`help.${helpTransId}`));
       });
 
-    SettingProxy.addListener(Settings, 'toolType', () =>
-      this.toggleFilterWarning('map.has_tool_filter_alert', Settings.toolType !== 3))();
     $('#tools')
       .on('change', function () {
         Settings.toolType = +$(this).val();
@@ -159,18 +161,41 @@ class Menu {
       })
       .val(Settings.toolType);
 
-    SettingProxy.addListener(Settings, 'filterType', () =>
-      this.toggleFilterWarning('map.has_filter_type_alert', Settings.filterType !== 'none'))();
-    $('#filter-type')
-      .on('change', function () {
-        Settings.filterType = $(this).val();
-        filterMapMarkers();
-      })
-      .val(Settings.filterType)
-      .triggerHandler('change');
+    SettingProxy.addListener(Settings, 'toolType', () =>
+      this.toggleFilterWarning('map.has_tool_filter_alert', Settings.toolType !== 3))();
+
+    SettingProxy.addListener(Settings, 'filterType', () => {
+      this.toggleFilterWarning('map.has_filter_type_alert', Settings.filterType !== 'none');
+      $('#filter-min-amount-items').parent().toggle(Settings.filterType === 'lowInventoryItems' && InventorySettings.isEnabled);
+      filterMapMarkers();
+    })();
+
+    SettingProxy.addListener(InventorySettings, 'maxAmountLowInventoryItems', () => {
+      filterMapMarkers();
+    });
+
+    SettingProxy.addListener(Settings, 'markerColor', () =>
+      $('#open-custom-marker-color-modal').toggle(Settings.markerColor === 'custom'))();
+
+    SettingProxy.addListener(InventorySettings, 'isEnabled', () => {
+      $('#filter-min-amount-items').parent().toggle(Settings.filterType === 'lowInventoryItems' && InventorySettings.isEnabled);
+      $('#filter-type option[value="lowInventoryItems"]').toggle(InventorySettings.isEnabled);
+    })();
 
     $('.filter-alert').on('click', function () {
       $(this).hide();
+    });
+
+    // “random” category still needs this (other collectibles have handlers in their class)
+    $('.menu-option.clickable input').on('click', function (event) {
+      event.stopPropagation();
+    });
+
+    $('.menu-option.clickable input').on('change', function (event) {
+      const el = $(event.target);
+      Cycles.categories[el.attr("name")] = parseInt(el.val());
+      MapBase.addMarkers();
+      Menu.refreshMenu();
     });
   }
 }

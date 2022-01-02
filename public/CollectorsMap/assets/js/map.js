@@ -1,30 +1,40 @@
-/**
- * Created by Jean on 2019-10-09.
- */
-
 const MapBase = {
   minZoom: 2,
   maxZoom: 7,
   map: null,
+  markers: [],
   overlays: [],
   lootTables: [],
   fastTravelData: [],
   // see building interiors in overlays; might not be rotated right
   // (you also have to load overlays_beta.json instead of overlays.json in loader.js)
   interiors: false,
-  importantItems: [],
   updateLoopAvailable: true,
+  updateTippyTimer: null,
+  tippyInstances: [],
   requestLoopCancel: false,
   showAllMarkers: false,
   filtersData: [],
+  utcTimeCorrectionMs: 0,
+
+  // Query adjustable parameters
   isPreviewMode: false,
   colorOverride: null,
+  themeOverride: null,
+  viewportX: -70,
+  viewportY: 111.75,
+  viewportZoom: 3,
 
   mapInit: function () {
     'use strict';
 
+    // Parses and properly sets map preferences from query parameters.
+    this.beforeLoad();
+
+    this.tippyInstances = [];
     const mapBoundary = L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176));
-    //Please, do not use the GitHub map tiles. Thanks
+
+    // Please, do not use the GitHub map tiles. Thanks
     const mapLayers = {
       'map.layers.default': L.tileLayer('https://s.rsg.sc/sc/images/games/RDR2/map/game/{z}/{x}/{y}.jpg', {
         noWrap: true,
@@ -103,8 +113,8 @@ const MapBase = {
       maxZoom: this.maxZoom,
       zoomControl: false,
       crs: L.CRS.Simple,
-      layers: [mapLayers[Settings.baseLayer]],
-    }).setView([-70, 111.75], 3);
+      layers: [mapLayers[this.themeOverride || Settings.baseLayer]],
+    }).setView([this.viewportX, this.viewportY], this.viewportZoom);
 
     MapBase.map.addControl(
       L.control.attribution({
@@ -146,10 +156,7 @@ const MapBase = {
 
     MapBase.map.doubleClickZoom[Settings.isDoubleClickZoomEnabled ? 'enable' : 'disable']();
 
-    const southWest = L.latLng(-160, -120),
-      northEast = L.latLng(25, 250),
-      bounds = L.latLngBounds(southWest, northEast);
-    MapBase.map.setMaxBounds(bounds);
+    MapBase.updateMapBoundaries();
 
     Layers.oms = new OverlappingMarkerSpiderfier(MapBase.map, {
       keepSpiderfied: true
@@ -160,8 +167,36 @@ const MapBase = {
     Layers.itemMarkersLayer.addTo(MapBase.map);
   },
 
+  mapTime: function () {
+    return new Date(Date.now() - MapBase.utcTimeCorrectionMs);
+  },
+
+  setMapTime: function () {
+    return Loader.promises['tounixtimestamp'].consumeJson(({ UnixTimeStamp }) => {
+      const difference = Date.now() - UnixTimeStamp * 1000;
+      // apply correction if the difference is bigger than 10 seconds
+      if (Math.abs(difference) > 1e4) {
+        MapBase.utcTimeCorrectionMs = difference;
+        console.info(`%c[UTC time] Corrected by ${difference}ms`, 'color: #bada55; background: #242424');
+      }
+    }).catch(() => {
+      console.info('%c[UTC time] Unable to load!', 'color: #FF6969; background: #242424');
+      // Allow to load next scripts on API error
+      return Promise.resolve();
+    });
+  },
+
+  updateMapBoundaries: function() {
+    if(Settings.isMapBoundariesEnabled) {
+      const southWest = L.latLng(-160, -120),
+        northEast = L.latLng(25, 250),
+        bounds = L.latLngBounds(southWest, northEast);
+      MapBase.map.setMaxBounds(bounds);
+    }
+  },
+
   isDarkMode: function () {
-    return ['map.layers.dark', 'map.layers.black'].includes(Settings.baseLayer);
+    return ['map.layers.dark', 'map.layers.black'].includes(this.themeOverride || Settings.baseLayer);
   },
 
   loadOverlays: function () {
@@ -181,7 +216,7 @@ const MapBase = {
 
   setMapBackground: function () {
     'use strict';
-    $('#map').css('background-color', MapBase.isDarkMode() ? (Settings.baseLayer === 'map.layers.black' ? '#000' : '#3d3d3d') : '#d2b790');
+    $('#map').css('background-color', MapBase.isDarkMode() ? ((this.themeOverride || Settings.baseLayer) === 'map.layers.black' ? '#000' : '#3d3d3d') : '#d2b790');
     MapBase.setOverlays();
     if (Settings.markerColor.startsWith('auto')) {
       MapBase.markers.forEach(marker => marker.updateColor());
@@ -221,8 +256,32 @@ const MapBase = {
   },
 
   beforeLoad: function () {
+    // Set map to preview mode before loading.
+    const previewParam = getParameterByName('q');
+    if (previewParam) this.isPreviewMode = true;
+
+    // Set map theme according to param.
+    const themeParam = getParameterByName('theme');
+    if (themeParam && ['default', 'detailed', 'dark', 'black'].includes(themeParam))
+      this.themeOverride = `map.layers.${themeParam}`;
+
+    // Sets the map's default zoom level to anywhere between minZoom and maxZoom.
+    const zoomParam = Number.parseInt(getParameterByName('z'));
+    if (!isNaN(zoomParam) && this.minZoom <= zoomParam && zoomParam <= this.maxZoom)
+      this.viewportZoom = zoomParam;
+
+    // Pans the map to a specific coordinate location on the map for default focussing.
+    const flyParam = getParameterByName('ft');
+    if (flyParam) {
+      const latLng = flyParam.split(',');
+      if (latLng.filter(Number).length === 2) {
+        this.viewportX = latLng[0];
+        this.viewportY = latLng[1];
+      }
+    }
+
     // Sets all marker colors to static color.
-    var colorParam = getParameterByName('c');
+    const colorParam = getParameterByName('c');
     if (colorParam) {
       const validColors = [
         'aquagreen', 'beige', 'black', 'blue', 'brown', 'cadetblue', 'darkblue', 'darkgreen', 'darkorange', 'darkpurple',
@@ -232,24 +291,6 @@ const MapBase = {
 
       if (validColors.includes(colorParam)) this.colorOverride = colorParam;
     }
-
-    // Sets the map's default zoom level to anywhere between minZoom and maxZoom.
-    var zoomParam = Number.parseInt(getParameterByName('z'));
-    if (!isNaN(zoomParam) && MapBase.minZoom <= zoomParam && zoomParam <= MapBase.maxZoom) {
-      MapBase.map.setZoom(zoomParam);
-    }
-
-    // Pans the map to a specific coordinate location on the map for default focussing.
-    var flyParam = getParameterByName('ft');
-    if (flyParam) {
-      const latLng = flyParam.split(',');
-      if (latLng.filter(Number).length === 2)
-        MapBase.map.flyTo(latLng);
-    }
-
-    // Temporary hack.
-    const previewParam = getParameterByName('q');
-    if (previewParam) MapBase.isPreviewMode = true;
   },
 
   afterLoad: function () {
@@ -287,6 +328,10 @@ const MapBase = {
           MapBase.map.setView([visibleItems[0].lat, visibleItems[0].lng], 6);
       }
 
+      // Puppeteer hack and utility for other extensions.
+      // Allows utilities to wait for this global to then do their stuff.
+      window.loaded = true;
+
       // Don't need to do anything else, just exit.
       return;
     }
@@ -318,16 +363,15 @@ const MapBase = {
   },
 
   resetMarkersDaily: function () {
-    const date = new Date().toISOUTCDateString();
+    const date = MapBase.mapTime().toISOUTCDateString();
 
-    if (localStorage.getItem('main.date') == null || date != localStorage.getItem('main.date')) {
+    if (localStorage.getItem('rdr2collector.date') == null || date != localStorage.getItem('rdr2collector.date')) {
       MapBase.markers.forEach(marker => {
-        // reset daily all random categories
         if (Settings.resetMarkersDaily || marker.isRandomizedItem) {
           marker.isCollected = false;
         }
 
-        if (InventorySettings.resetInventoryDaily && marker.category !== 'random') {
+        if (InventorySettings.resetInventoryDaily && !marker.isRandomizedItem) {
           marker.item.amount = 0;
         }
       });
@@ -336,44 +380,40 @@ const MapBase = {
       Menu.refreshMenu();
     }
 
-    localStorage.setItem('main.date', date);
-    MapBase.addMarkers(true);
+    localStorage.setItem('rdr2collector.date', date);
   },
 
   onSearch: function (searchString) {
     Menu.toggleFilterWarning('map.has_search_filter_alert', !!searchString);
 
-    searchTerms = [];
-    $.each(searchString.split(';'), function (key, value) {
-      if ($.inArray(value.trim(), searchTerms) == -1) {
-        if (value.length > 0)
-          searchTerms.push(value.trim());
-      }
-    });
+    const searchTerms = [
+      ...new Set(searchString
+        .replace(/^[;\s]+|[;\s]+$/g, '')
+        .split(';')
+        .filter(element => element)
+        .map(term => term.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''))
+      )
+    ];
 
-    if (searchTerms.length == 0) {
+    if (!searchTerms.length) {
       uniqueSearchMarkers = MapBase.markers;
-    } else {
-      Layers.itemMarkersLayer.clearLayers();
-      let searchMarkers = [];
-      uniqueSearchMarkers = [];
-      $.each(searchTerms, function (id, term) {
-
-        searchMarkers = searchMarkers.concat(MapBase.markers.filter(_marker =>
-          _marker.itemId === term ||
-          _marker.itemNumberStr === term ||
-          Language.get(_marker.itemTranslationKey).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(term.toLowerCase())
-        ));
-
-        $.each(searchMarkers, function (i, el) {
-          if ($.inArray(el, uniqueSearchMarkers) !== -1) return;
-          if (!enabledCategories.includes(el.category)) enabledCategories.push(el.category);
-
-          uniqueSearchMarkers.push(el);
-        });
-      });
-
+      MapBase.addMarkers();
+      return;
     }
+
+    Layers.itemMarkersLayer.clearLayers();
+    uniqueSearchMarkers = MapBase.markers.filter(marker =>
+      searchTerms.some(term =>
+        marker.itemId === term ||
+        marker.itemNumberStr === term ||
+        Language.get(marker.itemTranslationKey).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(term)
+      )
+    );
+
+    uniqueSearchMarkers.forEach(({ category }) => {
+      if (!enabledCategories.includes(category))
+        enabledCategories.push(category);
+    });
 
     MapBase.addMarkers();
   },
@@ -401,9 +441,11 @@ const MapBase = {
         MapBase.updateLoopAvailable = true;
         MapBase.requestLoopCancel = false;
         Menu.refreshItemsCounter();
-        MapBase.loadImportantItems();
         Inventory.updateItemHighlights();
+        Item.convertImportantItems(); // only temporary - convert old localStorage values to new
+        Item.initImportedItems();
         Routes.getCustomRoute();
+        MapBase.updateTippy('addMarkers');
       }
     );
 
@@ -493,60 +535,6 @@ const MapBase = {
     return MapBase.debugMarker((0.01552 * y + -63.6), (0.01552 * x + 111.29), z);
   },
 
-  highlightImportantItem: function (text, category = '') {
-    const randomCategories = ['arrowhead', 'coin', 'fossils_random', 'jewelry_random', 'random'];
-    if (category == 'flower' || category == 'egg')
-      text = text.replace(/_\d/, '');
-
-    const textMenu = text.replace(/egg_|flower_/, '');
-
-    if (!randomCategories.includes(category))
-      $(`[data-type=${textMenu}]`).toggleClass('highlight-important-items-menu');
-
-    $.each($(`[data-marker*=${text}]`), function (key, marker) {
-      let markerData = null;
-
-      if (!randomCategories.includes(category))
-        markerData = $(this).data('marker').replace(/\B_\d$/, '');
-      else
-        markerData = $(this).data('marker');
-
-      if (markerData === text)
-        $(this).toggleClass('highlight-items');
-    });
-
-    if ($(`[data-marker*=${text}].highlight-items`).length)
-      MapBase.importantItems.push(text);
-    else
-      MapBase.importantItems.splice(MapBase.importantItems.indexOf(text), 1);
-
-    localStorage.setItem('importantItems', JSON.stringify(MapBase.importantItems));
-  },
-
-  clearImportantItems: function () {
-    $('.highlight-items').removeClass('highlight-items');
-    $('.highlight-important-items-menu').removeClass('highlight-important-items-menu');
-    MapBase.importantItems = [];
-    localStorage.setItem('importantItems', JSON.stringify(MapBase.importantItems));
-  },
-
-  loadImportantItems: function () {
-    if (localStorage.getItem('importantItems') === undefined)
-      MapBase.importantItems = [];
-    else
-      MapBase.importantItems = JSON.parse(localStorage.getItem('importantItems')) || [];
-
-    $.each(MapBase.importantItems, function (key, item) {
-      if (item.includes('random'))
-        $(`[data-marker=${item}]`).addClass('highlight-items');
-      else
-        $(`[data-marker*=${item}]`).addClass('highlight-items');
-
-      const textMenu = item.replace(/egg_|flower_/, '');
-      $(`[data-type=${textMenu}]`).addClass('highlight-important-items-menu');
-    });
-  },
-
   loadFastTravels: function () {
     return Loader.promises['fasttravels'].consumeJson(data => {
       MapBase.fastTravelData = data;
@@ -561,7 +549,7 @@ const MapBase = {
         const shadow = Settings.isShadowsEnabled ?
           '<img class="shadow" width="' + 35 * markerSize + '" height="' + 16 * markerSize + '" src="./assets/images/markers-shadow.png" alt="Shadow">' : '';
         const marker = L.marker([value.x, value.y], {
-          icon: L.divIcon({
+          icon: new L.DivIcon.DataMarkup({
             iconSize: [35 * markerSize, 45 * markerSize],
             iconAnchor: [17 * markerSize, 42 * markerSize],
             popupAnchor: [1 * markerSize, -29 * markerSize],
@@ -569,7 +557,8 @@ const MapBase = {
               <img class="icon" src="./assets/images/icons/fast_travel.png" alt="Icon">
               <img class="background" src="./assets/images/icons/marker_${MapBase.colorOverride || 'gray'}.png" alt="Background">
               ${shadow}
-            `
+            `,
+            tippy: Language.get(value.text + '.name'),
           })
         });
 
@@ -591,7 +580,7 @@ const MapBase = {
     const shadow = Settings.isShadowsEnabled ?
       '<img class="shadow" width="' + 35 * markerSize + '" height="' + 16 * markerSize + '" src="./assets/images/markers-shadow.png" alt="Shadow">' : '';
     const marker = L.marker([lat, long], {
-      icon: L.divIcon({
+      icon: new L.DivIcon.DataMarkup({
         iconSize: [35 * markerSize, 45 * markerSize],
         iconAnchor: [17 * markerSize, 42 * markerSize],
         popupAnchor: [1 * markerSize, -29 * markerSize],
@@ -599,7 +588,8 @@ const MapBase = {
           <img class="icon" src="./assets/images/icons/random.png" alt="Icon">
           <img class="background" src="./assets/images/icons/marker_${MapBase.colorOverride || 'darkblue'}.png" alt="Background">
           ${shadow}
-        `
+        `,
+        tippy: name,
       })
     });
 
@@ -622,16 +612,21 @@ const MapBase = {
       $('.lat-lng-container p').html(
         `Latitude: ${lat}<br>
         Longitude: ${lng}<br>
+        <hr>
         <a href="javascript:void(0)"
-        onclick="Routes.setCustomRouteStart('${lat}', '${lng}')">${Language.get('routes.set_as_route_start')}</a>`);
+        onclick="Routes.setCustomRouteStart('${lat}', '${lng}')">${Language.get('routes.set_as_route_start')}</a><br>
+        <a href="javascript:void(0)"
+        onclick="Routes.setCustomRouteStart('${lat}', '${lng}', true)">${Language.get('routes.generate_route_now')}</a>`);
 
       $('#lat-lng-container-close-button').click(function () {
         $('.lat-lng-container').css('display', 'none');
       });
     }
 
-    if (Settings.isPinsPlacingEnabled)
-      Pins.addPin(coords.latlng.lat, coords.latlng.lng);
+    if (Settings.isPinsPlacingEnabled) {
+      Pins.onMap = true;
+      Pins.addPin(coords.latlng);
+    }
   },
 
   runOnDayChange: function () {
@@ -640,6 +635,7 @@ const MapBase = {
   },
 
   yieldingLoop: function (count, chunksize, callback, finished) {
+    if (MapBase.isPreviewMode) chunksize = count;
     let i = 0;
     (function chunk() {
       const end = Math.min(i + chunksize, count);
@@ -652,6 +648,75 @@ const MapBase = {
         finished.call(null);
       }
     })();
-  }
+  },
 
+  updateTippy: function (loc = '') {
+    if (Settings.isDebugEnabled)
+      console.log('UpdateTippy called from', loc);
+
+    // This is here to deal with stacked onMap updates (show all/hide all)
+    clearTimeout(MapBase.updateTippyTimer);
+    MapBase.updateTippyTimer = setTimeout(function () {
+      if (Settings.isDebugEnabled)
+        console.log('Updating MapBase Tippy...');
+
+      MapBase.tippyInstances.forEach(instance => instance.destroy());
+      MapBase.tippyInstances = [];
+
+      if (!Settings.showTooltipsMap || Settings.isPopupsHoverEnabled) return;
+
+      MapBase.tippyInstances = tippy('[data-tippy]', {
+        theme: 'map-theme',
+        placement: 'right',
+        arrow: false,
+        distance: 0,
+        zIndex: 910,
+        allowHTML: true,
+        content(ref) {
+          return ref.getAttribute('data-tippy');
+        },
+      });
+    }, 300);
+  },
+
+  // Rectangle for testing.
+  _rectangle: function (x, y, width, height) {
+    var currentPoint = this.map.latLngToContainerPoint([x, y]);
+
+    var xDifference = width / 2;
+    var yDifference = height / 2;
+
+    var southWest = L.point((currentPoint.x - xDifference), (currentPoint.y - yDifference));
+    var northEast = L.point((currentPoint.x + xDifference), (currentPoint.y + yDifference));
+
+    var bounds = L.latLngBounds(this.map.containerPointToLatLng(southWest), this.map.containerPointToLatLng(northEast));
+    L.rectangle(bounds).addTo(this.map);
+  },
+
+  //R* converting stuff
+  _debugMarker: function (coords) {
+    let temp = MapBase.map.unproject(this._gameToMap(coords), 8);
+    MapBase.debugMarker(temp.lat, temp.lng);
+    return { 'lat': temp.lat.toFixed(4), 'lng': temp.lng.toFixed(4) };
+  },
+
+  _gameToMap: function (coords) {
+    let image = [48841, 38666],
+      topLeft = [-7168, 4096],
+      bottomRight = [5120, -5632];
+
+    let i = image[0],
+      n = image[1],
+      e = this._normal_xy(topLeft, bottomRight),
+      s = this._normal_xy(topLeft, coords);
+    return [i * (s[0] / e[0]), n * (s[1] / e[1])];
+  },
+
+  _normal_xy: function (t, i) {
+    return [this._num_distance(t[0], i[0]), this._num_distance(t[1], i[1])];
+  },
+
+  _num_distance: function (t, i) {
+    return t > i ? t - i : i - t;
+  },
 };

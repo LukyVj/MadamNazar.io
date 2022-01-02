@@ -134,14 +134,13 @@ const SettingProxy = function () {
 }();
 
 // General settings
-const Settings = SettingProxy.createSettingProxy('main');
+const Settings = SettingProxy.createSettingProxy('rdr2collector');
 Object.entries({
   lastVersion: { default: 0 },
   alertClosed: { default: false },
   baseLayer: { default: 'map.layers.default' },
   fmeDisplayGeneralPeriod: { default: 30 },
   fmeDisplayRolePeriod: { default: 60 },
-  fmeEnabledEvents: { default: 131071 },
   fmeNotificationPeriod: { default: 10 },
   isClock24Hour: { default: false },
   isCoordsOnClickEnabled: { default: false },
@@ -153,7 +152,7 @@ Object.entries({
   isFmeDisplayEnabled: { default: true },
   isFmeNotificationEnabled: { default: false },
   isMarkerClusterEnabled: { default: true },
-  isMenuOpened: { default: false },
+  isMenuOpened: { default: true },
   isPinsEditingEnabled: { default: true },
   isPinsPlacingEnabled: { default: false },
   isPopupsEnabled: { default: true },
@@ -161,6 +160,7 @@ Object.entries({
   isRightClickEnabled: { default: false },
   isShadowsEnabled: { default: true },
   isLaBgEnabled: { default: true },
+  isMapBoundariesEnabled: {default: true },
   markerOpacity: { default: 1 },
   markerSize: { default: 1 },
   overlayOpacity: { default: 0.5 },
@@ -172,13 +172,13 @@ Object.entries({
   showRoutesSettings: { default: true },
   showUtilitiesSettings: { default: true },
   topWidgetState: { default: 0 },
-  legendarySpawnIconType: { default: 0 },
+  legendarySpawnIconType: { default: 'head' },
   legendarySpawnIconSize: { default: 1 },
-  timeZoneOffset: { default: 0 },
+  showTooltipsMap: { default: 1 },
 }).forEach(([name, config]) => SettingProxy.addSetting(Settings, name, config));
 
 // Inventory settings
-const InventorySettings = SettingProxy.createSettingProxy('inventory');
+const InventorySettings = SettingProxy.createSettingProxy('rdr2collector.inventory');
 Object.entries({
   highlightLowAmountItems: { default: false },
   isEnabled: { default: false },
@@ -187,12 +187,13 @@ Object.entries({
   resetInventoryDaily: { default: false },
   stackSize: { default: 10 },
   flowersSoftStackSize: { default: 10 },
-  enableAdvancedInventoryOptions: { default: false },
+  enableAdvancedInventoryOptions: { default: true },
   autoEnableSoldItems: { default: true },
+  maxAmountLowInventoryItems: { default: 5 }
 }).forEach(([name, config]) => SettingProxy.addSetting(InventorySettings, name, config));
 
 // Route settings
-const RouteSettings = SettingProxy.createSettingProxy('routes');
+const RouteSettings = SettingProxy.createSettingProxy('rdr2collector.routes');
 Object.entries({
   allowFasttravel: { default: false },
   allowRailroad: { default: false },
