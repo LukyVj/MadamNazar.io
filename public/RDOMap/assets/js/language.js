@@ -4,7 +4,7 @@ jQuery.fn.translate = function () {
 
 var Language = {
   data: {},
-  availableLanguages: ['en', 'af', 'ar', 'ca', 'cs', 'da', 'de', 'el', 'en-GB', 'es', 'fi', 'fr', 'he', 'hu', 'it', 'ja', 'ko', 'nl', 'no', 'pl', 'pt', 'pt-BR', 'ro', 'ru', 'sr', 'sv', 'th', 'tr', 'uk', 'vi', 'zh-Hans', 'zh-Hant'],
+  availableLanguages: ['en', 'af', 'ar', 'ca', 'cs', 'da', 'de', 'el', 'en-GB', 'es', 'es-MX', 'fi', 'fr', 'he', 'hu', 'it', 'ja', 'ko', 'nl', 'no', 'pl', 'pt', 'pt-BR', 'ro', 'ru', 'sr', 'sv', 'th', 'tr', 'uk', 'vi', 'zh-Hans', 'zh-Hant'],
   progress: {},
 
   init: function () {
@@ -138,4 +138,8 @@ var Language = {
     if (!thisProg) thisProg = 0;
     $('#translation-progress').text(Language.get('menu.translate_progress').replace('{progress}', thisProg));
   },
+
+  hasTranslation: function (string) {
+    return this.get(string) !== string;
+  }
 };

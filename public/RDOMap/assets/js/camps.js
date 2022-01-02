@@ -67,7 +67,7 @@ class Camp {
             marker: this.key,
             tippy: marker.title,
           }),
-        }).bindPopup(marker.updateMarkerContent(), { minWidth: 300, maxWidth: 400 });
+        }).bindPopup(marker.updateMarkerContent.bind(marker, () => this.onMap = false), { minWidth: 300, maxWidth: 400 });
 
         this.layer.addLayer(tempMarker);
         if (Settings.isMarkerClusterEnabled)
@@ -82,17 +82,26 @@ class Camp {
       this.layer.addTo(MapBase.map);
       this.element.removeClass('disabled');
       if (!MapBase.isPreviewMode)
-        localStorage.setItem(`rdo:${this.key}`, 'true');
+        localStorage.setItem(`rdo.${this.key}`, 'true');
     } else {
       this.layer.remove();
       this.element.addClass('disabled');
       if (!MapBase.isPreviewMode)
-        localStorage.removeItem(`rdo:${this.key}`);
+        localStorage.removeItem(`rdo.${this.key}`);
     }
     MapBase.updateTippy('camps');
   }
 
   get onMap() {
-    return !!localStorage.getItem(`rdo:${this.key}`);
+    return !!localStorage.getItem(`rdo.${this.key}`);
+  }
+
+  static onLanguageChanged() {
+    Camp.locations.forEach(camp => camp.onLanguageChanged());
+    Menu.reorderMenu(this.context);
+  }
+
+  static onSettingsChanged() {
+    Camp.locations.forEach(camp => camp.reinitMarker());
   }
 }

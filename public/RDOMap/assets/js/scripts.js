@@ -38,10 +38,33 @@ $(function () {
 });
 
 function init() {
+  try {
+    Sentry.init({ release: nocache, tracesSampleRate: isLocalHost() ? 1 : 0.3 });
+  } catch (err) {
+    console.log(`Sentry: ${err}`);
+  }
 
   const navLang = navigator.language;
   SettingProxy.addSetting(Settings, 'language', {
     default: Language.availableLanguages.includes(navLang) ? navLang : 'en',
+  });
+
+  //Convert old settings if any
+  Object.keys(localStorage).forEach(key => {
+    if (key.startsWith('rdo:')) {
+      localStorage.setItem(`rdo.${key.split(':')[1]}`, localStorage.getItem(key));
+      localStorage.removeItem(key);
+    }
+    // Get rdr2collectors map legendary timers only when rdo keys does not exists
+    // Do not enable legendary animals base on collectors map because it cause an issue that are always enabled on RDO map on load ;)
+    else if (key.startsWith('rdr2collector:Legendaries_')) {
+      let _key = `rdo.${key.split(':')[1]}`;
+      if (localStorage.getItem(_key) == null)
+        localStorage.setItem(_key, localStorage.getItem(key));
+    } else if (key === 'lastDailiesDate') {
+      localStorage.setItem('rdo.lastDailiesDate', localStorage.getItem('lastDailiesDate'));
+      localStorage.removeItem('lastDailiesDate');
+    }
   });
 
   Menu.init();
@@ -57,8 +80,6 @@ function init() {
   // Bonus: If either of these fail to load, it doesn't block the map from working properly.
   Dailies.init();
   MadamNazar.init();
-
-  MapBase.beforeLoad();
 
   const animals = AnimalCollection.init();
   const locations = Location.init();
@@ -113,6 +134,8 @@ function init() {
   $('#customization-container').toggleClass('opened', Settings.showCustomizationSettings);
   $('#import-export-container').toggleClass('opened', Settings.showImportExportSettings);
   $('#debug-container').toggleClass('opened', Settings.showDebugSettings);
+
+  setInterval(clockTick, 1000);
 }
 
 function isLocalHost() {
@@ -180,8 +203,6 @@ function clockTick() {
   });
 }
 
-setInterval(clockTick, 1000);
-
 $('.side-menu').on('scroll', function () {
   // These are not equality checks because of mobile weirdness.
   const atTop = $(this).scrollTop() <= 0;
@@ -226,57 +247,54 @@ $('#show-debug').on('change', function () {
   $('#debug-container').toggleClass('opened', Settings.showDebugSettings);
 });
 
-//Disable menu category when click on input
-$('.menu-option.clickable input, #submit-new-herb').on('click', function (e) {
-  e.stopPropagation();
-});
-
 $('#language').on('change', function () {
   Settings.language = $('#language').val();
-
   Language.setMenuLanguage();
-  Treasure.onLanguageChanged();
+
+  AnimalCollection.onLanguageChanged();
   Bounty.onLanguageChanged();
+  Camp.onLanguageChanged();
+  Encounter.onLanguageChanged();
+  GunForHire.onLanguageChanged();
+  Legendary.onLanguageChanged();
+  Location.onLanguageChanged();
+  PlantsCollection.onLanguageChanged();
+  Shop.onLanguageChanged();
+  Treasure.onLanguageChanged();
+
   Dailies.sortDailies();
-
-  // WIP: update markers without reload page
-  Camp.locations.forEach(camp => camp.onLanguageChanged());
-  Encounter.locations.forEach(encounter => encounter.onLanguageChanged());
-  GunForHire.locations.forEach(gfh => gfh.onLanguageChanged());
-  Location.locations.forEach(location => location.onLanguageChanged());
-  Shop.locations.forEach(shop => shop.onLanguageChanged());
   MadamNazar.addMadamNazar();
-  Legendary.onSettingsChanged();
-
   MapBase.updateTippy('language');
 });
 
 $('#marker-size').on('change', function () {
   Settings.markerSize = Number($('#marker-size').val());
-  Treasure.onSettingsChanged();
-  Bounty.onSettingsChanged();
+
+  Camp.onSettingsChanged();
   CondorEgg.onSettingsChanged();
+  Encounter.onSettingsChanged();
+  GunForHire.onSettingsChanged();
+  Location.onSettingsChanged();
   Salvage.onSettingsChanged();
-  Camp.locations.forEach(camp => camp.reinitMarker());
-  Encounter.locations.forEach(encounter => encounter.reinitMarker());
-  GunForHire.locations.forEach(gfh => gfh.reinitMarker());
-  Location.locations.forEach(location => location.reinitMarker());
-  Shop.locations.forEach(shop => shop.reinitMarker());
+  Shop.onSettingsChanged();
+  Treasure.onSettingsChanged();
+
   MadamNazar.addMadamNazar();
   Pins.loadPins();
 });
 
 $('#marker-opacity').on('change', function () {
   Settings.markerOpacity = Number($('#marker-opacity').val());
-  Treasure.onSettingsChanged();
-  Bounty.onSettingsChanged();
+
+  Camp.onSettingsChanged();
   CondorEgg.onSettingsChanged();
+  Encounter.onSettingsChanged();
+  GunForHire.onSettingsChanged();
+  Location.onSettingsChanged();
   Salvage.onSettingsChanged();
-  Camp.locations.forEach(camp => camp.reinitMarker());
-  Encounter.locations.forEach(encounter => encounter.reinitMarker());
-  GunForHire.locations.forEach(gfh => gfh.reinitMarker());
-  Location.locations.forEach(location => location.reinitMarker());
-  Shop.locations.forEach(shop => shop.reinitMarker());
+  Shop.onSettingsChanged();
+  Treasure.onSettingsChanged();
+
   MadamNazar.addMadamNazar();
   Pins.loadPins();
 });
@@ -304,11 +322,12 @@ $('#marker-cluster').on('change', function () {
 
   Layers.oms.clearMarkers();
 
-  Camp.locations.forEach(camp => camp.reinitMarker());
-  Encounter.locations.forEach(encounter => encounter.reinitMarker());
-  GunForHire.locations.forEach(gfh => gfh.reinitMarker());
-  Location.locations.forEach(location => location.reinitMarker());
-  Shop.locations.forEach(shop => shop.reinitMarker());
+  Camp.onSettingsChanged();
+  Encounter.onSettingsChanged();
+  GunForHire.onSettingsChanged();
+  Location.onSettingsChanged();
+  Shop.onSettingsChanged();
+
   MadamNazar.addMadamNazar();
   Pins.loadPins();
 });
@@ -319,15 +338,14 @@ $('#enable-marker-popups-hover').on('change', function () {
 
 $('#enable-marker-shadows').on('change', function () {
   Settings.isShadowsEnabled = $('#enable-marker-shadows').prop('checked');
+  Camp.onSettingsChanged();
+  Encounter.onSettingsChanged();
+  GunForHire.onSettingsChanged();
+  Location.onSettingsChanged();
+  Shop.onSettingsChanged();
   Treasure.onSettingsChanged();
-  Bounty.onSettingsChanged();
-  Camp.locations.forEach(camp => camp.reinitMarker());
-  Encounter.locations.forEach(encounter => encounter.reinitMarker());
-  GunForHire.locations.forEach(gfh => gfh.reinitMarker());
-  Location.locations.forEach(location => location.reinitMarker());
   Pins.loadPins();
   MadamNazar.addMadamNazar();
-  Shop.locations.forEach(shop => shop.reinitMarker());
 });
 
 $('#enable-legendary-backgrounds').on('change', function () {
@@ -336,7 +354,7 @@ $('#enable-legendary-backgrounds').on('change', function () {
 });
 
 $('#legendary-animal-marker-type').on('change', function () {
-  Settings.legendarySpawnIconType = Number($('#legendary-animal-marker-type').val());
+  Settings.legendarySpawnIconType = $('#legendary-animal-marker-type').val();
   Legendary.onSettingsChanged();
 });
 
@@ -396,17 +414,14 @@ $('.menu-toggle').on('click', function () {
   $('#fme-container').toggleClass('fme-menu-opened', Settings.isMenuOpened);
 });
 
-$('#sync-map-to-dailies').on('click', function () {
-  SynchronizeDailies.init();
-});
-
 $(document).on('contextmenu', function (e) {
   if (!Settings.isRightClickEnabled) e.preventDefault();
 });
 
 $('#delete-all-settings').on('click', function () {
   $.each(localStorage, function (key) {
-    localStorage.removeItem(key);
+    if (key.startsWith('rdo.'))
+      localStorage.removeItem(key);
   });
 
   location.reload(true);
@@ -441,8 +456,8 @@ function timeRange(from, to) {
   while (hour !== to) {
     times.push(hour);
     hour = (hour + 1) % 24;
+    if (times.length >= 24) break;
   }
-
   return times;
 }
 /**
@@ -504,12 +519,13 @@ $('#cookie-export').on('click', function () {
     // Remove irrelevant properties (from COPY of localStorage, only to do not export them):
     storage = $.extend(true, {}, localStorage);
     delete storage['pinned-items'];
+    delete storage['rdo.pinned-items'];
     delete storage['routes.customRoute'];
     delete storage['importantItems'];
     delete storage['enabled-categories'];
 
     for (var key in storage) {
-      if (storage.hasOwnProperty(key) && key.includesOneOf('collected.', 'routes.', 'shown.', 'amount.')) {
+      if (!key.startsWith('rdo.')) {
         delete storage[key];
       }
     }

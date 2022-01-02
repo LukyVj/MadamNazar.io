@@ -6,11 +6,12 @@ Object.defineProperty(Date.prototype, 'toISOUTCDateString', {
 
 class Loader {
   static init(urls) {
-    this.urls = urls;
+    this.urls = new Map();
     this.promises = {};
     urls.forEach(url => {
-      const name = url.split('/').pop().split('.', 1)[0];
-      this.promises[name] = new Loader(name, url);
+        const name = url.split('/').filter(e => e).pop().split('.', 1)[0];
+        this.promises[name] = new Loader(name, url);
+        this.urls.set(name, url);
     });
 
     /*
@@ -24,7 +25,10 @@ class Loader {
   }
   constructor(name, url, customNoCache = null) {
     const queryString = {};
-    if (!url.startsWith('http')) queryString.nocache = customNoCache || nocache;
+
+    if (['updates'].includes(name)) queryString.nocache = Date.now();
+    else if (['fme'].includes(name)) queryString.nocache = Math.floor(Date.now() / 10000);
+    else if (!url.startsWith('http')) queryString.nocache = customNoCache || nocache;
     else queryString.nocache = customNoCache || new Date(Date.now() - 21600000).toISOUTCDateString();
 
     if (['lang_progress'].includes(name)) queryString.date = customNoCache || new Date().toISOUTCDateString();
@@ -39,8 +43,7 @@ class Loader {
   }
   static reloadData(name) {
     delete this.promises[name];
-    const url = this.urls.find(url => url.split('/').pop().split('.', 1)[0] === name);
-    this.promises[name] = new Loader(name, url, Date.now());
+    this.promises[name] = new Loader(name, this.urls.get(name), Date.now());
   }
 }
 
@@ -54,7 +57,6 @@ const urls = [
   'data/discoverables.json',
   'data/encounters.json',
   'data/fasttravels.json',
-  'data/fme.json',
   'data/gfh.json',
   'data/hm.json',
   'data/items.json',
@@ -65,7 +67,9 @@ const urls = [
   'data/shops.json',
   'data/treasures.json',
   'data/bounties.json',
-  'https://pepegapi.jeanropke.net/v2/rdo/dailies',
-  'https://pepegapi.jeanropke.net/v2/rdo/nazar'
+  'https://pepegapi.jeanropke.net/v3/rdo/dailies',
+  'https://pepegapi.jeanropke.net/v2/rdo/nazar',
+  'https://api.rdo.gg/fme/',
+  'data/fme_keys.json',
 ];
 Loader.init(urls);

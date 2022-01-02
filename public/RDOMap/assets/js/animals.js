@@ -13,15 +13,14 @@ class Animal {
       .translate();
 
     this.markers = [];
-    let self = this;
 
     if (this.groups != null) {
       this.groups.forEach(_group => {
         if (!AnimalCollection.groups[_group])
           return console.error(`The animal spawns group for ${_group} could not be found.`);
-        MapBase.yieldingLoop(AnimalCollection.groups[_group].length, 50, function (i) {
-          const _marker = AnimalCollection.groups[_group][i];
-          const tempMarker = L.marker([_marker.x, _marker.y], {
+        MapBase.yieldingLoop(AnimalCollection.groups[_group].length, 50, index => {
+          this.marker = AnimalCollection.groups[_group][index];
+          const tempMarker = L.marker([this.marker.x, this.marker.y], {
             opacity: .75,
             icon: new L.divIcon({
               iconUrl: 'assets/images/icons/animal.png',
@@ -31,33 +30,50 @@ class Animal {
             }),
           });
 
-          let popupContent = Language.get('map.animal_spawns.desc')
-            .replace('{animal}', Language.get(`menu.cmpndm.${self.key}`));
-
-          if (_marker.start && _marker.end) {
-            const startTime = convertToTime(_marker.start);
-            const endTime = convertToTime(_marker.end);
-            popupContent = Language.get('map.animal_spawns_timed.desc')
-              .replace('{animal}', Language.get(`menu.cmpndm.${self.key}`))
-              .replace('{start}', startTime)
-              .replace('{end}', endTime);
-          }
-
-          let debugDisplayLatLng = $('<small>').text(`Latitude: ${_marker.x} / Longitude: ${_marker.y} / Start: ${_marker.start} / End: ${_marker.end}`);
-          tempMarker.bindPopup(
-            `<h1>${Language.get('map.animal_spawns.name').replace('{animal}', Language.get(`menu.cmpndm.${self.key}`))}</h1>
-            <span class="marker-content-wrapper">
-              <p>${popupContent}</p>
-            </span>
-            ${Settings.isDebugEnabled ? debugDisplayLatLng.prop('outerHTML') : ''}`, { minWidth: 300, maxWidth: 400 });
-          self.data.push(tempMarker._latlng);
-          self.markers.push(tempMarker);
-        }, function () {
-        });
+          // exception from `.bind(this)` to show correct data in marker popup
+          tempMarker.bindPopup(this.popupContent(), { minWidth: 300, maxWidth: 400 });
+          this.data.push(tempMarker._latlng);
+          this.markers.push(tempMarker);
+        }, function () { });
       });
     }
 
     this.element.appendTo(this.context);
+  }
+
+  popupContent() {
+    const animalName = Language.get('map.animal_spawns.name').replace('{animal}', Language.get(`menu.cmpndm.${this.key}`));
+    let description = Language.get('map.animal_spawns.desc')
+      .replace('{animal}', Language.get(`menu.cmpndm.${this.key}`));
+
+    if (this.marker.start && this.marker.end) {
+      const startTime = convertToTime(this.marker.start);
+      const endTime = convertToTime(this.marker.end);
+      description = Language.get('map.animal_spawns_timed.desc')
+        .replace('{animal}', Language.get(`menu.cmpndm.${this.key}`))
+        .replace('{start}', startTime)
+        .replace('{end}', endTime);
+    }
+
+    const snippet = $(`
+        <div>
+          <h1>${animalName}</h1>
+          <span class="marker-content-wrapper">
+            <p>${description}</p>
+          </span>
+          <button class="btn btn-default full-popup-width" data-text="map.remove"></button>
+          <small>Latitude: ${this.marker.x} / Longitude: ${this.marker.y} / Start: ${this.marker.start} / End: ${this.marker.end}</small>
+        </div>
+      `)
+      .translate()
+      .find('small')
+      .toggle(Settings.isDebugEnabled)
+      .end()
+      .find('button')
+      .on('click', () => this.isEnabled = false)
+      .end();
+
+    return snippet[0];
   }
 
   set isEnabled(state) {
@@ -75,6 +91,7 @@ class Animal {
       AnimalCollection.heatmapLayer.setData({ data: [] });
       AnimalCollection.spawnLayer.clearLayers();
       this.element.children('span').addClass('disabled');
+      MapBase.map.closePopup();
     }
   }
 
@@ -128,6 +145,14 @@ class AnimalCollection {
       this.animals.push(new Animal(animal, this.key));
       AnimalCollection.quickParams.push(animal.key);
     });
-    Menu.reorderMenu($(`.menu-hidden[data-type=${this.key}]`));
+
+    AnimalCollection.onLanguageChanged();
+  }
+
+  static onLanguageChanged() {
+    AnimalCollection.collectionsData.forEach(group => Menu.reorderMenu($(`.menu-hidden[data-type=${group.key}]`)));
+  }
+  static hideAllAnimals() {
+    AnimalCollection.collection.forEach(collection => collection.animals.forEach(animal => animal.isEnabled = false));
   }
 }

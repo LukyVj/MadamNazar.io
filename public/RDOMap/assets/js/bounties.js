@@ -1,12 +1,4 @@
 class Bounty {
-
-  static onLanguageChanged() {
-    Menu.reorderMenu(this.context);
-  }
-  static onSettingsChanged() {
-    this.bounties.forEach(bounty => bounty.reinitMarker());
-  }
-
   // not idempotent (on the environment)
   constructor(preliminary, type) {
     Object.assign(this, preliminary);
@@ -53,20 +45,24 @@ class Bounty {
           iconAnchor: [9, 9],
         }),
         pane: 'bountyX',
-      }).bindPopup(this.popupContent(this, bounty), { minWidth: 300 }));
+      }).bindPopup(this.popupContent.bind(this, this, bounty), { minWidth: 300 }));
     });
     this.onMap = this.onMap;
   }
   popupContent(marker, bounty) {
-    const snippet = $(`<div class="handover-wrapper-with-no-influence">
+    const snippet = $(`
+      <div class="handover-wrapper-with-no-influence">
         <h1 data-text="menu.${marker.type}.${marker.text}"></h1>
         <p data-text="menu.${marker.type}.desc"></p>
         <span class="properties">
           <p class="property" data-text="menu.${marker.type}.min" data-property="min"></p>
           <!-- <p class="property" data-text="menu.${marker.type}.config" data-property="config"></p> -->
         </span>
-        <button type="button" class="btn btn-info remove-button remove-bounty" data-text="map.remove"></button>
-      </div>`).translate();
+        <button class="btn btn-default full-popup-width" data-text="map.remove"></button>
+        <small>Latitude: ${bounty.x} / Longitude: ${bounty.y} / Type: ${marker.type} / Text: ${marker.text}</small>
+      </div>
+      `)
+        .translate();
 
     const props = $('[data-property]', snippet);
     [...props].forEach(p => {
@@ -77,8 +73,11 @@ class Bounty {
     });
 
     snippet
-      .find('button.remove-bounty')
+      .find('button')
       .on('click', () => this.onMap = false)
+      .end()
+      .find('small')
+      .toggle(Settings.isDebugEnabled)
       .end();
 
     return snippet[0];
@@ -87,17 +86,21 @@ class Bounty {
     if (state) {
       BountyCollection.layer.addLayer(this.marker);
       if (!MapBase.isPreviewMode)
-        localStorage.setItem(`rdo:${this._shownKey}`, 'true');
+        localStorage.setItem(`rdo.${this._shownKey}`, 'true');
       this.element.removeClass('disabled');
     } else {
       BountyCollection.layer.removeLayer(this.marker);
       if (!MapBase.isPreviewMode)
-        localStorage.removeItem(`rdo:${this._shownKey}`);
+        localStorage.removeItem(`rdo.${this._shownKey}`);
       this.element.addClass('disabled');
     }
   }
   get onMap() {
-    return !!localStorage.getItem(`rdo:${this._shownKey}`);
+    return !!localStorage.getItem(`rdo.${this._shownKey}`);
+  }
+
+  static onLanguageChanged() {
+    Menu.reorderMenu(this.context);
   }
 }
 
@@ -130,7 +133,7 @@ class BountyCollection {
     this.bounties = [];
     this.locations.forEach(bounty => {
       this.bounties.push(new Bounty(bounty, this.key));
-      BountyCollection.quickParams.push(bounty.key);
+      BountyCollection.quickParams.push(`${this.key}_${bounty.text}`);
     });
 
     Menu.reorderMenu($(`.menu-hidden[data-type=${this.key}]`));

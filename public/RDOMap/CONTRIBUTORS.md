@@ -21,20 +21,22 @@ These are the people that provided the locations of the different items on the m
 - Player camp positions by [Senexis](https://github.com/Senexis).
 - Possible treasures locations by [IronJeff80](https://github.com/IronJeff80), [Dirty Tyler](https://www.youtube.com/channel/UC3LdKFizyou1RfkkmDUUVsg) and [Dean Nutz](https://www.youtube.com/channel/UCBSYrZQsPndOm-zckXNUItw).
 - Shop locations by [Senexis](https://github.com/Senexis).
-- Sightseeing locations by [Impossible_Phase](https://reddit.com/u/Impossible_Phase).
+- Sightseeing locations by [Impossible_Phase](https://reddit.com/u/Impossible_Phase) and [Senexis](https://github.com/Senexis).
 - Legendary Animal locations by [Senexis](https://github.com/Senexis), [alloc8or](https://github.com/alloc8or/) and [IronJeff80](https://github.com/IronJeff80).
 - Legendary Animal parts prices by [Senexis](https://github.com/Senexis), adapted to the map by [Michal__d](https://github.com/MichalD96) special thanks to [IronJeff80](https://github.com/IronJeff80) for collected data.
+- Condor Egg locations by [Senexis](https://github.com/Senexis), adapted to the map by [Michal__d](https://github.com/MichalD96).
+- Salvage locations by [Senexis](https://github.com/Senexis).
 
 ## Service credits
 These are the people or services that make the dynamic content of the map work.
-- Daily Challenges provided by [alloc8or](https://github.com/alloc8or/) and the [RDO Dailies API](https://rdodailies.com/).
-- Madam Nazar provided by [alloc8or](https://github.com/alloc8or/) and the [MadamNazar.io API](https://madamnazar.io/).
+- Daily Challenges provided by [alloc8or](https://github.com/alloc8or/) adapted to the map by [Michal__d](https://github.com/MichalD96).
+- Madam Nazar location provided by [alloc8or](https://github.com/alloc8or/) and the [MadamNazar.io](https://madamnazar.io/).
 - Freeroam events display by [Richard Westenra](https://www.richardwestenra.com/rdr2-free-roam-event-schedule), adapted to the map by [Senexis](https://github.com/Senexis).
 
 ## Assets credits
 These are the people that provided assets for the map.
 
-- Icons by [Game Icons](https://game-icons.net/) and Rockstar Games.
+- Icons by [Game Icons](https://game-icons.net/), Rockstar Games and [Michal__d](https://github.com/MichalD96).
 - Map tiles by:
     * Default tiles by Rockstar Games.
     * Detailed tiles by [RDR2Map](https://rdr2map.com/).

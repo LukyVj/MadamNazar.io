@@ -10,11 +10,20 @@ const MapBase = {
   requestLoopCancel: false,
   showAllMarkers: false,
   filtersData: [],
+
+  // Query adjustable parameters
   isPreviewMode: false,
   colorOverride: null,
+  themeOverride: null,
+  viewportX: -70,
+  viewportY: 111.75,
+  viewportZoom: 3,
 
   init: function () {
     'use strict';
+
+    // Parses and properly sets map preferences from query parameters.
+    this.beforeLoad();
 
     this.tippyInstances = [];
     const mapBoundary = L.latLngBounds(L.latLng(-144, 0), L.latLng(0, 176));
@@ -99,13 +108,13 @@ const MapBase = {
       maxZoom: this.maxZoom,
       zoomControl: false,
       crs: L.CRS.Simple,
-      layers: [mapLayers[Settings.baseLayer]],
-    }).setView([-70, 111.75], 3);
+      layers: [mapLayers[this.themeOverride || Settings.baseLayer]],
+    }).setView([this.viewportX, this.viewportY], this.viewportZoom);
 
     MapBase.map.addControl(
       L.control.attribution({
         position: 'bottomright',
-        prefix: '<a target="_blank" href="https://github.com/jeanropke/RDR2CollectorsMap/blob/master/CONTRIBUTORS.md" data-text="map.attribution_prefix">Collectors Map Contributors</a>',
+        prefix: '<a target="_blank" href="https://github.com/jeanropke/RDOMap/blob/master/CONTRIBUTORS.md" data-text="map.attribution_prefix">RDOMap Contributors</a>',
       })
     );
 
@@ -130,6 +139,7 @@ const MapBase = {
 
       Discoverable.updateLayers();
       Overlay.onSettingsChanged();
+      Legendary.onSettingsChanged();
     });
 
     MapBase.map.on('click', function (e) {
@@ -150,6 +160,8 @@ const MapBase = {
       MapBase.map.closePopup();
     });
 
+    MapBase.map.on('resize', MapBase.map.invalidateSize);
+
     Layers.debugLayer.addTo(MapBase.map);
 
     // Enable this and disable the above to see cool stuff.
@@ -159,18 +171,42 @@ const MapBase = {
 
   setMapBackground: function () {
     'use strict';
-    MapBase.isDarkMode = ['map.layers.dark', 'map.layers.black'].includes(Settings.baseLayer) ? true : false;
+    MapBase.isDarkMode = ['map.layers.dark', 'map.layers.black'].includes(this.themeOverride || Settings.baseLayer) ? true : false;
     $('#map').css('background-color', (() => {
       if (MapBase.isDarkMode)
-        return Settings.baseLayer === 'map.layers.black' ? '#000' : '#3d3d3d';
+        return (this.themeOverride || Settings.baseLayer) === 'map.layers.black' ? '#000' : '#3d3d3d';
       else
         return '#d2b790';
     }));
   },
 
   beforeLoad: function () {
+    // Set map to preview mode before loading.
+    const previewParam = getParameterByName('q');
+    if (previewParam) this.isPreviewMode = true;
+
+    // Set map theme according to param.
+    const themeParam = getParameterByName('theme');
+    if (themeParam && ['default', 'detailed', 'dark', 'black'].includes(themeParam))
+      this.themeOverride = `map.layers.${themeParam}`;
+
+    // Sets the map's default zoom level to anywhere between minZoom and maxZoom.
+    const zoomParam = Number.parseInt(getParameterByName('z'));
+    if (!isNaN(zoomParam) && this.minZoom <= zoomParam && zoomParam <= this.maxZoom)
+      this.viewportZoom = zoomParam;
+
+    // Pans the map to a specific coordinate location on the map for default focussing.
+    const flyParam = getParameterByName('ft');
+    if (flyParam) {
+      const latLng = flyParam.split(',');
+      if (latLng.filter(Number).length === 2) {
+        this.viewportX = latLng[0];
+        this.viewportY = latLng[1];
+      }
+    }
+
     // Sets all marker colors (except for plant markers) to static color.
-    var colorParam = getParameterByName('c');
+    const colorParam = getParameterByName('c');
     if (colorParam) {
       const validColors = [
         'aquagreen', 'beige', 'black', 'blue', 'brown', 'cadetblue', 'darkblue', 'darkgreen', 'darkorange', 'darkpurple',
@@ -180,29 +216,14 @@ const MapBase = {
 
       if (validColors.includes(colorParam)) this.colorOverride = colorParam;
     }
-
-    // Sets the map's default zoom level to anywhere between minZoom and maxZoom.
-    var zoomParam = Number.parseInt(getParameterByName('z'));
-    if (!isNaN(zoomParam) && MapBase.minZoom <= zoomParam && zoomParam <= MapBase.maxZoom) {
-      MapBase.map.setZoom(zoomParam);
-    }
-
-    // Pans the map to a specific coordinate location on the map for default focussing.
-    var flyParam = getParameterByName('ft');
-    if (flyParam) {
-      const latLng = flyParam.split(',');
-      if (latLng.filter(Number).length === 2)
-        MapBase.map.flyTo(latLng);
-    }
-
-    var quickParam = getParameterByName('q');
-    if (quickParam) this.isPreviewMode = true;
   },
 
   afterLoad: function () {
     // Preview mode parameter.
-    var quickParam = getParameterByName('q');
+    const quickParam = getParameterByName('q');
     if (quickParam) {
+      MapBase.isPreviewMode = true;
+
       $('.menu-toggle').remove();
       $('.top-widget').remove();
       $('#fme-container').remove();
@@ -257,20 +278,54 @@ const MapBase = {
           item.onMap = true;
           MapBase.map.setView({ lat: item.x, lng: item.y }, 5);
         });
+      } else if (BountyCollection.quickParams.indexOf(quickParam) !== -1) {
+        Object.keys(BountyCollection.collection).filter(item => {
+          BountyCollection.collection[item].bounties.filter(bounty => {
+            if (`${bounty.type}_${bounty.text}` !== quickParam) return;
+            bounty.onMap = true;
+            MapBase.map.setView({ lat: bounty.x, lng: bounty.y }, 5);
+          });
+        });
+      } else if (CondorEgg.quickParams.indexOf(quickParam) !== -1) {
+        CondorEgg.condorEggOnMap = true;
+        CondorEgg.condorEggs.filter(item => {
+          if (item.text !== quickParam) {
+            item.onMap = false;
+            return;
+          }
+          item.onMap = true;
+          MapBase.map.setView({ lat: item.x, lng: item.y }, 5);
+        });
+      } else if (Salvage.quickParams.indexOf(quickParam) !== -1) {
+        Salvage.salvageOnMap = true;
+        Salvage.salvages.filter(item => {
+          if (item.text !== quickParam) {
+            item.onMap = false;
+            return;
+          }
+          item.onMap = true;
+          MapBase.map.setView({ lat: item.x, lng: item.y }, 5);
+        });
       }
     }
 
     Menu.updateTippy();
     MapBase.updateTippy('afterLoad');
+
+    // Puppeteer hack and utility for other extensions.
+    // Allows utilities to wait for this global to then do their stuff.
+    window.loaded = true;
   },
 
   disableAll: function (toShow = false) {
     Camp.locations.forEach(camp => camp.onMap = toShow);
+    CondorEgg.condorEggOnMap = toShow;
     Encounter.locations.forEach(encounter => encounter.onMap = toShow);
     GunForHire.locations.forEach(gfh => gfh.onMap = toShow);
     Location.locations.forEach(location => location.onMap = toShow);
     Legendary.animals.forEach(animal => animal.onMap = toShow);
     MadamNazar.onMap = toShow;
+    Salvage.salvageOnMap = toShow;
     Shop.locations.forEach(shop => shop.onMap = toShow);
     PlantsCollection.locations.forEach(plants => plants.onMap = toShow);
   },
@@ -412,6 +467,7 @@ const MapBase = {
   },
 
   yieldingLoop: function (count, chunksize, callback, finished) {
+    if (MapBase.isPreviewMode) chunksize = count;
     var i = 0;
     (function chunk() {
       var end = Math.min(i + chunksize, count);
@@ -448,6 +504,7 @@ const MapBase = {
         placement: 'right',
         arrow: false,
         distance: 0,
+        zIndex: 910,
         content(ref) {
           return ref.getAttribute('data-tippy');
         },

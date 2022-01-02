@@ -56,7 +56,7 @@ class Location {
           time: marker.subdata,
         }),
       });
-      tempMarker.bindPopup(marker.updateMarkerContent(), { minWidth: 300, maxWidth: 400 });
+      tempMarker.bindPopup(marker.updateMarkerContent.bind(marker, () => this.onMap = false), { minWidth: 300, maxWidth: 400 });
 
       this.layer.addLayer(tempMarker);
       if (Settings.isMarkerClusterEnabled)
@@ -69,18 +69,26 @@ class Location {
       this.layer.addTo(MapBase.map);
       this.element.removeClass('disabled');
       if (!MapBase.isPreviewMode)
-        localStorage.setItem(`rdo:${this.key}`, 'true');
+        localStorage.setItem(`rdo.${this.key}`, 'true');
     } else {
       this.layer.remove();
       this.element.addClass('disabled');
       if (!MapBase.isPreviewMode)
-        localStorage.setItem(`rdo:${this.key}`, 'false');
+        localStorage.setItem(`rdo.${this.key}`, 'false');
     }
     MapBase.updateTippy('location');
   }
 
   get onMap() {
-    const value = JSON.parse(localStorage.getItem(`rdo:${this.key}`));
+    const value = JSON.parse(localStorage.getItem(`rdo.${this.key}`));
     return value || (value == null && !this.disabled);
+  }
+
+  static onLanguageChanged() {
+    Location.locations.forEach(location => location.onLanguageChanged());
+  }
+
+  static onSettingsChanged() {
+    Location.locations.forEach(location => location.reinitMarker());
   }
 }

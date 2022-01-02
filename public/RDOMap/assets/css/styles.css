@@ -238,7 +238,7 @@ select {
 }
 
 .top-widget {
-    z-index: 1010;
+    z-index: 990;
     position: fixed;
     left: 40px;
     top: 3px;
@@ -610,9 +610,29 @@ select {
     padding: 0;
     user-select: none;
     cursor: pointer;
-    line-height: 36px;
+    line-height: 42px;
 }
 
+.side-menu .menu-option.new::before {
+    background: url(../images/star.png) no-repeat;
+    background-size: contain;
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    right: 40px;
+    top: 7px;
+    content: '';
+}
+.side-menu .collectible-wrapper.new::before {
+    background: url(../images/star.png) no-repeat;
+    background-size: contain;
+    width: 18px;
+    height: 18px;
+    position: absolute;
+    right: 7px;
+    top: 8px;
+    content: '';
+}
 .side-menu .disabled {
     opacity: .5;
 }
@@ -637,7 +657,7 @@ select {
 
 .side-menu .menu-option .icon {
     width: 35px;
-    margin: 6px 0 -3px 2px;
+    margin: 0 0 3px 2px;
 }
 
 .side-menu .open-submenu {
@@ -1223,9 +1243,6 @@ a.no-style:visited {
 }
 
 @media (max-width: 768px) {
-    .top-widget-menu-opened {
-        display: none !important;
-    }
     .side-menu .menu-hidden .collectible,
     .input-container label {
         line-height: 38px;
@@ -1234,6 +1251,16 @@ a.no-style:visited {
     .input-text,
     .input-action {
         margin-top: 5px;
+    }
+    .daily-checkbox .input-checkbox+.input-checkbox-label {
+        margin-top: 0;
+    }
+    .collectible-icon {
+        margin-top: 7px;
+    }
+    .side-menu .collectible-wrapper.new::before {
+        top: 16px;
+        right: 0;
     }
 }
 
@@ -1418,7 +1445,6 @@ a.no-style:visited {
     z-index: 4;
     width: 100%;
     height: auto;
-    padding-top: 6px;
 }
 
 .leaflet-div-icon .background {
@@ -1549,8 +1575,19 @@ a.no-style:visited {
     }
     #fme-container .fme-card #next-general-mobile,
     #fme-container .fme-card #next-role-mobile {
-        display: block;
+        display: flex;
         overflow: hidden;
+    }
+    #fme-container .fme-card #next-general-mobile .next-title,
+    #fme-container .fme-card #next-role-mobile .next-title {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    #fme-container .fme-card #next-general-mobile .next-time,
+    #fme-container .fme-card #next-role-mobile .next-time {
+        flex: 1;
+        margin: 0 5px;
     }
     #fme-container .fme-card .fme-body {
         display: none;
@@ -1702,6 +1739,11 @@ span.daily-checkbox {
     font-size: 19px;
 }
 
+.dailies-difficulty-selection {
+    margin: 10px 5px;
+    padding: 5px;
+}
+
 /* End of dailies Styling */
 
 /* Dark mode styling */
@@ -1839,7 +1881,6 @@ span.daily-checkbox {
     z-index: 4;
     width: 100%;
     height: auto;
-    padding-top: 6px;
 }
 
 .leaflet-div-icon .background {
@@ -1924,7 +1965,13 @@ span.daily-checkbox {
     user-select: none;
 }
 
+button.full-popup-width,
 button.reload-nazar {
-    margin: 10px 0;
+    margin: 10px 0 5px 0;
     width: 100%;
+}
+
+#sync-map-to-dailies {
+    white-space: normal;
+    word-wrap: break-word;
 }

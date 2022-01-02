@@ -8,6 +8,10 @@ class Menu {
     $(menu).children().sort(function (a, b) {
       return a.textContent.toLowerCase().localeCompare(b.textContent.toLowerCase());
     }).appendTo(menu);
+
+    if ($(menu).children('.new').length > 0)
+      $(`[data-type=${$(menu).attr('data-type')}]`).toggleClass('new', true);
+
   }
 
   static activateHandlers() {
@@ -45,6 +49,9 @@ class Menu {
       });
       Legendary.animals.forEach(animal => {
         if (animal.onMap) animal.onMap = !animal.onMap;
+      });
+      AnimalCollection.collection.forEach(collection => {
+        collection.animals.forEach(animal => animal.isEnabled = false);
       });
       MadamNazar.onMap = false;
       Pins.onMap = false;

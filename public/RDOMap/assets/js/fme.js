@@ -97,7 +97,7 @@ const FME = {
 
           elements.nextEventName.innerHTML = fmeName;
           elements.nextEventEta.innerHTML = fmeBody;
-          elements.nextEventBodyMobile.innerHTML = `${fmeName} - ${event.etaText}`;
+          elements.nextEventBodyMobile.innerHTML = `<span class="next-title">${fmeName}</span><span class="next-time"> - ${event.etaText}</span>`;
         }
 
         FME.notify(event);
@@ -284,14 +284,24 @@ const FME = {
       $('#fme-enabled-events-modal').modal();
     });
 
-    $.getJSON(`data/fme.json?nocache=${nocache}`)
-      .done(function (data) {
-        FME._eventsJson = data;
-        FME.update();
-        FME.initModal();
-        window.setInterval(FME.update, 10000);
-        console.info('%c[FME] Loaded!', 'color: #bada55; background: #242424');
+    const events = Loader.promises['fme'].consumeJson(data => data);
+    const eventsKeys = Loader.promises['fme_keys'].consumeJson(data => data);
+
+    Promise.all([events, eventsKeys]).then(([eventsData, keysData]) => {
+      const normalizeKeys = key => keysData.find(({ newKey }) => newKey === key).oldKey || key;
+
+      const [general, role] = ['default', 'themed'].map(key => {
+        return Object.entries(eventsData[key]).reduce((acc, [time, { name, variation }]) => {
+          return [...acc, [time, normalizeKeys(variation || name)]];
+        }, []);
       });
+
+      FME._eventsJson = { general, role };
+      FME.update();
+      FME.initModal();
+      window.setInterval(FME.update, 10000);
+      console.info('%c[FME] Loaded!', 'color: #bada55; background: #242424');
+    });
   },
 
   initModal: function () {

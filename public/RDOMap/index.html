@@ -44,11 +44,11 @@
 
   <link rel="stylesheet" href="assets/css/leaflet.css" />
   <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="assets/css/styles.css?nocache=1512" />
-  <link rel="stylesheet" href="assets/css/tippy.css?nocache=1512" />
+  <link rel="stylesheet" href="assets/css/styles.css?nocache=1539" />
+  <link rel="stylesheet" href="assets/css/tippy.css?nocache=1539" />
 
   <script>
-    var nocache = 1512;
+    var nocache = 1539;
   </script>
 </head>
 
@@ -477,8 +477,49 @@
             data-help="sync_map_to_dailies">Sync map to dailies</button>
         </div>
       </div>
+      <div class="dailies-difficulty-selection">
+        <div class="input-container trader-dailies-difficulty-selection hidden" data-help="dailies_difficulty">
+          <label for="dailies-difficulty" data-text="menu.dailies_difficulty.trader">Trader role rank</label>
+          <select class="input-text wide-select-menu" id="trader-dailies-difficulty-selection">
+            <option value="hard" data-text="menu.dailies.rank_hard" selected>15+</option>
+            <option value="med" data-text="menu.dailies.rank_medium">5 - 14</option>
+            <option value="easy" data-text="menu.dailies.rank_easy">1 - 4</option>
+          </select>
+        </div>
+        <div class="input-container bounty_hunter-dailies-difficulty-selection hidden" data-help="dailies_difficulty">
+          <label for="dailies-difficulty" data-text="menu.dailies_difficulty.bounty_hunter">Bounty hunter role rank</label>
+          <select class="input-text wide-select-menu" id="bounty_hunter-dailies-difficulty-selection">
+            <option value="hard" data-text="menu.dailies.rank_hard" selected>15+</option>
+            <option value="med" data-text="menu.dailies.rank_medium">5 - 14</option>
+            <option value="easy" data-text="menu.dailies.rank_easy">1 - 4</option>
+          </select>
+        </div>
+        <div class="input-container collector-dailies-difficulty-selection hidden" data-help="dailies_difficulty">
+          <label for="dailies-difficulty" data-text="menu.dailies_difficulty.collector">Collector role rank</label>
+          <select class="input-text wide-select-menu" id="collector-dailies-difficulty-selection">
+            <option value="hard" data-text="menu.dailies.rank_hard" selected>15+</option>
+            <option value="med" data-text="menu.dailies.rank_medium">5 - 14</option>
+            <option value="easy" data-text="menu.dailies.rank_easy">1 - 4</option>
+          </select>
+        </div>
+        <div class="input-container moonshiner-dailies-difficulty-selection hidden" data-help="dailies_difficulty">
+          <label for="dailies-difficulty" data-text="menu.dailies_difficulty.moonshiner">Moonshiner role rank</label>
+          <select class="input-text wide-select-menu" id="moonshiner-dailies-difficulty-selection">
+            <option value="hard" data-text="menu.dailies.rank_hard" selected>15+</option>
+            <option value="med" data-text="menu.dailies.rank_medium">5 - 14</option>
+            <option value="easy" data-text="menu.dailies.rank_easy">1 - 4</option>
+          </select>
+        </div>
+        <div class="input-container naturalist-dailies-difficulty-selection hidden" data-help="dailies_difficulty">
+          <label for="dailies-difficulty" data-text="menu.dailies_difficulty.naturalist">Naturalist role rank</label>
+          <select class="input-text wide-select-menu" id="naturalist-dailies-difficulty-selection">
+            <option value="hard" data-text="menu.dailies.rank_hard" selected>15+</option>
+            <option value="med" data-text="menu.dailies.rank_medium">5 - 14</option>
+            <option value="easy" data-text="menu.dailies.rank_easy">1 - 4</option>
+          </select>
+        </div>
+      </div>
     </div>
-
     <div class="header">
       <span class="header-border"></span>
       <h2 class="header-title" data-text="menu.settings">Settings</h2>
@@ -488,7 +529,7 @@
       <div class="explain-text">
         <span class="menu-option-text" data-text="menu.translate_body">Translations are made by the community for the community.</span>
         <span id="translation-progress"></span>
-        <a data-text="menu.translate_link" href="https://crowdin.com/project/rdr2rdomap" target="_blank"
+        <a data-text="menu.translate_link" href="https://translate.rdo.gg/" target="_blank"
           rel="noopener noreferrer">Help us by translating on Crowdin.</a>
       </div>
       <hr class="menu-divider">
@@ -505,6 +546,7 @@
           <option value="el">ελληνικά (Greek)</option>
           <option value="en-GB">English (UK)</option>
           <option value="es">Español (Spanish)</option>
+          <option value="es-MX">Español (Mexican Spanish)</option>
           <option value="fi">Suomi (Finnish)</option>
           <option value="fr">Français (French)</option>
           <option value="he">עברית (Hebrew)</option>
@@ -727,8 +769,8 @@
         <div class="input-container" data-help="legendary_marker_type">
           <label for="legendary-marker-type" data-text="menu.legendary_animal_marker_type">Legendary animals marker type</label>
           <select class="input-text narrow-select-menu" id="legendary-animal-marker-type">
-            <option value="0" data-text="menu.legendary_icon_type.head" selected>Animal heads</option>
-            <option value="1" data-text="menu.legendary_icon_type.paw_prints">Animal paw prints</option>
+            <option value="head" data-text="menu.legendary_icon_type.head" selected>Animal heads</option>
+            <option value="footprint" data-text="menu.legendary_icon_type.paw_prints">Animal paw prints</option>
           </select>
         </div>
         <div class="input-container" data-help="legendary_marker_size">
@@ -934,6 +976,22 @@
         </select>
         <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
       </form>
+      <hr class="menu-divider">
+      <div class="input-container-noflex">
+        <h4 class="no-margin-top" data-text="menu.sponsors">Sponsors</h4>
+      </div>
+      <a class="no-style" href="https://crowdin.com/?utm_source=badge&utm_medium=referral&utm_campaign=badge-add-on" rel="nofollow" target="_blank">
+        <div class="input-container clickable" style="align-items: center;">
+          <label>Crowdin</label>
+          <img style="width:140;height:40px;opacity:0.8;" src="https://badges.crowdin.net/badge/light/crowdin-on-dark.png" srcset="https://badges.crowdin.net/badge/light/crowdin-on-dark.png 1x,https://badges.crowdin.net/badge/light/crowdin-on-dark@2x.png 2x" alt="Crowdin | Agile localization for tech companies" />
+        </div>
+      </a>
+      <a class="no-style" href="https://sentry.io/welcome/" rel="nofollow" target="_blank">
+        <div class="input-container clickable" style="align-items: center;">
+          <label>Sentry</label>
+          <svg style="width:135;height:40px;background-color: rgb(204, 204, 204);border-radius:5px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 222 66" width="135" height="40"><path d="M29,2.26a4.67,4.67,0,0,0-8,0L14.42,13.53A32.21,32.21,0,0,1,32.17,40.19H27.55A27.68,27.68,0,0,0,12.09,17.47L6,28a15.92,15.92,0,0,1,9.23,12.17H4.62A.76.76,0,0,1,4,39.06l2.94-5a10.74,10.74,0,0,0-3.36-1.9l-2.91,5a4.54,4.54,0,0,0,1.69,6.24A4.66,4.66,0,0,0,4.62,44H19.15a19.4,19.4,0,0,0-8-17.31l2.31-4A23.87,23.87,0,0,1,23.76,44H36.07a35.88,35.88,0,0,0-16.41-31.8l4.67-8a.77.77,0,0,1,1.05-.27c.53.29,20.29,34.77,20.66,35.17a.76.76,0,0,1-.68,1.13H40.6q.09,1.91,0,3.81h4.78A4.59,4.59,0,0,0,50,39.43a4.49,4.49,0,0,0-.62-2.28Z M124.32,28.28,109.56,9.22h-3.68V34.77h3.73V15.19l15.18,19.58h3.26V9.22h-3.73ZM87.15,23.54h13.23V20.22H87.14V12.53h14.93V9.21H83.34V34.77h18.92V31.45H87.14ZM71.59,20.3h0C66.44,19.06,65,18.08,65,15.7c0-2.14,1.89-3.59,4.71-3.59a12.06,12.06,0,0,1,7.07,2.55l2-2.83a14.1,14.1,0,0,0-9-3c-5.06,0-8.59,3-8.59,7.27,0,4.6,3,6.19,8.46,7.52C74.51,24.74,76,25.78,76,28.11s-2,3.77-5.09,3.77a12.34,12.34,0,0,1-8.3-3.26l-2.25,2.69a15.94,15.94,0,0,0,10.42,3.85c5.48,0,9-2.95,9-7.51C79.75,23.79,77.47,21.72,71.59,20.3ZM195.7,9.22l-7.69,12-7.64-12h-4.46L186,24.67V34.78h3.84V24.55L200,9.22Zm-64.63,3.46h8.37v22.1h3.84V12.68h8.37V9.22H131.08ZM169.41,24.8c3.86-1.07,6-3.77,6-7.63,0-4.91-3.59-8-9.38-8H154.67V34.76h3.8V25.58h6.45l6.48,9.2h4.44l-7-9.82Zm-10.95-2.5V12.6h7.17c3.74,0,5.88,1.77,5.88,4.84s-2.29,4.86-5.84,4.86Z" transform="translate(11, 11)" fill="#252933"></path></svg>
+        </div>
+      </a>
     </div>
 
     <div id="bottom-sticky">
@@ -1075,9 +1133,10 @@
   <!-- ES6 Compatibility Check -->
   <script>function isES6() { try { return eval("() => {};"), !0 } catch (r) { return !1 } } isES6() || alert("This browser might not be fully supported, and errors will likely occur. Please update your browser if you experience issues.");</script>
 
+  <script src='https://js.sentry-cdn.com/a130f51c41c747c5b3ff6d39a6a31e41.min.js' crossorigin="anonymous" data-lazy="no"></script>
   <script src="assets/js/lib/jquery-3.4.1.min.js"></script>
   <script src="assets/js/lib/bootstrap.min.js"></script>
-  <script src="assets/js/loader.js?nocache=1512"></script>
+  <script src="assets/js/loader.js?nocache=1539"></script>
   <script src="assets/js/lib/popper.min.js"></script>
   <script src="assets/js/lib/tippy.min.js"></script>
   <script src="assets/js/lib/jquery.cookie.js"></script>
@@ -1089,30 +1148,30 @@
   <script>var module = {};</script>
   <script src="assets/js/lib/leaflet.canvas-markers.js"></script>
   <script>module.exports(L);</script>
-  <script src="assets/js/layers.js?nocache=1512"></script>
-  <script src="assets/js/settings.js?nocache=1512"></script>
-  <script src="assets/js/nazar.js?nocache=1512"></script>
-  <script src="assets/js/marker.js?nocache=1512"></script>
-  <script src="assets/js/treasures.js?nocache=1512"></script>
-  <script src="assets/js/bounties.js?nocache=1512"></script>
-  <script src="assets/js/legendary.js?nocache=1512"></script>
-  <script src="assets/js/encounters.js?nocache=1512"></script>
-  <script src="assets/js/locations.js?nocache=1512"></script>
-  <script src="assets/js/plants.js?nocache=1512"></script>
-  <script src="assets/js/camps.js?nocache=1512"></script>
-  <script src="assets/js/shops.js?nocache=1512"></script>
-  <script src="assets/js/gfh.js?nocache=1512"></script>
-  <script src="assets/js/events.js?nocache=1512"></script>
-  <script src="assets/js/animals.js?nocache=1512"></script>
-  <script src="assets/js/discoverables.js?nocache=1512"></script>
-  <script src="assets/js/overlays.js?nocache=1512"></script>
-  <script src="assets/js/pins.js?nocache=1512"></script>
-  <script src="assets/js/map.js?nocache=1512"></script>
-  <script src="assets/js/language.js?nocache=1512"></script>
-  <script src="assets/js/menu.js?nocache=1512"></script>
-  <script src="assets/js/dailies.js?nocache=1512"></script>
-  <script src="assets/js/scripts.js?nocache=1512"></script>
-  <script src="assets/js/fme.js?nocache=1512"></script>
+  <script src="assets/js/layers.js?nocache=1539"></script>
+  <script src="assets/js/settings.js?nocache=1539"></script>
+  <script src="assets/js/nazar.js?nocache=1539"></script>
+  <script src="assets/js/marker.js?nocache=1539"></script>
+  <script src="assets/js/treasures.js?nocache=1539"></script>
+  <script src="assets/js/bounties.js?nocache=1539"></script>
+  <script src="assets/js/legendary.js?nocache=1539"></script>
+  <script src="assets/js/encounters.js?nocache=1539"></script>
+  <script src="assets/js/locations.js?nocache=1539"></script>
+  <script src="assets/js/plants.js?nocache=1539"></script>
+  <script src="assets/js/camps.js?nocache=1539"></script>
+  <script src="assets/js/shops.js?nocache=1539"></script>
+  <script src="assets/js/gfh.js?nocache=1539"></script>
+  <script src="assets/js/events.js?nocache=1539"></script>
+  <script src="assets/js/animals.js?nocache=1539"></script>
+  <script src="assets/js/discoverables.js?nocache=1539"></script>
+  <script src="assets/js/overlays.js?nocache=1539"></script>
+  <script src="assets/js/pins.js?nocache=1539"></script>
+  <script src="assets/js/map.js?nocache=1539"></script>
+  <script src="assets/js/language.js?nocache=1539"></script>
+  <script src="assets/js/menu.js?nocache=1539"></script>
+  <script src="assets/js/dailies.js?nocache=1539"></script>
+  <script src="assets/js/scripts.js?nocache=1539"></script>
+  <script src="assets/js/fme.js?nocache=1539"></script>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-39999584-5"></script>
@@ -1127,9 +1186,6 @@
     gtag('config', 'UA-39999584-5');
 
   </script>
-
-  <!-- Temporary anonymous metric collection. -->
-  <!-- <script>var data = $.cookie(); var url = 'https://script.google.com/macros/s/AKfycbwK8MXqw6QnR03-M3shhobskU5yFEQ-rOI3YD53QZATB4nR1NU/exec'; $(document).ready(function () { if ($.cookie('did-form-1') !== undefined) return; $.cookie('did-form-1', 1, { expires: 999 }); $.ajax({ url: url, method: "GET", dataType: "json", data: data }) })</script> -->
 </body>
 
 </html>

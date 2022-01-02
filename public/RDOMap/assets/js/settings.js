@@ -124,7 +124,10 @@ const SettingProxy = (function () {
     },
     addListener: function (settingProxy, names, callback) {
       const proxyConfig = settingProxy[_proxyConfig];
-      names.split(' ').forEach(name => {
+      if (!Array.isArray(names)) {
+        names = names.split(' ');
+      }
+      names.forEach(name => {
         settingHandler._checkAndGetSettingConfig(proxyConfig, name, ReferenceError)
           .listeners.push(callback);
       });
@@ -134,7 +137,7 @@ const SettingProxy = (function () {
 })();
 
 // General settings
-const Settings = SettingProxy.createSettingProxy('main');
+const Settings = SettingProxy.createSettingProxy('rdo');
 Object.entries({
   alertClosed: { default: false },
   baseLayer: { default: 'map.layers.default' },
@@ -150,7 +153,7 @@ Object.entries({
   isFmeDisplayEnabled: { default: true },
   isFmeNotificationEnabled: { default: false },
   isMarkerClusterEnabled: { default: true },
-  isMenuOpened: { default: false },
+  isMenuOpened: { default: true },
   isPinsEditingEnabled: { default: true },
   isPinsPlacingEnabled: { default: false },
   isPopupsEnabled: { default: true },
@@ -171,9 +174,17 @@ Object.entries({
   showCustomizationSettings: { default: true },
   showImportExportSettings: { default: true },
   showDebugSettings: { default: false },
-  legendarySpawnIconType: { default: 0 },
+  legendarySpawnIconType: { default: 'head' },
   legendarySpawnIconSize: { default: 1 },
 }).forEach(([name, config]) => SettingProxy.addSetting(Settings, name, config));
 
 // Completed daily challenges settings (file dailies.js)
-const DailyChallenges = SettingProxy.createSettingProxy('rdo:dailies');
+const DailyChallenges = SettingProxy.createSettingProxy('rdo.dailies');
+
+Object.entries({
+  trader_difficulty: { default: 'hard' },
+  bounty_hunter_difficulty: { default: 'hard' },
+  collector_difficulty: { default: 'hard' },
+  moonshiner_difficulty: { default: 'hard' },
+  naturalist_difficulty: { default: 'hard' },
+}).forEach(([name, config]) => SettingProxy.addSetting(DailyChallenges, name, config));

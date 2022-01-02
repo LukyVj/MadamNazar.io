@@ -22,7 +22,7 @@ class Encounter {
     this.onLanguageChanged();
 
     const imgKey = this.key === 'rescue' ? 'rescue_objective' : this.key;
-    this.element = $(`<div class="collectible-wrapper" data-help="item" data-type="${this.key}">`)
+    this.element = $(`<div class="collectible-wrapper ${this.new ? 'new' : ''}" data-help="item" data-type="${this.key}">`)
       .attr('data-tippy-content', Language.get(`menu.${this.key}`))
       .on('click', () => this.onMap = !this.onMap)
       .append($(`<img class="collectible-icon" src="./assets/images/icons/${imgKey}.png">`))
@@ -64,7 +64,7 @@ class Encounter {
           tippy: marker.title,
         }),
       });
-      tempMarker.bindPopup(marker.updateMarkerContent(), { minWidth: 300, maxWidth: 400 });
+      tempMarker.bindPopup(marker.updateMarkerContent.bind(marker, () => this.onMap = false), { minWidth: 300, maxWidth: 400 });
 
       this.layer.addLayer(tempMarker);
       if (Settings.isMarkerClusterEnabled)
@@ -77,17 +77,26 @@ class Encounter {
       this.layer.addTo(MapBase.map);
       this.element.children('span').removeClass('disabled');
       if (!MapBase.isPreviewMode)
-        localStorage.setItem(`rdo:${this.key}`, 'true');
+        localStorage.setItem(`rdo.${this.key}`, 'true');
     } else {
       this.layer.remove();
       this.element.children('span').addClass('disabled');
       if (!MapBase.isPreviewMode)
-        localStorage.removeItem(`rdo:${this.key}`);
+        localStorage.removeItem(`rdo.${this.key}`);
     }
     MapBase.updateTippy('encounters');
   }
 
   get onMap() {
-    return !!localStorage.getItem(`rdo:${this.key}`);
+    return !!localStorage.getItem(`rdo.${this.key}`);
+  }
+
+  static onLanguageChanged() {
+    Encounter.locations.forEach(encounter => encounter.onLanguageChanged());
+    Menu.reorderMenu(this.context);
+  }
+
+  static onSettingsChanged() {
+    Encounter.locations.forEach(encounter => encounter.reinitMarker());
   }
 }

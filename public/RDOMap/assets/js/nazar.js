@@ -63,9 +63,12 @@ class MadamNazar {
     });
     tempMarker.bindPopup(this.popupContent.bind(this), { minWidth: 300 });
 
-    MadamNazar.layer.addLayer(tempMarker);
-    if (Settings.isMarkerClusterEnabled)
-      Layers.oms.addMarker(tempMarker);
+    // Fix occasional race condition with preview mode.
+    if (!MapBase.isPreviewMode || getParameterByName('q') === 'nazar') {
+      MadamNazar.layer.addLayer(tempMarker);
+      if (Settings.isMarkerClusterEnabled)
+        Layers.oms.addMarker(tempMarker);
+    }
 
     this.onMap = this.onMap;
   }
@@ -95,18 +98,18 @@ class MadamNazar {
       MadamNazar.layer.addTo(MapBase.map);
       this.context.removeClass('disabled');
       if (!MapBase.isPreviewMode)
-        localStorage.setItem('rdo:nazar', 'true');
+        localStorage.setItem('rdo.nazar', 'true');
     } else {
       MadamNazar.layer.remove();
       this.context.addClass('disabled');
       if (!MapBase.isPreviewMode)
-        localStorage.setItem('rdo:nazar', 'false');
+        localStorage.setItem('rdo.nazar', 'false');
     }
     MapBase.updateTippy('nazar');
   }
 
   static get onMap() {
-    const value = JSON.parse(localStorage.getItem('rdo:nazar'));
+    const value = JSON.parse(localStorage.getItem('rdo.nazar'));
     return value || value == null;
   }
 

@@ -64,7 +64,7 @@ class Shop {
             tippy: marker.title,
           }),
         });
-        tempMarker.bindPopup(marker.updateMarkerContent(), { minWidth: 300, maxWidth: 400 });
+        tempMarker.bindPopup(marker.updateMarkerContent.bind(marker, () => this.onMap = false), { minWidth: 300, maxWidth: 400 });
 
         this.layer.addLayer(tempMarker);
         if (Settings.isMarkerClusterEnabled)
@@ -78,16 +78,25 @@ class Shop {
       this.layer.addTo(MapBase.map);
       this.element.children('span').removeClass('disabled');
       if (!MapBase.isPreviewMode)
-        localStorage.setItem(`rdo:${this.key}`, 'true');
+        localStorage.setItem(`rdo.${this.key}`, 'true');
     } else {
       this.layer.remove();
       this.element.children('span').addClass('disabled');
       if (!MapBase.isPreviewMode)
-        localStorage.removeItem(`rdo:${this.key}`);
+        localStorage.removeItem(`rdo.${this.key}`);
     }
     MapBase.updateTippy('shops');
   }
   get onMap() {
-    return !!localStorage.getItem(`rdo:${this.key}`);
+    return !!localStorage.getItem(`rdo.${this.key}`);
+  }
+
+  static onLanguageChanged() {
+    Shop.locations.forEach(shop => shop.onLanguageChanged());
+    Menu.reorderMenu(this.context);
+  }
+
+  static onSettingsChanged() {
+    Shop.locations.forEach(shop => shop.reinitMarker());
   }
 }
